@@ -1,0 +1,56 @@
+.custom-dialog .p-dialog-content {
+    background-color: rgba(11, 199, 93, 0.155);
+    /* Gris translúcido */
+    overflow-y: auto;
+    color: #4a5568;
+    /* Texto gris */
+    padding: 1.5rem 1.5rem 2rem 1.5rem;
+    /* Añade espaciado al contenido */
+    border-bottom-left-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+}
+
+.custom-dialog .dark .p-dialog-content {
+    background-color: #1a202c;
+    /* Fondo oscuro en modo oscuro */
+    color: rgba(255, 255, 255, 0.8);
+    /* Texto blanco con opacidad en modo oscuro */
+}
+
+.p-dialog-header {
+    background-color: rgba(11, 199, 92, 0);
+    /* Gris translúcido */
+    padding: 0;
+    color: white;
+}
+
+.p-dialog-title {
+    background-color: rgba(0, 255, 255, 0);
+}
+
+.p-dialog-header-icons {
+    background-color: rgba(11, 199, 92, 0.726);
+    /* verde translúcido */
+    padding: 0.5rem 0.5rem 1.5rem 0.5rem;
+    /* Añade espaciado al contenido */
+    border-top-right-radius: 0.5rem;
+    color: rgb(255, 255, 255);
+
+}
+
+.p-dialog-header-icon {
+    color: white;
+}
+
+.custom-header {
+    padding: 2rem 1.5rem 2rem 1.5rem;
+    /* Añade espaciado al contenido */
+    border-top-left-radius: 0.5rem;
+    background-color: rgba(11, 199, 92, 0.726);
+    /* verde translúcido */
+
+}
+
+.input-login .p-inputtext {
+    min-width: 15rem;
+}

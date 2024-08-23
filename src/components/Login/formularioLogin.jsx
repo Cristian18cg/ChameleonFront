@@ -1,8 +1,5 @@
 import React, { useState } from "react";
 import useControl from "../../hooks/useControl";
-import "../../styles/styles.css";
-import imagenn from "../../img/icono.png";
-import imagencor from "../../img/tra.webp";
 import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
@@ -33,7 +30,6 @@ const FormularioLogin = () => {
                 <div className="col-lg-6">
                   <div className="card-body mx-4">
                     <div className="text-center">
-                      <img src={imagenn} className="img-fluid logoini" alt="Logo" />
                       <h1>Bienvenido</h1>
                       <h3>Gestor bodega</h3>
                     </div>
@@ -80,7 +76,6 @@ const FormularioLogin = () => {
                   </div>
                 </div>
                 <div className="img-fluid fond col-12 col-md-6 d-flex align-items-center gradient-custom-2 ">
-                  <img src={imagencor} className="img-fluid" alt="Logo" />
                 </div>
               </div>
             </div>

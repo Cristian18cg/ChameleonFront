@@ -1,10 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'primevue/resources/themes/aura-light-green/theme.css'
-
+import './styles/styles.css'
+import './styles/FormularioL.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
