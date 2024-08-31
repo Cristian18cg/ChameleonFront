@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Menubar } from "primereact/menubar";
 import { InputText } from "primereact/inputtext";
 import { Badge } from "primereact/badge";
@@ -8,9 +8,44 @@ import icono_color from "../../img/icono-color.png";
 import { useNavigate } from "react-router-dom";
 import { Dialog } from "primereact/dialog";
 import { Formulario_Login } from "../Login/Formularios/Formulario_Login";
+import { FormularioRegistro } from "../Login/Formularios/Formulario_registro";
+import { FooterLogin } from "../Login/Formularios/FooterLogin";
+import { PanelMenu } from "primereact/panelmenu";
+
+import useControl from "../../hooks/useControl";
 export const NavBar = () => {
   const navigate = useNavigate();
-  const [visible, setVisible] = useState(false);
+  const {
+    vistaLog,
+    setVistaLog,
+    setVisibleProfile,
+    visibleProfile,
+    token,
+    setToken,
+    isLoggedIn,
+    usuario,
+    setUsuario,
+    setLoggedIn,
+  } = useControl();
+  useEffect(() => {
+    const accessToken = localStorage.getItem("accessToken");
+    const usuarioo = localStorage.getItem("user");
+    console.log(token)
+    console.log(usuario)
+    console.log(isLoggedIn)
+    console.log(accessToken)
+    // Llama a la función asincrónica para obtener los datos
+    if (accessToken && token === "" && usuario === "" && isLoggedIn===false) {
+      console.log('oooooooo')
+      setToken(accessToken);
+      setUsuario(usuarioo);
+      setLoggedIn(true);
+    }
+  }, []);
+  const avatarTemplate = ()=>{
+    return <Avatar label={usuario.charAt(0).toUpperCase()} size="large" className="mt-2" style={{ backgroundColor: '#0bc75cb9', color: '#ffffff' }} shape="circle" />
+ 
+   }
   const itemRenderer = (item) => (
     <a className="flex align-items-center p-menuitem-link p-2">
       <span className={item.icon} />
@@ -89,7 +124,50 @@ export const NavBar = () => {
       badge: 3,
       template: itemRenderer,
     },
+    {
+      label: "Perfil",
+      template:avatarTemplate,
+      items: [
+        {
+          label: "Mi perfil",
+          icon: "pi pi-user",
+          command: () => {
+            navigate("/tienda");
+          },
+        },
+        {
+          label: "Cerrar sesion",
+          icon: "pi pi-sign-out",
+          command: () => {
+            navigate("/tienda");
+          },
+        },
+      ],
+    },
   ];
+  const items2 = [
+    {
+      label: "Perfil",
+      items: [
+        {
+          label: "Mi perfil",
+          icon: "pi pi-user",
+          command: () => {
+            navigate("/tienda");
+          },
+        },
+        {
+          label: "Cerrar sesion",
+          icon: "pi pi-sign-out",
+          command: () => {
+            navigate("/tienda");
+          },
+        },
+      ],
+    },
+    
+  ];
+
   const start = (
     <img
       alt="logo"
@@ -106,15 +184,17 @@ export const NavBar = () => {
         type="text"
         className="  m-2.5 md:w-auto max-w-screen-sm"
       />
-      <Avatar
-        icon="pi pi-user"
-        shape="circle"
-        size="large"
-        className="ml-2 mt-1 transition duration-300 ease-in-out cursor-pointer"
-        onClick={() => {
-          setVisible(true);
-        }}
-      />
+      
+        <Avatar
+          icon="pi pi-user"
+          shape="circle"
+          size="large"
+          className="ml-2 mt-1 transition duration-300 ease-in-out cursor-pointer"
+          onClick={() => {
+            setVisibleProfile(true);
+          }}
+        />
+      
     </div>
   );
   const headerDialog = () => {
@@ -127,7 +207,16 @@ export const NavBar = () => {
           width="50"
           className="mr-1 sm:w-1rem"
         ></img>
-        <h3>INICIAR SESIÓN</h3>
+
+        {vistaLog === 1 ? (
+          <>
+            <h3>INICIAR SESIÓN</h3>
+          </>
+        ) : (
+          <>
+            <h3>REGISTRO</h3>
+          </>
+        )}
       </div>
     );
   };
@@ -137,16 +226,30 @@ export const NavBar = () => {
       <Dialog
         header={headerDialog}
         modal
-        visible={visible}
+        visible={visibleProfile}
         onHide={() => {
-          setVisible(false);
+          
+          setVisibleProfile(false);
         }}
         position="center"
-        style={{ width: "30vw", }}
+        style={{
+          width: vistaLog === 1 ? "30vw" : "50vw",
+          height: vistaLog === 1 ? "30vw" : "50vw",
+        }}
         breakpoints={{ "960px": "75vw", "641px": "100vw" }}
         className="custom-dialog"
       >
-        <Formulario_Login />
+        {vistaLog === 1 ? (
+          <>
+            <Formulario_Login />
+            <FooterLogin />
+          </>
+        ) : (
+          <>
+            <FormularioRegistro />
+            <FooterLogin />
+          </>
+        )}
       </Dialog>
     </div>
   );

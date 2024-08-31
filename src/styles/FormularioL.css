@@ -54,3 +54,7 @@
 .input-login .p-inputtext {
     min-width: 15rem;
 }
+.input-login .p-input-icon {
+
+    margin-top: 0.1vw;
+}

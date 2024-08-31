@@ -86,6 +86,10 @@ function App() {
     greaterThanOrEqual: "Mayor o igual",
     lessThanOrEqual: "Menor o igual",
     accept: "Aceptar",
+    weak:"Leve",
+    medium: "Medio",
+    strong: "Fuerte",
+    passwordPrompt: "Ingrese la contraseña"
     //...
   });
   return (
