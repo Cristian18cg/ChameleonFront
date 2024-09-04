@@ -7,7 +7,7 @@ export const FooterLogin = () => {
   const { vistaLog, setVistaLog } = useControl();
 
   return (
-    <div className="flex flex-col justify-center items-center mt-4 space-y-2">
+    <div className="flex flex-col justify-center items-center mt-1 space-y-2">
       {vistaLog === 2 ? (
         <>
           {/* Si el usuario está en la vista de registro, muestra esto */}

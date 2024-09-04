@@ -30,10 +30,7 @@ export const NavBar = () => {
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken");
     const usuarioo = localStorage.getItem("user");
-    console.log(token)
-    console.log(usuario)
-    console.log(isLoggedIn)
-    console.log(accessToken)
+
     // Llama a la función asincrónica para obtener los datos
     if (accessToken && token === "" && usuario === "" && isLoggedIn===false) {
       console.log('oooooooo')
@@ -124,48 +121,7 @@ export const NavBar = () => {
       badge: 3,
       template: itemRenderer,
     },
-    {
-      label: "Perfil",
-      template:avatarTemplate,
-      items: [
-        {
-          label: "Mi perfil",
-          icon: "pi pi-user",
-          command: () => {
-            navigate("/tienda");
-          },
-        },
-        {
-          label: "Cerrar sesion",
-          icon: "pi pi-sign-out",
-          command: () => {
-            navigate("/tienda");
-          },
-        },
-      ],
-    },
-  ];
-  const items2 = [
-    {
-      label: "Perfil",
-      items: [
-        {
-          label: "Mi perfil",
-          icon: "pi pi-user",
-          command: () => {
-            navigate("/tienda");
-          },
-        },
-        {
-          label: "Cerrar sesion",
-          icon: "pi pi-sign-out",
-          command: () => {
-            navigate("/tienda");
-          },
-        },
-      ],
-    },
-    
+  
   ];
 
   const start = (
@@ -232,12 +188,10 @@ export const NavBar = () => {
           setVisibleProfile(false);
         }}
         position="center"
-        style={{
-          width: vistaLog === 1 ? "30vw" : "50vw",
-          height: vistaLog === 1 ? "30vw" : "50vw",
-        }}
-        breakpoints={{ "960px": "75vw", "641px": "100vw" }}
-        className="custom-dialog"
+       
+        className={`custom-dialog shadow-lg ${
+    vistaLog === 1 ? "w-full md:w-1/3 lg:w-1/4 xl:w-1/5" : "w-full md:w-5/6 lg:w-6/12 xl:w-5/12"
+  } ${vistaLog === 1 ? "sm:h-80 md:h-90 lg:h-2/3 xl:h-3/6" : "sm:h-96 md:h-5/6 lg:h-auto"}`}
       >
         {vistaLog === 1 ? (
           <>

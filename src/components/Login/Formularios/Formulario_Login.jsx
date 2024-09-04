@@ -60,25 +60,25 @@ export const Formulario_Login = () => {
   };
 
   return (
-    <div className="card flex flex-col justify-center items-center space-y-4 mt-6 w-full p-4 rounded-lg">
-      <form onSubmit={handleSubmit} className="w-full max-w-md">
+    <div className="flex flex-col justify-center items-center w-full  rounded-lg">
+      <form onSubmit={handleSubmit} className="w-full">
         {/* Campo de Correo Electrónico */}
-        <div className="mb-3">
-          <FloatLabel>
+        <div className=" flex flex-col items-center">
+          <FloatLabel >
             <InputText
               id="username"
-              className="input-login"
+              className="input-login "
               value={usuario}
               onChange={handleCorreoChange}
-              style={{ width: "15rem" }}
+              style={{width:"15rem"}}
             />
-            <label htmlFor="username">Correo electrónico</label>
+            <label className="w-full" htmlFor="username">Correo electrónico</label>
           </FloatLabel>
-          {errores.correo && <small className="p-error">{errores.correo}</small>}
+          {errores.correo && <small className="p-error mb-5">{errores.correo}</small>}
         </div>
-
+  
         {/* Campo de Contraseña */}
-        <div className="mt-3">
+        <div className=" flex flex-col items-center">
           <FloatLabel>
             <Password
               inputId="password"
@@ -92,10 +92,13 @@ export const Formulario_Login = () => {
           </FloatLabel>
           {errores.contraseña && <small className="p-error">{errores.contraseña}</small>}
         </div>
-
+  
         {/* Botón de Enviar */}
-        <Button label="Entrar" severity="success" className="mt-3" type="submit" />
+        <div className="flex justify-center">
+          <Button label="Entrar" severity="success" className="mt-3" type="submit" />
+        </div>
       </form>
     </div>
   );
+  
 };

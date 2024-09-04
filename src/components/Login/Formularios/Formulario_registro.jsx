@@ -148,10 +148,10 @@ export const FormularioRegistro = () => {
       <Toast ref={toast} />
       <form
         onSubmit={handleSubmit}
-        className="grid grid-cols-2 gap-4 w-full max-w-lg"
+        className="grid  grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-5 w-full max-w-lg"
       >
         {/* Nombres */}
-        <div className="mb-2">
+        <div >
           <FloatLabel>
             <InputText
               id="nombres"
@@ -189,7 +189,7 @@ export const FormularioRegistro = () => {
         </div>
 
         {/* Correo Electrónico */}
-        <div className="mb-2">
+        <div >
           <FloatLabel>
             <InputText
               type="email"
@@ -227,7 +227,7 @@ export const FormularioRegistro = () => {
         </div>
 
         {/* Tipo de Identificación */}
-        <div className="mb-2">
+        <div >
           <FloatLabel>
             <Dropdown
               id="tipoIdentificacion"
@@ -252,7 +252,7 @@ export const FormularioRegistro = () => {
         </div>
 
         {/* Número de Identificación */}
-        <div className="mb-2">
+        <div >
           <FloatLabel>
             <InputText
               id="numeroIdentificacion"
@@ -292,7 +292,7 @@ export const FormularioRegistro = () => {
           )}
         </div>
         {/* Dirección */}
-        <div className="mb-2">
+        <div>
           <FloatLabel>
             <InputText
               id="direccion"
@@ -317,8 +317,9 @@ export const FormularioRegistro = () => {
               name="contrasena"
               value={usuario.contrasena}
               onChange={handleInputChange}
-              className="input-login"
-              style={{ width: "100%" }}
+              className="input-login  min-w-full "
+              style={{ width: "20rem" }}
+              unstyled={true}
               toggleMask
             />
             <label htmlFor="contrasena">Contraseña</label>
@@ -329,26 +330,27 @@ export const FormularioRegistro = () => {
         </div>
 
         {/* Confirmar Contraseña */}
-        <div>
+        <div  className=" min-w-full ">
           <FloatLabel>
             <Password
               inputId="confirmarContrasena"
               name="confirmarContrasena"
               value={usuario.confirmarContrasena}
               onChange={handleInputChange}
-              className="input-login"
-              style={{ width: "100%" }}
+              className="input-login min-w-full "
+              style={{width:"20rem"}}
               toggleMask
+              unstyled={true}
             />
             <label htmlFor="confirmarContrasena">Confirmar Contraseña</label>
           </FloatLabel>
           {errores.confirmarContrasena && (
-            <small className="p-error">{errores.confirmarContrasena}</small>
+            <small className="p-error min-w-full">{errores.confirmarContrasena}</small>
           )}
         </div>
 
         {/* Botón de Registro */}
-        <div className="col-span-2 flex justify-center mt-4">
+        <div className=" md:col-span-2 flex justify-center mt-4">
           <Button
             type="submit"
             label="Registrarse"
@@ -358,5 +360,5 @@ export const FormularioRegistro = () => {
         </div>
       </form>
     </div>
-  );
+  );j
 };
