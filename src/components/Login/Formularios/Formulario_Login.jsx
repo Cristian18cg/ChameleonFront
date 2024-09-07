@@ -3,8 +3,9 @@ import { InputText } from "primereact/inputtext";
 import { FloatLabel } from "primereact/floatlabel";
 import { Button } from "primereact/button";
 import { Password } from "primereact/password";
-
+import useControl from "../../../hooks/useControl";
 export const Formulario_Login = () => {
+  const { login } = useControl();
   const [usuario, setUsuario] = useState("");
   const [contraseña, setContraseña] = useState("");
   const [errores, setErrores] = useState({ correo: "", contraseña: "" });
@@ -53,10 +54,8 @@ export const Formulario_Login = () => {
     if (errores.correo || errores.contraseña) {
       return; // No enviar el formulario si hay errores
     }
-
-    // Aquí puedes manejar el envío del formulario (login)
-    console.log("Correo:", usuario);
-    console.log("Contraseña:", contraseña);
+    login(usuario, contraseña)
+   
   };
 
   return (
@@ -78,7 +77,7 @@ export const Formulario_Login = () => {
         </div>
   
         {/* Campo de Contraseña */}
-        <div className=" flex flex-col items-center">
+        <div className=" flex flex-col items-center mt-5">
           <FloatLabel>
             <Password
               inputId="password"

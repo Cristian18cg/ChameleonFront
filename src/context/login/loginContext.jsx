@@ -10,6 +10,7 @@ const LoginProvider = ({ children }) => {
   const [jsonlogin, setJsonlogin] = useState({});
   const [jsonusuarios, setJsonusuarios] = useState({});
   const [usuario, setUsuario] = useState("");
+  const [admin, setAdmin] = useState(false)
   const [dataadicional, setdataadicional] = useState({});
   const [token, setToken] = useState("");
   const [refresh_token, setrefresh_Token] = useState("");
@@ -116,6 +117,8 @@ const LoginProvider = ({ children }) => {
         );
         localStorage.setItem("accessToken", dataLogin.access);
         localStorage.setItem("refreshToken", dataLogin.refresh);
+        localStorage.setItem("is_superuser", (dataLogin.is_superuser ? false : false));
+        setAdmin(dataLogin.is_superuser)       
         setToken(dataLogin.access);
         setrefresh_Token(dataLogin.refresh);
       }
@@ -196,6 +199,8 @@ const LoginProvider = ({ children }) => {
             ? `${dataLogin.first_name} ${dataLogin.last_name}`
             : "usuario"
         );
+        localStorage.setItem("is_superuser", (dataLogin.is_superuser ? false : false));
+        setAdmin(dataLogin.is_superuser)
         setLoggedIn(true);
         setUsuario(
           `${dataLogin?.first_name} ${dataLogin?.last_name}`.trim()
@@ -204,16 +209,11 @@ const LoginProvider = ({ children }) => {
         );
         setToken(dataLogin.access);
         setrefresh_Token(dataLogin.refresh);
+        setVisibleProfile(false);
       }
-      /*    if (infoAdicional()) {
-        setTimeout(() => {
-          setUsuario(dataLogin.data.nombre);
-          setJsonlogin(dataLogin.data);
-          setToken(response.data.access);
-          setcontraseñanueva(dataLogin.data.nuevo_usuario)
-          return true;
-        }, 2000);
-      } */
+      showSuccess(
+        `¡Bienvenido, ${dataLogin.first_name} ${dataLogin.last_name}!`
+      );
     } catch (error) {
       if (error.message === "Network Error") {
         return Swal.fire({
@@ -263,12 +263,13 @@ const LoginProvider = ({ children }) => {
       const respuesta = await clienteAxios.post(
         "users/logout/",
         datos,
-        headers
+        { headers } // Pasar headers dentro de un objeto { headers }
       );
-      if (respuesta.status !== 200) {
+      if (respuesta.status !== 205) {
+        // Cambiado a 205 porque es el código que esperas en la respuesta
         return Swal.fire({
           icon: "error",
-          title: "Error al cerrar sesion",
+          title: "Error al cerrar sesión",
         });
       }
 
@@ -278,8 +279,17 @@ const LoginProvider = ({ children }) => {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("user");
+      localStorage.removeItem("is_superuser");
+
       window.location.reload();
-    } catch (error) {}
+    } catch (error) {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("user");
+      localStorage.removeItem("is_superuser");
+
+      console.error(error);
+    }
   };
 
   const infoAdicional = async () => {

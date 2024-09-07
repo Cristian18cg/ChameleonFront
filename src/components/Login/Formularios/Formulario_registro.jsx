@@ -192,6 +192,9 @@ export const FormularioRegistro = () => {
         <div >
           <FloatLabel>
             <InputText
+               readonly onfocus="this.removeAttribute('readonly');"
+                        autoComplete="off"
+
               type="email"
               id="correo"
               name="correo"
@@ -200,7 +203,7 @@ export const FormularioRegistro = () => {
               unstyled={true}
               style={{ width: "100%" }}
             />
-            <label htmlFor="correo">Correo Electrónico</label>
+            <label htmlFor="email">Correo Electrónico</label>
           </FloatLabel>
           {errores.correo && (
             <small className="p-error">{errores.correo}</small>
@@ -313,13 +316,14 @@ export const FormularioRegistro = () => {
         <div>
           <FloatLabel>
             <Password
+             readonly onfocus="this.removeAttribute('readonly');"
+                        autoComplete="off"
+
               inputId="contrasena"
               name="contrasena"
               value={usuario.contrasena}
               onChange={handleInputChange}
-              className="input-login  min-w-full "
-              style={{ width: "20rem" }}
-              unstyled={true}
+              className="input-login min-w-full"
               toggleMask
             />
             <label htmlFor="contrasena">Contraseña</label>
@@ -332,15 +336,17 @@ export const FormularioRegistro = () => {
         {/* Confirmar Contraseña */}
         <div  className=" min-w-full ">
           <FloatLabel>
+            
             <Password
+                        readonly onfocus="this.removeAttribute('readonly');"
+                        autoComplete="off"
+
               inputId="confirmarContrasena"
               name="confirmarContrasena"
               value={usuario.confirmarContrasena}
               onChange={handleInputChange}
               className="input-login min-w-full "
-              style={{width:"20rem"}}
               toggleMask
-              unstyled={true}
             />
             <label htmlFor="confirmarContrasena">Confirmar Contraseña</label>
           </FloatLabel>
@@ -360,5 +366,5 @@ export const FormularioRegistro = () => {
         </div>
       </form>
     </div>
-  );j
+  );
 };

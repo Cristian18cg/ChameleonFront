@@ -21,6 +21,7 @@ export const NavBar = () => {
     setVisibleProfile,
     visibleProfile,
     token,
+    logout,
     setToken,
     isLoggedIn,
     usuario,
@@ -32,17 +33,24 @@ export const NavBar = () => {
     const usuarioo = localStorage.getItem("user");
 
     // Llama a la función asincrónica para obtener los datos
-    if (accessToken && token === "" && usuario === "" && isLoggedIn===false) {
-      console.log('oooooooo')
+    if (accessToken && token === "" && usuario === "" && isLoggedIn === false) {
+      console.log("oooooooo");
       setToken(accessToken);
       setUsuario(usuarioo);
       setLoggedIn(true);
     }
   }, []);
-  const avatarTemplate = ()=>{
-    return <Avatar label={usuario.charAt(0).toUpperCase()} size="large" className="mt-2" style={{ backgroundColor: '#0bc75cb9', color: '#ffffff' }} shape="circle" />
- 
-   }
+  const avatarTemplate = () => {
+    return (
+      <Avatar
+        label={usuario.charAt(0).toUpperCase()}
+        size="large"
+        className="mt-2"
+        style={{ backgroundColor: "#0bc75cb9", color: "#ffffff" }}
+        shape="circle"
+      />
+    );
+  };
   const itemRenderer = (item) => (
     <a className="flex align-items-center p-menuitem-link p-2">
       <span className={item.icon} />
@@ -69,7 +77,7 @@ export const NavBar = () => {
       command: () => {
         navigate("/tienda");
       },
-    },
+    } /* ,
     {
       label: "Projects",
       icon: "pi pi-search",
@@ -121,16 +129,14 @@ export const NavBar = () => {
       badge: 3,
       template: itemRenderer,
     },
-  
+   */,
   ];
 
   const start = (
     <img
       alt="logo"
       src={chameleonLargo}
-      height="10"
-      width="300"
-      className="mr-2 sm:w-1rem"
+      className="mr-2 w-24 h-10 md:w-64 md:h-20"
     ></img>
   );
   const end = (
@@ -138,19 +144,39 @@ export const NavBar = () => {
       <InputText
         placeholder="Buscar"
         type="text"
-        className="  m-2.5 md:w-auto max-w-screen-sm"
+        className="  m-2.5 hidden md:block w-auto"
       />
-      
-        <Avatar
-          icon="pi pi-user"
-          shape="circle"
-          size="large"
-          className="ml-2 mt-1 transition duration-300 ease-in-out cursor-pointer"
-          onClick={() => {
-            setVisibleProfile(true);
-          }}
-        />
-      
+    
+      {isLoggedIn ? (
+        <>
+          <div className="p-menuitem-content">
+      <a className="flex align-items-center p-menuitem p-3 mt-4" onClick={()=>{
+        logout()
+      }}>
+        <span className="pi pi-sign-out p-menuitem-icon" />
+        <span className="p-menuitem-text mx-2">Cerrar Sesion</span>
+      </a>
+      </div>
+          <Avatar
+            shape="circle"
+            size="large"
+            label={usuario ? usuario.charAt(0).toUpperCase() : ""}
+            className="ml-2 mt-2 transition duration-300 ease-in-out cursor-pointer bg-green-400 bg-opacity-55 text-white"
+          />
+        </>
+      ) : (
+        <>
+          <Avatar
+            icon="pi pi-user"
+            shape="circle"
+            size="large"
+            className="ml-2 mt-2 transition duration-300 ease-in-out cursor-pointer"
+            onClick={() => {
+              setVisibleProfile(true);
+            }}
+          />
+        </>
+      )}
     </div>
   );
   const headerDialog = () => {
@@ -184,14 +210,18 @@ export const NavBar = () => {
         modal
         visible={visibleProfile}
         onHide={() => {
-          
           setVisibleProfile(false);
         }}
         position="center"
-       
         className={`custom-dialog shadow-lg ${
-    vistaLog === 1 ? "w-full md:w-1/3 lg:w-1/4 xl:w-1/5" : "w-full md:w-5/6 lg:w-6/12 xl:w-5/12"
-  } ${vistaLog === 1 ? "sm:h-80 md:h-90 lg:h-2/3 xl:h-3/6" : "sm:h-96 md:h-5/6 lg:h-auto"}`}
+          vistaLog === 1
+            ? "w-full md:w-1/3 lg:w-1/4 xl:w-1/5"
+            : "w-full md:w-5/6 lg:w-6/12 xl:w-5/12"
+        } ${
+          vistaLog === 1
+            ? "sm:h-auto md:h-auto lg:h-auto xl:h-auto"
+            : "sm:h-96 md:h-5/6 lg:h-auto"
+        }`}
       >
         {vistaLog === 1 ? (
           <>

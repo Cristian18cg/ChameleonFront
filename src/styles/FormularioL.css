@@ -52,20 +52,10 @@
 }
 
 .input-login .p-inputtext {
-    min-width: 15rem !important;
+    min-width: 15.3rem !important;
 }
 .input-login .p-input-icon {
     margin-top: 0.1vw;
-    width: 100%;
-}
-
-.input-login .p-icon-field-right{
     min-width: 15rem !important;
-
-}
-.input-login .p-inputwrapper .p-inputwrapper-filled .p-input-icon-right{
-    min-width: 30rem !important;
-}
-.input-login .p-password{
-    min-width: 30rem !important;
+    
 }
