@@ -27,19 +27,24 @@ export const NavBar = () => {
     usuario,
     setUsuario,
     setLoggedIn,
+    admin,
+    setAdmin,
   } = useControl();
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken");
     const usuarioo = localStorage.getItem("user");
-
     // Llama a la función asincrónica para obtener los datos
     if (accessToken && token === "" && usuario === "" && isLoggedIn === false) {
-      console.log("oooooooo");
       setToken(accessToken);
       setUsuario(usuarioo);
       setLoggedIn(true);
+      console.log("admin", localStorage.getItem("is_superuser"));
+      setAdmin(localStorage.getItem("is_superuser"), false);
     }
   }, []);
+  useEffect(() => {
+    console.log("admin log", admin);
+  }, [admin]);
   const avatarTemplate = () => {
     return (
       <Avatar
@@ -131,7 +136,82 @@ export const NavBar = () => {
     },
    */,
   ];
-
+  const itemsAdmin = [
+    {
+      label: "Home",
+      icon: "pi pi-home",
+      command: () => {
+        navigate("/");
+      },
+    },
+    {
+      label: "Tienda",
+      icon: "pi pi-shop",
+      command: () => {
+        navigate("/tienda");
+      },
+    },
+    {
+      label: "Productos",
+      icon: "pi pi-shop",
+      command: () => {
+        navigate("/productos");
+      },
+    },
+    {
+      label: "Projects",
+      icon: "pi pi-search",
+      items: [
+        {
+          label: "Core",
+          icon: "pi pi-bolt",
+          shortcut: "⌘+S",
+          template: itemRenderer,
+        },
+        {
+          label: "Blocks",
+          icon: "pi pi-server",
+          shortcut: "⌘+B",
+          template: itemRenderer,
+        },
+        {
+          label: "UI Kit",
+          icon: "pi pi-pencil",
+          shortcut: "⌘+U",
+          template: itemRenderer,
+        },
+        {
+          separator: true,
+        },
+        {
+          label: "Templates",
+          icon: "pi pi-palette",
+          items: [
+            {
+              label: "Apollo",
+              icon: "pi pi-palette",
+              badge: 2,
+              template: itemRenderer,
+            },
+            {
+              label: "Ultima",
+              icon: "pi pi-palette",
+              badge: 3,
+              template: itemRenderer,
+            },
+          ],
+        },
+      ],
+    } /*
+    {
+      label: "Contact",
+      icon: "pi pi-envelope",
+      badge: 3,
+      template: itemRenderer,
+    },
+   */,
+    ,
+  ];
   const start = (
     <img
       alt="logo"
@@ -146,17 +226,20 @@ export const NavBar = () => {
         type="text"
         className="  m-2.5 hidden md:block w-auto"
       />
-    
+
       {isLoggedIn ? (
         <>
           <div className="p-menuitem-content">
-      <a className="flex align-items-center p-menuitem p-3 mt-4" onClick={()=>{
-        logout()
-      }}>
-        <span className="pi pi-sign-out p-menuitem-icon" />
-        <span className="p-menuitem-text mx-2">Cerrar Sesion</span>
-      </a>
-      </div>
+            <a
+              className="flex align-items-center p-menuitem p-3 mt-4"
+              onClick={() => {
+                logout();
+              }}
+            >
+              <span className="pi pi-sign-out p-menuitem-icon" />
+              <span className="p-menuitem-text mx-2">Cerrar Sesion</span>
+            </a>
+          </div>
           <Avatar
             shape="circle"
             size="large"
@@ -204,7 +287,12 @@ export const NavBar = () => {
   };
   return (
     <div className="card">
-      <Menubar model={items} start={start} end={end} className="rounded-none" />
+      <Menubar
+        model={admin ? itemsAdmin : items}
+        start={start}
+        end={end}
+        className="rounded-none"
+      />
       <Dialog
         header={headerDialog}
         modal

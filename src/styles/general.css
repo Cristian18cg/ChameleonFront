@@ -33,3 +33,9 @@
     border-radius: 20px;       /* redondez del pulgar de desplazamiento */
     border: 1px solid #9999991e;   /* crea un borde alrededor del pulgar de desplazamiento */
   }
+
+  
+html {
+  font-size: 14px;
+}
+  

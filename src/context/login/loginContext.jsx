@@ -10,7 +10,7 @@ const LoginProvider = ({ children }) => {
   const [jsonlogin, setJsonlogin] = useState({});
   const [jsonusuarios, setJsonusuarios] = useState({});
   const [usuario, setUsuario] = useState("");
-  const [admin, setAdmin] = useState(false)
+  const [admin, setAdmin] = useState(false);
   const [dataadicional, setdataadicional] = useState({});
   const [token, setToken] = useState("");
   const [refresh_token, setrefresh_Token] = useState("");
@@ -117,8 +117,9 @@ const LoginProvider = ({ children }) => {
         );
         localStorage.setItem("accessToken", dataLogin.access);
         localStorage.setItem("refreshToken", dataLogin.refresh);
-        localStorage.setItem("is_superuser", (dataLogin.is_superuser ? false : false));
-        setAdmin(dataLogin.is_superuser)       
+        localStorage.setItem("is_superuser", dataLogin.is_superuser);
+        console.log("admin ini", dataLogin.is_superuser);
+        setAdmin(dataLogin.is_superuser);
         setToken(dataLogin.access);
         setrefresh_Token(dataLogin.refresh);
       }
@@ -129,8 +130,7 @@ const LoginProvider = ({ children }) => {
         return Swal.fire({
           icon: "error",
           title: "Error de red",
-          text:
-            "No se puede conectar al servidor. Por favor, verifica tu conexión.",
+          text: "No se puede conectar al servidor. Por favor, verifica tu conexión.",
         });
       }
 
@@ -185,6 +185,8 @@ const LoginProvider = ({ children }) => {
         password: contraseña,
       });
       const dataLogin = response.data;
+
+
       if (response.status !== 200) {
         return Swal.fire({
           icon: "error",
@@ -199,18 +201,20 @@ const LoginProvider = ({ children }) => {
             ? `${dataLogin.first_name} ${dataLogin.last_name}`
             : "usuario"
         );
-        localStorage.setItem("is_superuser", (dataLogin.is_superuser ? false : false));
-        setAdmin(dataLogin.is_superuser)
+        localStorage.setItem("is_superuser", dataLogin.is_superuser);
+        setAdmin(dataLogin.is_superuser);
         setLoggedIn(true);
         setUsuario(
           `${dataLogin?.first_name} ${dataLogin?.last_name}`.trim()
             ? `${dataLogin.first_name} ${dataLogin.last_name}`
             : "usuario"
         );
+        console.log('super',dataLogin.is_superuser)
         setToken(dataLogin.access);
         setrefresh_Token(dataLogin.refresh);
         setVisibleProfile(false);
       }
+
       showSuccess(
         `¡Bienvenido, ${dataLogin.first_name} ${dataLogin.last_name}!`
       );
@@ -252,6 +256,14 @@ const LoginProvider = ({ children }) => {
     }
   };
   const logout = async (id) => {
+    setLoggedIn(false);
+    setToken(null);
+    setAdmin(false);
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("user");
+    localStorage.removeItem("is_superuser");
+    window.location.reload();
     try {
       const headers = {
         "Content-Type": "application/json",
@@ -275,7 +287,7 @@ const LoginProvider = ({ children }) => {
 
       setLoggedIn(false);
       setToken(null);
-
+      setAdmin(false);
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("user");
@@ -292,49 +304,13 @@ const LoginProvider = ({ children }) => {
     }
   };
 
-  const infoAdicional = async () => {
-    const response = await clienteAxios.get("ne/data/", {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (response.status !== 200) {
-      return false;
-    } else {
-      setdataadicional(response.data);
-      return true;
-    }
-  };
-  const listarUsuarios = async () => {
-    try {
-      const headers = {
-        Authorization: `Bearer ${token}`,
-      };
-
-      const response = await clienteAxios.get("ne/sistemas/", {
-        headers,
-      });
-      const data = response.data;
-      if (response.status !== 200) {
-        return Swal.fire({
-          icon: "error",
-        });
-      }
-      setJsonusuarios(data);
-    } catch (error) {
-      // Si hay un error en la petición
-      console.error("Error:", error.response.data);
-    }
-  };
-
   const contextValue = useMemo(() => {
     return {
       // ... tus valores de contexto
+      admin,
+      setAdmin,
       login,
       logout,
-      listarUsuarios,
       setVistaLog,
       registro,
       setVisibleProfile,
@@ -353,9 +329,10 @@ const LoginProvider = ({ children }) => {
       dataadicional,
     };
   }, [
+    admin,
+    setAdmin,
     login,
     logout,
-    listarUsuarios,
     setVistaLog,
     registro,
     setVisibleProfile,
