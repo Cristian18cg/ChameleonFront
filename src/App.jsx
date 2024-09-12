@@ -29,7 +29,6 @@ function App() {
     autoZIndex: true,
     locale: "es",
     pt: Tailwind,
-    unstyled: true,
   };
   addLocale("es", {
     firstDayOfWeek: 1,

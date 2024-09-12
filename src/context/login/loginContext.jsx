@@ -95,33 +95,7 @@ const LoginProvider = ({ children }) => {
 
         // Si también deseas iniciar sesión automáticamente después del registro, puedes hacer una solicitud de inicio de sesión aquí.
         // Por ejemplo:
-        const loginResponse = await clienteAxios.post("users/token/", {
-          username: usuario.correo, // Usa el correo para el inicio de sesión
-          password: usuario.contrasena,
-        });
-
-        const dataLogin = loginResponse.data;
-        console.log(dataLogin);
-        // Actualizar el estado de la aplicación con los datos del usuario y tokens
-        setLoggedIn(true);
-        setUsuario(
-          `${dataLogin.first_name} ${dataLogin.last_name}`.trim()
-            ? `${dataLogin.first_name} ${dataLogin.last_name}`
-            : "usuario"
-        );
-        localStorage.setItem(
-          "user",
-          `${dataLogin.first_name} ${dataLogin.last_name}`.trim()
-            ? `${dataLogin.first_name} ${dataLogin.last_name}`
-            : "usuario"
-        );
-        localStorage.setItem("accessToken", dataLogin.access);
-        localStorage.setItem("refreshToken", dataLogin.refresh);
-        localStorage.setItem("is_superuser", dataLogin.is_superuser);
-        console.log("admin ini", dataLogin.is_superuser);
-        setAdmin(dataLogin.is_superuser);
-        setToken(dataLogin.access);
-        setrefresh_Token(dataLogin.refresh);
+        login(usuario.correo, usuario.contrasena);
       }
     } catch (error) {
       console.log(error);
@@ -130,16 +104,14 @@ const LoginProvider = ({ children }) => {
         return Swal.fire({
           icon: "error",
           title: "Error de red",
-          text: "No se puede conectar al servidor. Por favor, verifica tu conexión.",
+          text:
+            "No se puede conectar al servidor. Por favor, verifica tu conexión.",
         });
       }
 
       if (error.response) {
-        console.log(error.response);
-
         // Inicializa una variable para el mensaje de error consolidado
         let mensajeError = "";
-
         // Recorre todos los errores del objeto error.response.data
         for (const campo in error.response.data) {
           if (error.response.data.hasOwnProperty(campo)) {
@@ -186,32 +158,40 @@ const LoginProvider = ({ children }) => {
       });
       const dataLogin = response.data;
 
-
       if (response.status !== 200) {
         return Swal.fire({
           icon: "error",
           title: "Contraseña incorrecta",
         });
       } else {
+        ///LOCAL STORAGE
+        /* Poner en local storage los token */
         localStorage.setItem("accessToken", dataLogin.access);
         localStorage.setItem("refreshToken", dataLogin.refresh);
+        /* poner el nombre del usuario */
         localStorage.setItem(
           "user",
           `${dataLogin.first_name} ${dataLogin.last_name}`.trim()
             ? `${dataLogin.first_name} ${dataLogin.last_name}`
             : "usuario"
         );
+        /* Administrar si es o no admin */
         localStorage.setItem("is_superuser", dataLogin.is_superuser);
         setAdmin(dataLogin.is_superuser);
+
+        /// VARIABLES
+        /* Poner que ya esta logueado */
         setLoggedIn(true);
+        /* Nombre de usuarios */
         setUsuario(
           `${dataLogin?.first_name} ${dataLogin?.last_name}`.trim()
             ? `${dataLogin.first_name} ${dataLogin.last_name}`
             : "usuario"
         );
-        console.log('super',dataLogin.is_superuser)
+        /* tokens */
         setToken(dataLogin.access);
         setrefresh_Token(dataLogin.refresh);
+        /* dialog login */
         setVisibleProfile(false);
       }
 

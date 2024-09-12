@@ -11,6 +11,7 @@
     background: #33333300;        /* color del área de seguimiento */
   }
   
+  
   body::-webkit-scrollbar-thumb {
   
     background-color: #49494962;    /* color del pulgar de desplazamiento */
@@ -38,4 +39,19 @@
 html {
   font-size: 14px;
 }
-  
+/* header dialog */
+.custom-header2 {
+  padding: 1rem 1rem 1rem 1rem;
+  /* Añade espaciado al contenido */
+  border-top-left-radius: 0.5rem;
+  background-color: rgba(11, 199, 92, 0.726);
+  /* verde translúcido */
+
+}
+.custom-header2 .p-dialog-header-icons {
+  background-color: rgba(11, 199, 92, 0);
+  /* verde translúcido */
+  /* Añade espaciado al contenido */
+  color: rgb(255, 255, 255);
+padding: 0;
+}

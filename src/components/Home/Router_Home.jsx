@@ -18,7 +18,6 @@ export const Router_Home = () => {
   } = useControl();
   const [Manager, setManager] = useState(false);
   useEffect(() => {
-    console.log('aadddmin',admin);
     setManager(admin);
   }, [admin]);
   return (

@@ -6,6 +6,7 @@ import './styles/styles.css'
 import './styles/FormularioL.css'
 import './styles/general.css'
 import './styles/Navbar.css'
+import './styles/Productos.css'
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <App />

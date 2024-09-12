@@ -38,13 +38,17 @@ export const NavBar = () => {
       setToken(accessToken);
       setUsuario(usuarioo);
       setLoggedIn(true);
-      console.log("admin", localStorage.getItem("is_superuser"));
-      setAdmin(localStorage.getItem("is_superuser"), false);
+      console.log("admin",localStorage.getItem("is_superuser") );
+      if(localStorage.getItem("is_superuser")=== 'false'){
+        setAdmin(false);
+      }else if (localStorage.getItem("is_superuser")=== 'true'){
+        setAdmin(true)
+      }else{
+        setAdmin(false)
+      }
     }
   }, []);
-  useEffect(() => {
-    console.log("admin log", admin);
-  }, [admin]);
+
   const avatarTemplate = () => {
     return (
       <Avatar
