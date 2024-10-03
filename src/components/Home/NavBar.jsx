@@ -30,36 +30,47 @@ export const NavBar = () => {
     admin,
     setAdmin,
   } = useControl();
+
+  /* Funcion para verificar que no se ha vencido el token */
+  const getItemWithExpiration = (key) => {
+    const itemStr = localStorage.getItem(key);
+
+    // Si el ítem no existe
+    if (!itemStr) {
+      return null;
+    }
+
+    const item = JSON.parse(itemStr);
+    const now = new Date();
+
+    // Si el ítem ha expirado
+    if (now.getTime() > item.expiration) {
+      localStorage.removeItem(key); // Eliminar el ítem expirado
+      return null;
+    }
+
+    return item.value;
+  };
   useEffect(() => {
-    const accessToken = localStorage.getItem("accessToken");
-    const usuarioo = localStorage.getItem("user");
+    const accessToken = getItemWithExpiration("accessToken");
+    const usuarioo = getItemWithExpiration("user");
+
     // Llama a la función asincrónica para obtener los datos
     if (accessToken && token === "" && usuario === "" && isLoggedIn === false) {
       setToken(accessToken);
       setUsuario(usuarioo);
       setLoggedIn(true);
-      console.log("admin",localStorage.getItem("is_superuser") );
-      if(localStorage.getItem("is_superuser")=== 'false'){
+      console.log(getItemWithExpiration("is_superuser"));
+      if (getItemWithExpiration("is_superuser") === false) {
         setAdmin(false);
-      }else if (localStorage.getItem("is_superuser")=== 'true'){
-        setAdmin(true)
-      }else{
-        setAdmin(false)
+      } else if (getItemWithExpiration("is_superuser") === true) {
+        setAdmin(true);
+      } else {
+        setAdmin(false);
       }
     }
   }, []);
 
-  const avatarTemplate = () => {
-    return (
-      <Avatar
-        label={usuario.charAt(0).toUpperCase()}
-        size="large"
-        className="mt-2"
-        style={{ backgroundColor: "#0bc75cb9", color: "#ffffff" }}
-        shape="circle"
-      />
-    );
-  };
   const itemRenderer = (item) => (
     <a className="flex align-items-center p-menuitem-link p-2">
       <span className={item.icon} />

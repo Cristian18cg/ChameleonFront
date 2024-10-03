@@ -149,6 +149,17 @@ const LoginProvider = ({ children }) => {
       }
     }
   };
+  /* Funcion para almacenar el token por tiempo */
+  const setItemWithExpiration = (key, value, expirationInMinutes) => {
+    const now = new Date();
+
+    const item = {
+      value: value,
+      expiration: now.getTime() + expirationInMinutes * 60 * 1000, // Convierte minutos a milisegundos
+    };
+
+    localStorage.setItem(key, JSON.stringify(item));
+  };
 
   const login = async (correo, contraseña) => {
     try {
@@ -166,23 +177,24 @@ const LoginProvider = ({ children }) => {
       } else {
         ///LOCAL STORAGE
         /* Poner en local storage los token */
-        localStorage.setItem("accessToken", dataLogin.access);
-        localStorage.setItem("refreshToken", dataLogin.refresh);
+        setItemWithExpiration("accessToken", dataLogin.access, 1440);
+        setItemWithExpiration("refreshToken", dataLogin.refresh, 1440);
         /* poner el nombre del usuario */
-        localStorage.setItem(
+        setItemWithExpiration(
           "user",
           `${dataLogin.first_name} ${dataLogin.last_name}`.trim()
-            ? `${dataLogin.first_name} ${dataLogin.last_name}`
-            : "usuario"
+          ? `${dataLogin.first_name} ${dataLogin.last_name}`
+          : "usuario",
+          1440
         );
         /* Administrar si es o no admin */
-        localStorage.setItem("is_superuser", dataLogin.is_superuser);
+        setItemWithExpiration("is_superuser", dataLogin.is_superuser,1440);
         setAdmin(dataLogin.is_superuser);
 
         /// VARIABLES
         /* Poner que ya esta logueado */
         setLoggedIn(true);
-        /* Nombre de usuarios */
+        /* Nombre de usuarios */  
         setUsuario(
           `${dataLogin?.first_name} ${dataLogin?.last_name}`.trim()
             ? `${dataLogin.first_name} ${dataLogin.last_name}`
@@ -199,6 +211,9 @@ const LoginProvider = ({ children }) => {
         `¡Bienvenido, ${dataLogin.first_name} ${dataLogin.last_name}!`
       );
     } catch (error) {
+      console.log(error)
+      console.log(error.request.response)
+
       if (error.message === "Network Error") {
         return Swal.fire({
           icon: "error",
@@ -207,17 +222,14 @@ const LoginProvider = ({ children }) => {
         });
       }
 
-      if (error.response) {
+      if (error.request) {
         Swal.fire({
           icon: "error",
-          title: "Error de respuesta del servidor " + error.response.status,
-          text: error.response.data.error,
+          title: "Error en autenticacion o servidor ",
+          text:error?.response?.data?.detail,
         });
-        console.error(
-          "Error de respuesta del servidor:",
-          error.response.data.error
-        );
-      } else if (error.request) {
+      
+      } else if (error.response) {
         Swal.fire({
           icon: "error",
           title: "No se recibió respuesta del servidor",

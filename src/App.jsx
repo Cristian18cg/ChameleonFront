@@ -2,8 +2,9 @@ import Login from "./components/Login/login";
 import "primereact/resources/themes/saga-blue/theme.css"; // Tema
 import "primereact/resources/primereact.min.css"; // Estilos base
 import "primeicons/primeicons.css";
-import { LoginProvider } from "./context/login/loginContext";
 import { Router_Home } from "./components/Home/Router_Home";
+import { LoginProvider } from "./context/login/loginContext";
+import { ProductosProvider } from "./context/Productos/productosContext";
 import { PrimeReactProvider } from "primereact/api";
 import {
   locale,
@@ -85,10 +86,10 @@ function App() {
     greaterThanOrEqual: "Mayor o igual",
     lessThanOrEqual: "Menor o igual",
     accept: "Aceptar",
-    weak:"Leve",
+    weak: "Leve",
     medium: "Medio",
     strong: "Fuerte",
-    passwordPrompt: "Ingrese la contraseña"
+    passwordPrompt: "Ingrese la contraseña",
     //...
   });
   return (
@@ -108,9 +109,11 @@ function App() {
         locale: "es",
       }}
     >
-      <LoginProvider>
-        <Router_Home />
-      </LoginProvider>
+      <ProductosProvider>
+        <LoginProvider>
+          <Router_Home />
+        </LoginProvider>
+      </ProductosProvider>
     </PrimeReactProvider>
   );
 }
