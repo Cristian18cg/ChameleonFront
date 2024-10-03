@@ -201,7 +201,7 @@ export default function ProductsDemo() {
       <img
         src={`${rowData.image}`}
         alt={rowData.name}
-        className="shadow-2 border-round"
+        className="shadow-md shadow-slate-200 rounded"
         style={{ width: "64px" }}
       />
     );
