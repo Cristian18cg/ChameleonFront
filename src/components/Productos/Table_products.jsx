@@ -49,8 +49,6 @@ export default function ProductsDemo() {
     } else {
       setProducts(productos);
     }
-
-    console.log(productos);
   }, [productos]);
 
   const formatCurrency = (value) => {
@@ -199,7 +197,6 @@ export default function ProductsDemo() {
   };
 
   const imageBodyTemplate = (rowData) => {
-    console.log(rowData.image);
     return (
       <img
         src={`${rowData.image}`}
@@ -387,10 +384,17 @@ export default function ProductsDemo() {
           ></Column>
           <Column
             field="categories"
-            header="Categoria"
+            header="Categoría"
             sortable
             style={{ minWidth: "10rem" }}
+            body={(rowData) => {
+              // rowData.categories es un array de nombres de categorías
+              return rowData.categories && rowData.categories.length > 0
+                ? rowData.categories.join(", ") // Unir las categorías con comas
+                : "Sin categoría"; // Si no hay categorías, mostrar algún texto por defecto
+            }}
           ></Column>
+
           <Column
             field="rating"
             header="Reviews"

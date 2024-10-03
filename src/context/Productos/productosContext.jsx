@@ -6,6 +6,7 @@ import useControl from "../../hooks/useControl";
 const ProductosContextControl = createContext();
 
 const ProductosProvider = ({ children }) => {
+  const { token } = useControl();
   const [vistaCrearCat, setvistaCrearCat] = useState(false);
   const [categorias, setCategorias] = useState("");
   const [productos, setProductos] = useState("");
@@ -25,27 +26,7 @@ const ProductosProvider = ({ children }) => {
   };
   const [product, setProduct] = useState(emptyProduct);
 
-  /* Funcion para verificar que no se ha vencido el token */
-  const getItemWithExpiration = (key) => {
-    const itemStr = localStorage.getItem(key);
-
-    // Si el ítem no existe
-    if (!itemStr) {
-      return null;
-    }
-
-    const item = JSON.parse(itemStr);
-    const now = new Date();
-
-    // Si el ítem ha expirado
-    if (now.getTime() > item.expiration) {
-      localStorage.removeItem(key); // Eliminar el ítem expirado
-      return null;
-    }
-
-    return item.value;
-  };
-  const token = getItemWithExpiration("accessToken");
+  // Solo una vez al montar el componente
 
   const FuncionErrorToken = useCallback((error) => {
     if (error?.response?.status === 401) {
@@ -101,34 +82,6 @@ const ProductosProvider = ({ children }) => {
       buttonsStyling: false,
     });
   };
-
-  const crearCategoria = useCallback(
-    async (categoriaNombre, categoriaPadre) => {
-      try {
-        const response = await clienteAxios.post(
-          "products/categories/",
-          {
-            name: categoriaNombre, // Nombre de la categoría
-            parent: categoriaPadre, // ID de la categoría padre (si existe)
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        console.log(response);
-        showSuccess(`Se creó la categoría ${categoriaNombre}`);
-        setvistaCrearCat(false);
-      } catch (error) {
-        FuncionErrorToken(error);
-        console.log(error);
-        console.error("Error en la creación de la categoría: ", error);
-      }
-    },
-    [FuncionErrorToken, token]
-  );
   const listarCategorias = useCallback(async () => {
     try {
       const response = await clienteAxios.get(
@@ -146,9 +99,37 @@ const ProductosProvider = ({ children }) => {
     } catch (error) {
       FuncionErrorToken(error);
       console.log(error);
-      console.error("Error en la creación de la categoría: ", error);
+      console.error("Error obteniendo categorías: ", error);
     }
   }, [categoriapadre, token, FuncionErrorToken]);
+  const crearCategoria = useCallback(
+    async (categoriaNombre, categoriaPadre) => {
+      try {
+        const response = await clienteAxios.post(
+          "products/categories/",
+          {
+            name: categoriaNombre, // Nombre de la categoría
+            parent: categoriaPadre, // ID de la categoría padre (si existe)
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        showSuccess(`Se creó la categoría ${categoriaNombre}`);
+        setvistaCrearCat(false);
+        listarCategorias();
+      } catch (error) {
+        FuncionErrorToken(error);
+        console.log(error);
+        console.error("Error en la creación de la categoría: ", error);
+      }
+    },
+    [FuncionErrorToken, listarCategorias, token]
+  );
+
   const obtenerProductos = useCallback(async () => {
     try {
       const response = await clienteAxios.get("products/products/", {
@@ -157,7 +138,7 @@ const ProductosProvider = ({ children }) => {
         },
       });
       const productos = response.data;
-
+      console.log(productos);
       setProductos(productos); // Guardar productos en el estado
     } catch (error) {
       if (error.response) {
@@ -222,33 +203,39 @@ const ProductosProvider = ({ children }) => {
             ? parseFloat(producto.discount_percentage).toFixed(2)
             : 0
         );
-        formData.append("categories", JSON.stringify(producto.categories)); // Enviar categorías como array
+  
+        // Extraer los IDs de las categorías seleccionadas y añadirlas como un array sin índices
+        const selectedCategoryIds = Object.keys(producto.categories).filter(
+          (key) => producto.categories[key]
+        );
+  
+        selectedCategoryIds.forEach((categoryId) => {
+          console.log(categoryId)
+          formData.append('category_ids', categoryId);  // Sin índice, para que el backend lo trate como array
+        });
+  
         if (producto.image) {
           formData.append("image", producto.image); // Si estás subiendo una imagen
         }
-
-        const response = await clienteAxios.post(
-          "products/products/",
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data", // Porque estás enviando una imagen
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
+  
+        console.log([...formData.entries()]);  // Depuración para ver qué se está enviando
+  
+        await clienteAxios.post("products/products/", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data", // Porque estás enviando una imagen
+            Authorization: `Bearer ${token}`,
+          },
+        });
+  
         showSuccess(`Producto ${producto.name} creado con éxito`);
         obtenerProductos();
+        setProductDialog(false);
       } catch (error) {
         console.log(error);
         if (error.response) {
-          // Inicializa una variable para el mensaje de error consolidado
           let mensajeError = "";
-          // Recorre todos los errores del objeto error.response.data
           for (const campo in error.response.data) {
             if (error.response.data.hasOwnProperty(campo)) {
-              // Si el valor del campo es un array, únelos en una cadena
               const erroresCampo = error.response.data[campo];
               if (Array.isArray(erroresCampo)) {
                 mensajeError += erroresCampo.join(", ") + "\n";
@@ -257,16 +244,15 @@ const ProductosProvider = ({ children }) => {
               }
             }
           }
-
-          // Mostrar el mensaje de error consolidado en SweetAlert
+  
           Swal.fire({
             icon: "error",
-            title: "Error de creacion",
+            title: "Error de creación",
             text: mensajeError
               ? mensajeError
-              : "Hubo un error en la creacion del producto.",
+              : "Hubo un error en la creación del producto.",
           });
-
+  
           console.error("Error de respuesta del servidor:", error.response);
         } else if (error.request) {
           Swal.fire({
@@ -287,7 +273,7 @@ const ProductosProvider = ({ children }) => {
     },
     [obtenerProductos, token]
   );
-
+  
   const eliminarProducto = useCallback(
     async (productoId) => {
       try {
@@ -303,6 +289,7 @@ const ProductosProvider = ({ children }) => {
 
         // Si la petición fue exitosa, muestra un mensaje de éxito
         showSuccess(`Producto eliminado con éxito`);
+        obtenerProductos();
       } catch (error) {
         // Manejo de errores
         if (error.response) {
@@ -348,7 +335,7 @@ const ProductosProvider = ({ children }) => {
         console.error("Error al intentar eliminar el producto:", error);
       }
     },
-    [ token]
+    [token]
   );
 
   const contextValue = useMemo(() => {

@@ -21,7 +21,7 @@ export const CrearCategoria = () => {
   }, [categorias]);
 
   const CategoriaCrear = () => {
-    crearCategoria(categoria, categoriaPadre.id);
+    crearCategoria(categoria, categoriaPadre.id ? categoriaPadre.id : undefined);
   };
   return (
     <div className="card  grid grid-cols-1  w-full items-center justify-content-center gap-3">

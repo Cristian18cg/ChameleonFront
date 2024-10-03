@@ -1,4 +1,3 @@
-import Login from "./components/Login/login";
 import "primereact/resources/themes/saga-blue/theme.css"; // Tema
 import "primereact/resources/primereact.min.css"; // Estilos base
 import "primeicons/primeicons.css";
@@ -7,15 +6,10 @@ import { LoginProvider } from "./context/login/loginContext";
 import { ProductosProvider } from "./context/Productos/productosContext";
 import { PrimeReactProvider } from "primereact/api";
 import {
-  locale,
   addLocale,
-  updateLocaleOption,
-  updateLocaleOptions,
-  localeOption,
-  localeOptions,
+
 } from "primereact/api";
 import Tailwind from "primereact/passthrough/tailwind";
-import { Tooltip } from "react-bootstrap";
 
 function App() {
   const value = {
@@ -109,11 +103,11 @@ function App() {
         locale: "es",
       }}
     >
-      <ProductosProvider>
-        <LoginProvider>
+      <LoginProvider>
+        <ProductosProvider>
           <Router_Home />
-        </LoginProvider>
-      </ProductosProvider>
+        </ProductosProvider>
+      </LoginProvider>
     </PrimeReactProvider>
   );
 }

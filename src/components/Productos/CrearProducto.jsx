@@ -10,7 +10,7 @@ import { TreeSelect } from "primereact/treeselect";
 import { CrearCategoria } from "./CrearCategoria";
 import { Dialog } from "primereact/dialog";
 import useControlProductos from "../../hooks/useControlProductos";
-export const CrearProducto = ({ productoExistente, onSave }) => {
+export const CrearProducto = ({ producto }) => {
   const {
     categorias,
     listarCategorias,
@@ -19,25 +19,23 @@ export const CrearProducto = ({ productoExistente, onSave }) => {
     crearProducto,
   } = useControlProductos();
   const [product, setProduct] = useState(
-    productoExistente || { is_active: true }
+    producto || { is_active: true }
   );
   const [submitted, setSubmitted] = useState(false);
   const [nodeCategoria, setnodeCategoria] = useState("");
-  const [categorieDialog, setcategorieDialog] = useState(false);
   const [disableDiscountPrice, setDisableDiscountPrice] = useState(true);
-  const [disableDiscountPercentage, setDisableDiscountPercentage] = useState(
-    true
-  );
+  const [disableDiscountPercentage, setDisableDiscountPercentage] =
+    useState(true);
   const [imageFile, setImageFile] = useState(null);
   const fileUploadRef = useRef(null);
   // Cuando se carga el producto existente, inicializar el estado
   useEffect(() => {
-    if (productoExistente) {
-      setProduct(productoExistente);
-      setDisableDiscountPrice(!!productoExistente.discount_percentage);
-      setDisableDiscountPercentage(!!productoExistente.discount_price);
+    if (producto) {
+      setProduct(producto);
+      setDisableDiscountPrice(!!producto.discount_percentage);
+      setDisableDiscountPercentage(!!producto.discount_price);
     }
-  }, [productoExistente]);
+  }, [producto]);
   useEffect(() => {
     if (categorias?.length === 0) {
       listarCategorias();
@@ -50,10 +48,12 @@ export const CrearProducto = ({ productoExistente, onSave }) => {
   useEffect(() => {
     console.log(product);
   }, [product]);
+
   const onInputChange = (e, field) => {
-    const value = e?.target?.value || e?.File?.objectUrl;
-    setProduct({ ...product, [field]: value });
+    const value = e.target.value;
+    setProduct((prevProduct) => ({ ...prevProduct, [field]: value }));
   };
+  
 
   const onInputNumberChange = (e, field) => {
     const value = e.value;
@@ -82,7 +82,7 @@ export const CrearProducto = ({ productoExistente, onSave }) => {
       setDisableDiscountPrice(false); // Habilitar precio con descuento
       setDisableDiscountPercentage(true);
     }
-    if (field === "stock" && value ) {
+    if (field === "stock" && value) {
       setProduct({ ...product, [field]: value });
     }
     if (field === "price" && value > 100) {
@@ -105,7 +105,6 @@ export const CrearProducto = ({ productoExistente, onSave }) => {
     setProduct({ ...product, ["image"]: file });
   };
   const onSaveProduct = () => {
-    console.log(product.price);
     setSubmitted(true);
     if (
       product.name &&
@@ -130,15 +129,18 @@ export const CrearProducto = ({ productoExistente, onSave }) => {
   };
   const buildCategoryTree = (categories) => {
     const categoryMap = {};
-
     // Crear un map para acceder rápidamente a las categorías por su ID
-    categories.forEach((categoria) => {
-      categoryMap[categoria.id] = {
-        label: categoria.name,
-        key: categoria.id,
-        children: [],
-      };
-    });
+    if (Array.isArray(categories)) {
+      categories.forEach((categoria) => {
+        categoryMap[categoria.id] = {
+          label: categoria.name,
+          key: categoria.id,
+          children: [],
+        };
+      });
+    } else {
+      console.log("categories no es un array");
+    }
 
     const tree = [];
 
@@ -256,15 +258,23 @@ export const CrearProducto = ({ productoExistente, onSave }) => {
               <TreeSelect
                 value={product.categories}
                 onChange={(e) => {
-                  console.log(e.target);
-                  onInputChange(e, "categories");
+                  // Aquí asume que e.value ya es un array de IDs seleccionados
+                  const selectedCategories = e.value;
+                
+                  onInputChange(
+                    { target: { value: selectedCategories } },
+                    "categories"
+                  );
                 }}
+                
                 options={nodeCategoria}
                 className="w-full input-productos"
                 placeholder="Selecciona una categoria"
                 emptyMessage="No hay categorias"
                 panelFooterTemplate={categoriaCrear}
-              ></TreeSelect>
+                selectionMode="multiple"
+              />
+
               {submitted && !product.categories && (
                 <small className="p-error"> La categoria es obligatoria.</small>
               )}
