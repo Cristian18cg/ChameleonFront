@@ -49,6 +49,7 @@ export default function ProductsDemo() {
     } else {
       setProducts(productos);
     }
+    console.log(productos)
   }, [productos]);
 
   const formatCurrency = (value) => {

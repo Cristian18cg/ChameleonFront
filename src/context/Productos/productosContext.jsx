@@ -273,7 +273,97 @@ const ProductosProvider = ({ children }) => {
     },
     [obtenerProductos, token]
   );
+  const editarProducto = useCallback(
+    async (producto) => {
+      try {
+        const formData = new FormData();
+        formData.append("name", producto.name);
+        formData.append("code", producto.code);
+        formData.append("description", producto.description);
+        formData.append("price", producto.price);
+        formData.append("stock", producto.stock);
+        formData.append(
+          "discount_price",
+          producto.discount_price
+            ? parseFloat(producto.discount_price).toFixed(2)
+            : 0
+        );
+        formData.append(
+          "discount_percentage",
+          producto.discount_percentage
+            ? parseFloat(producto.discount_percentage).toFixed(2)
+            : 0
+        );
   
+        // Extraer los IDs de las categorías seleccionadas y añadirlas como un array sin índices
+        const selectedCategoryIds = Object.keys(producto.categories).filter(
+          (key) => producto.categories[key]
+        );
+  
+        selectedCategoryIds.forEach((categoryId) => {
+          console.log(categoryId)
+          formData.append('category_ids', categoryId);  // Sin índice, para que el backend lo trate como array
+        });
+  
+        if (producto.image) {
+          formData.append("image", producto.image); // Si estás subiendo una imagen
+        }
+  
+        console.log([...formData.entries()]);  // Depuración para ver qué se está enviando
+  
+        await clienteAxios.put( `products/products/${producto.id}/`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data", // Porque estás enviando una imagen
+            Authorization: `Bearer ${token}`,
+          },
+        });
+  
+        showSuccess(`Producto ${producto.name} creado con éxito`);
+        obtenerProductos();
+        setProductDialog(false);
+      } catch (error) {
+        console.log(error);
+        if (error.response) {
+          let mensajeError = "";
+          for (const campo in error.response.data) {
+            if (error.response.data.hasOwnProperty(campo)) {
+              const erroresCampo = error.response.data[campo];
+              if (Array.isArray(erroresCampo)) {
+                mensajeError += erroresCampo.join(", ") + "\n";
+              } else {
+                mensajeError += erroresCampo + "\n";
+              }
+            }
+          }
+  
+          Swal.fire({
+            icon: "error",
+            title: "Error de creación",
+            text: mensajeError
+              ? mensajeError
+              : "Hubo un error en la creación del producto.",
+          });
+  
+          console.error("Error de respuesta del servidor:", error.response);
+        } else if (error.request) {
+          Swal.fire({
+            icon: "error",
+            title: "No se recibió respuesta del servidor",
+            text: "Por favor, inténtelo de nuevo más tarde.",
+          });
+          console.error("No se recibió respuesta del servidor", error.request);
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Error inesperado",
+            text: error.message || "Ocurrió un error inesperado.",
+          });
+        }
+        console.error("Error en la creación del producto:", error);
+      }
+    },
+    [obtenerProductos, token]
+  );
   const eliminarProducto = useCallback(
     async (productoId) => {
       try {
@@ -351,6 +441,7 @@ const ProductosProvider = ({ children }) => {
       eliminarProducto,
       setDeleteProductDialog,
       setProduct,
+      editarProducto,
       product,
       deleteProductDialog,
       productDialog,
@@ -370,6 +461,7 @@ const ProductosProvider = ({ children }) => {
     eliminarProducto,
     setDeleteProductDialog,
     setProduct,
+    editarProducto,
     product,
     deleteProductDialog,
     productDialog,

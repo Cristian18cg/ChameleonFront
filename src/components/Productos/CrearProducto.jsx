@@ -17,10 +17,9 @@ export const CrearProducto = ({ producto }) => {
     setvistaCrearCat,
     vistaCrearCat,
     crearProducto,
+    editarProducto,
   } = useControlProductos();
-  const [product, setProduct] = useState(
-    producto || { is_active: true }
-  );
+  const [product, setProduct] = useState(producto || { is_active: true });
   const [submitted, setSubmitted] = useState(false);
   const [nodeCategoria, setnodeCategoria] = useState("");
   const [disableDiscountPrice, setDisableDiscountPrice] = useState(true);
@@ -40,10 +39,30 @@ export const CrearProducto = ({ producto }) => {
     if (categorias?.length === 0) {
       listarCategorias();
     } else {
+      // Construir el árbol de categorías cuando estén disponibles
       const cate = buildCategoryTree(categorias);
+  
+      // Si estamos editando un producto, mapear sus categorías a IDs
+      if (product && product.categories) {
+        console.log('entro')
+        const selectedCategoryIds = product.categories.map((categoryName) => {
+          const categoriaEncontrada = categorias.find(
+            (cat) => cat.name === categoryName
+          );
+          return categoriaEncontrada ? categoriaEncontrada.id : null;
+        }).filter(id => id !== null);  // Filtrar IDs nulos
+        console.log(selectedCategoryIds)
+        // Asignar los IDs de las categorías seleccionadas al producto
+        setProduct((prevProduct) => ({
+          ...prevProduct,
+          categories: selectedCategoryIds,
+        }));
+      }
+  
+      // Setear el árbol de categorías para el TreeSelect
       setnodeCategoria(cate);
     }
-  }, [categorias]);
+  }, [categorias, product, ]);
 
   useEffect(() => {
     console.log(product);
@@ -53,7 +72,6 @@ export const CrearProducto = ({ producto }) => {
     const value = e.target.value;
     setProduct((prevProduct) => ({ ...prevProduct, [field]: value }));
   };
-  
 
   const onInputNumberChange = (e, field) => {
     const value = e.value;
@@ -113,9 +131,16 @@ export const CrearProducto = ({ producto }) => {
       product.code &&
       product.categories
     ) {
-      crearProducto(product); // Enviar los datos del producto al backend
+      // Si el producto ya tiene un id, actualiza el producto, de lo contrario crea uno nuevo
+      if (product.id) {
+        editarProducto(product);
+      } else {
+        crearProducto(product);
+      }
+      // Callback para cerrar el modal o hacer cualquier acción extra al guardar
     }
   };
+
   const categoriaCrear = () => {
     return (
       <Button
@@ -175,7 +200,9 @@ export const CrearProducto = ({ producto }) => {
       {product?.image && (
         <div className="text-center">
           <img
-            src={`${product?.image.objectURL}`}
+            src={`${
+              producto.image ? producto.image : product?.image.objectURL
+            }`}
             alt={product?.image}
             className="product-image block m-auto pb-3 rounded-md  w-48 h-3/5"
           />
@@ -260,13 +287,12 @@ export const CrearProducto = ({ producto }) => {
                 onChange={(e) => {
                   // Aquí asume que e.value ya es un array de IDs seleccionados
                   const selectedCategories = e.value;
-                
+
                   onInputChange(
                     { target: { value: selectedCategories } },
                     "categories"
                   );
                 }}
-                
                 options={nodeCategoria}
                 className="w-full input-productos"
                 placeholder="Selecciona una categoria"
