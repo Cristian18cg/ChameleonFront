@@ -4,6 +4,7 @@ import { NavBar } from "./NavBar";
 import { Landing_home } from "./Landing_home";
 import Table_products from "../Productos/Table_products";
 import useControl from "../../hooks/useControl";
+import { Tienda } from "../Tienda/Tienda";
 
 export const Router_Home = () => {
   const {
@@ -28,6 +29,7 @@ export const Router_Home = () => {
           <Routes>
             <Route path="/" element={<Landing_home />} />
             <Route path="/productos" element={<Table_products />} />
+            <Route path="/tienda" element={<Tienda />} />
           </Routes>
         </Router>
       ) : (
@@ -35,6 +37,8 @@ export const Router_Home = () => {
           <NavBar />
           <Routes>
             <Route path="/" element={<Landing_home />} />
+            <Route path="/tienda" element={<Tienda />} />
+
           </Routes>
         </Router>
       )}

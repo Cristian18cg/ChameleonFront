@@ -49,7 +49,7 @@ export default function ProductsDemo() {
     } else {
       setProducts(productos);
     }
-    console.log(productos)
+    console.log(productos);
   }, [productos]);
 
   const formatCurrency = (value) => {
@@ -218,10 +218,7 @@ export default function ProductsDemo() {
 
   const statusBodyTemplate = (rowData) => {
     return (
-      <Tag
-        value={rowData.inventoryStatus}
-        severity={getSeverity(rowData)}
-      ></Tag>
+      <Tag value={getMessage(rowData)} severity={getSeverity(rowData)}></Tag>
     );
   };
   /* BOTONES DE ACCION */
@@ -245,21 +242,30 @@ export default function ProductsDemo() {
       </React.Fragment>
     );
   };
-
   const getSeverity = (product) => {
-    switch (product.inventoryStatus) {
-      case "INSTOCK":
-        return "success";
-
-      case "LOWSTOCK":
-        return "warning";
-
-      case "OUTOFSTOCK":
-        return "danger";
-
-      default:
-        return null;
+    if (product.stock === 0) {
+      return `danger`;
+    } else if (product.stock > 0 && product.stock <= 5) {
+      return `warning`;
+    } else if (product.stock > 5) {
+      return `success`;
     }
+
+    return null;
+  };
+
+  const getMessage = (product) => {
+    const stock = product.stock;
+
+    if (stock === 0) {
+      return `SIN STOCK -> ${stock}u`;
+    } else if (stock > 0 && stock <= 5) {
+      return `POCO STOCK -> ${stock}u`;
+    } else if (stock > 5) {
+      return `EN STOCK -> ${stock}u`;
+    }
+
+    return null;
   };
 
   const header = (
@@ -403,9 +409,10 @@ export default function ProductsDemo() {
             sortable
             style={{ minWidth: "12rem" }}
           ></Column>
+
           <Column
-            field="inventoryStatus"
-            header="Status"
+            field="stock"
+            header="Stock"
             body={statusBodyTemplate}
             sortable
             style={{ minWidth: "12rem" }}

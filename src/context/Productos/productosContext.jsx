@@ -133,9 +133,7 @@ const ProductosProvider = ({ children }) => {
   const obtenerProductos = useCallback(async () => {
     try {
       const response = await clienteAxios.get("products/products/", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      
       });
       const productos = response.data;
       console.log(productos);
@@ -305,9 +303,10 @@ const ProductosProvider = ({ children }) => {
           formData.append('category_ids', categoryId);  // Sin índice, para que el backend lo trate como array
         });
   
-        if (producto.image) {
-          formData.append("image", producto.image); // Si estás subiendo una imagen
+        if (producto.image && producto.image instanceof File) {
+          formData.append("image", producto.image); // Solo agregar si es un archivo
         }
+        
   
         console.log([...formData.entries()]);  // Depuración para ver qué se está enviando
   
@@ -359,7 +358,7 @@ const ProductosProvider = ({ children }) => {
             text: error.message || "Ocurrió un error inesperado.",
           });
         }
-        console.error("Error en la creación del producto:", error);
+        console.error("Error editando el producto:", error);
       }
     },
     [obtenerProductos, token]

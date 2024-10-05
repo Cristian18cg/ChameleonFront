@@ -42,27 +42,33 @@ export const CrearProducto = ({ producto }) => {
       // Construir el árbol de categorías cuando estén disponibles
       const cate = buildCategoryTree(categorias);
   
-      // Si estamos editando un producto, mapear sus categorías a IDs
-      if (product && product.categories) {
+      // Si estamos editando un producto, mapear sus categorías a un objeto
+      if (producto && producto.categories) {
         console.log('entro')
-        const selectedCategoryIds = product.categories.map((categoryName) => {
-          const categoriaEncontrada = categorias.find(
-            (cat) => cat.name === categoryName
-          );
-          return categoriaEncontrada ? categoriaEncontrada.id : null;
-        }).filter(id => id !== null);  // Filtrar IDs nulos
-        console.log(selectedCategoryIds)
-        // Asignar los IDs de las categorías seleccionadas al producto
+        
+        // Crear un objeto con los IDs de categorías como clave y true como valor
+        const selectedCategories = product.categories.reduce((acc, categoryName) => {
+          const categoriaEncontrada = categorias.find((cat) => cat.name === categoryName);
+          if (categoriaEncontrada) {
+            acc[categoriaEncontrada.id] = true;
+          }
+          return acc;
+        }, {});
+
+        console.log(selectedCategories); // Esto imprimirá el objeto con categorías en el formato {1: true, 2: true}
+        
+        // Asignar el objeto de categorías seleccionadas al producto
         setProduct((prevProduct) => ({
           ...prevProduct,
-          categories: selectedCategoryIds,
+          categories: selectedCategories,
         }));
       }
   
       // Setear el árbol de categorías para el TreeSelect
       setnodeCategoria(cate);
     }
-  }, [categorias, product, ]);
+  }, [categorias, producto]);
+
 
   useEffect(() => {
     console.log(product);
@@ -100,7 +106,8 @@ export const CrearProducto = ({ producto }) => {
       setDisableDiscountPrice(false); // Habilitar precio con descuento
       setDisableDiscountPercentage(true);
     }
-    if (field === "stock" && value) {
+    if (field === "stock" && value >= 0 ) {
+      console.log('entro')
       setProduct({ ...product, [field]: value });
     }
     if (field === "price" && value > 100) {
@@ -127,7 +134,6 @@ export const CrearProducto = ({ producto }) => {
     if (
       product.name &&
       product.price &&
-      product.stock &&
       product.code &&
       product.categories
     ) {
@@ -140,7 +146,6 @@ export const CrearProducto = ({ producto }) => {
       // Callback para cerrar el modal o hacer cualquier acción extra al guardar
     }
   };
-
   const categoriaCrear = () => {
     return (
       <Button

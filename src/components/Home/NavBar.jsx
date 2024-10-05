@@ -34,29 +34,29 @@ export const NavBar = () => {
   /* Funcion para verificar que no se ha vencido el token */
   const getItemWithExpiration = (key) => {
     const itemStr = localStorage.getItem(key);
-  
+
     // Si el ítem no existe
     if (!itemStr) {
       return null;
     }
-  
+
     const item = JSON.parse(itemStr);
     const now = new Date();
     const expirationDate = new Date(item.expiration); // Convertir la cadena ISO de nuevo a un objeto Date
-  
+
     // Si la fecha actual es mayor a la fecha de expiración
     if (now > expirationDate) {
       localStorage.removeItem(key); // Eliminar el ítem expirado
       return null;
     }
-  
+
     return item.value; // Retorna el valor si no ha expirado
   };
-  
+
   useEffect(() => {
     const accessToken = getItemWithExpiration("accessToken");
     const usuarioo = getItemWithExpiration("user");
-    console.log(accessToken)
+    console.log(accessToken);
     // Llama a la función asincrónica para obtener los datos
     if (accessToken && token === "" && usuario === "" && isLoggedIn === false) {
       setToken(accessToken);
@@ -71,7 +71,7 @@ export const NavBar = () => {
         setAdmin(false);
       }
     }
-  }, [isLoggedIn,setAdmin,setLoggedIn,setToken,setUsuario,token,usuario]);
+  }, [isLoggedIn, setAdmin, setLoggedIn, setToken, setUsuario, token, usuario]);
 
   const itemRenderer = (item) => (
     <a className="flex align-items-center p-menuitem-link p-2">
@@ -285,9 +285,7 @@ export const NavBar = () => {
         <img
           alt="logo"
           src={icono_color}
-          height="10"
-          width="50"
-          className="mr-1 sm:w-1rem"
+          className="mr-1 sm:w-1rem w-56"
         ></img>
 
         {vistaLog === 1 ? (
