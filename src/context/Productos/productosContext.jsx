@@ -84,16 +84,7 @@ const ProductosProvider = ({ children }) => {
   };
   const listarCategorias = useCallback(async () => {
     try {
-      const response = await clienteAxios.get(
-        "products/categories/",
-
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await clienteAxios.get("products/categories/");
       const resultado = categoriapadre.concat(response.data);
       setCategorias(resultado);
     } catch (error) {
@@ -101,7 +92,7 @@ const ProductosProvider = ({ children }) => {
       console.log(error);
       console.error("Error obteniendo categorías: ", error);
     }
-  }, [categoriapadre, token, FuncionErrorToken]);
+  }, [categoriapadre, FuncionErrorToken]);
   const crearCategoria = useCallback(
     async (categoriaNombre, categoriaPadre) => {
       try {
@@ -132,9 +123,7 @@ const ProductosProvider = ({ children }) => {
 
   const obtenerProductos = useCallback(async () => {
     try {
-      const response = await clienteAxios.get("products/products/", {
-      
-      });
+      const response = await clienteAxios.get("products/products/", {});
       const productos = response.data;
       console.log(productos);
       setProductos(productos); // Guardar productos en el estado
@@ -179,7 +168,42 @@ const ProductosProvider = ({ children }) => {
       }
       console.error("Error al obtener los productos:", error);
     }
-  }, [token]);
+  }, []);
+
+  const filtrarCategoria = useCallback(async (idcategoria) => {
+    try {
+      const response = await clienteAxios.get(
+        `products/products/category/${idcategoria}/`
+      );
+      const productos = response.data;
+      setProductos(productos); // Guardar productos en el estado
+    } catch (error) {
+      if (error.response) {
+        // Mostrar el mensaje de error consolidado en SweetAlert
+        Swal.fire({
+          icon: "error",
+          title: "Error obteniendo productos",
+          text: "Hubo un problema filtrando los productos.",
+        });
+
+        console.error("Error de respuesta del servidor:", error.response);
+      } else if (error.request) {
+        Swal.fire({
+          icon: "error",
+          title: "No se recibió respuesta del servidor",
+          text: "Por favor, inténtelo de nuevo más tarde.",
+        });
+        console.error("No se recibió respuesta del servidor", error.request);
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Error inesperado",
+          text: error.message || "Ocurrió un error inesperado.",
+        });
+      }
+      console.error("Error al obtener los productos:", error);
+    }
+  }, []);
   const crearProducto = useCallback(
     async (producto) => {
       try {
@@ -201,30 +225,30 @@ const ProductosProvider = ({ children }) => {
             ? parseFloat(producto.discount_percentage).toFixed(2)
             : 0
         );
-  
+
         // Extraer los IDs de las categorías seleccionadas y añadirlas como un array sin índices
         const selectedCategoryIds = Object.keys(producto.categories).filter(
           (key) => producto.categories[key]
         );
-  
+
         selectedCategoryIds.forEach((categoryId) => {
-          console.log(categoryId)
-          formData.append('category_ids', categoryId);  // Sin índice, para que el backend lo trate como array
+          console.log(categoryId);
+          formData.append("category_ids", categoryId); // Sin índice, para que el backend lo trate como array
         });
-  
+
         if (producto.image) {
           formData.append("image", producto.image); // Si estás subiendo una imagen
         }
-  
-        console.log([...formData.entries()]);  // Depuración para ver qué se está enviando
-  
+
+        console.log([...formData.entries()]); // Depuración para ver qué se está enviando
+
         await clienteAxios.post("products/products/", formData, {
           headers: {
             "Content-Type": "multipart/form-data", // Porque estás enviando una imagen
             Authorization: `Bearer ${token}`,
           },
         });
-  
+
         showSuccess(`Producto ${producto.name} creado con éxito`);
         obtenerProductos();
         setProductDialog(false);
@@ -242,7 +266,7 @@ const ProductosProvider = ({ children }) => {
               }
             }
           }
-  
+
           Swal.fire({
             icon: "error",
             title: "Error de creación",
@@ -250,7 +274,7 @@ const ProductosProvider = ({ children }) => {
               ? mensajeError
               : "Hubo un error en la creación del producto.",
           });
-  
+
           console.error("Error de respuesta del servidor:", error.response);
         } else if (error.request) {
           Swal.fire({
@@ -292,31 +316,30 @@ const ProductosProvider = ({ children }) => {
             ? parseFloat(producto.discount_percentage).toFixed(2)
             : 0
         );
-  
+
         // Extraer los IDs de las categorías seleccionadas y añadirlas como un array sin índices
         const selectedCategoryIds = Object.keys(producto.categories).filter(
           (key) => producto.categories[key]
         );
-  
+
         selectedCategoryIds.forEach((categoryId) => {
-          console.log(categoryId)
-          formData.append('category_ids', categoryId);  // Sin índice, para que el backend lo trate como array
+          console.log(categoryId);
+          formData.append("category_ids", categoryId); // Sin índice, para que el backend lo trate como array
         });
-  
+
         if (producto.image && producto.image instanceof File) {
           formData.append("image", producto.image); // Solo agregar si es un archivo
         }
-        
-  
-        console.log([...formData.entries()]);  // Depuración para ver qué se está enviando
-  
-        await clienteAxios.put( `products/products/${producto.id}/`, formData, {
+
+        console.log([...formData.entries()]); // Depuración para ver qué se está enviando
+
+        await clienteAxios.put(`products/products/${producto.id}/`, formData, {
           headers: {
             "Content-Type": "multipart/form-data", // Porque estás enviando una imagen
             Authorization: `Bearer ${token}`,
           },
         });
-  
+
         showSuccess(`Producto ${producto.name} creado con éxito`);
         obtenerProductos();
         setProductDialog(false);
@@ -334,7 +357,7 @@ const ProductosProvider = ({ children }) => {
               }
             }
           }
-  
+
           Swal.fire({
             icon: "error",
             title: "Error de creación",
@@ -342,7 +365,7 @@ const ProductosProvider = ({ children }) => {
               ? mensajeError
               : "Hubo un error en la creación del producto.",
           });
-  
+
           console.error("Error de respuesta del servidor:", error.response);
         } else if (error.request) {
           Swal.fire({
@@ -441,6 +464,7 @@ const ProductosProvider = ({ children }) => {
       setDeleteProductDialog,
       setProduct,
       editarProducto,
+      filtrarCategoria,
       product,
       deleteProductDialog,
       productDialog,
@@ -461,6 +485,7 @@ const ProductosProvider = ({ children }) => {
     setDeleteProductDialog,
     setProduct,
     editarProducto,
+    filtrarCategoria,
     product,
     deleteProductDialog,
     productDialog,

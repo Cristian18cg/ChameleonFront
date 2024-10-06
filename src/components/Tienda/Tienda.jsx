@@ -3,16 +3,28 @@ import { Button } from "primereact/button";
 import { DataView, DataViewLayoutOptions } from "primereact/dataview";
 import { Rating } from "primereact/rating";
 import { Tag } from "primereact/tag";
-import { classNames } from "primereact/utils";
-import useControlProductos from "../../hooks/useControlProductos";
 import { Dropdown } from "primereact/dropdown";
+import { classNames } from "primereact/utils";
+import { PanelMenu } from "primereact/panelmenu";
+import useControlProductos from "../../hooks/useControlProductos";
+import { Tree } from "primereact/tree";
 export const Tienda = () => {
-  const { productos, obtenerProductos } = useControlProductos();
+  const {
+    productos,
+    obtenerProductos,
+    listarCategorias,
+    categorias,
+    filtrarCategoria,
+  } = useControlProductos();
   const [products, setProducts] = useState([]);
   const [layout, setLayout] = useState("grid");
   const [sortOrder, setSortOrder] = useState(0);
   const [sortField, setSortField] = useState("");
   const [sortKey, setSortKey] = useState("");
+  const [nodeCategoria, setnodeCategoria] = useState("");
+  const [selectedKey, setSelectedKey] = useState("");
+  const [disabledFiltroCate, setdisabledFiltroCate] = useState(true);
+
   const sortOptions = [
     { label: "Precio Mayor a Menor", value: "!price" },
     { label: "Precio Menos a Mayor", value: "price" },
@@ -38,6 +50,53 @@ export const Tienda = () => {
     }
     console.log(productos);
   }, [productos]);
+  useEffect(() => {
+    if (selectedKey) {
+      console.log(selectedKey);
+      setdisabledFiltroCate(false);
+    } else {
+      setdisabledFiltroCate(true);
+    }
+  }, [selectedKey]);
+  useEffect(() => {
+    if (categorias?.length === 0) {
+      listarCategorias();
+    } else {
+      // Construir el árbol de categorías cuando estén disponibles
+      const cate = buildCategoryTree(categorias);
+
+      // Setear el árbol de categorías para el TreeSelect
+      setnodeCategoria(cate);
+    }
+  }, [categorias]);
+  const buildCategoryTree = (categories) => {
+    const categoryMap = {};
+    // Crear un map para acceder rápidamente a las categorías por su ID
+    if (Array.isArray(categories)) {
+      categories.forEach((categoria) => {
+        categoryMap[categoria.id] = {
+          label: categoria.name,
+          key: categoria.id,
+          children: [],
+        };
+      });
+    } else {
+      console.log("categories no es un array");
+    }
+
+    const tree = [];
+
+    // Iterar sobre las categorías y asignarlas a sus padres o a la raíz
+    categories.forEach((categoria) => {
+      if (categoria.parent === null) {
+        tree.push(categoryMap[categoria.id]);
+      } else if (categoryMap[categoria.parent]) {
+        categoryMap[categoria.parent].children.push(categoryMap[categoria.id]);
+      }
+    });
+
+    return tree;
+  };
 
   // List Item View
   const listItem = (product, index) => {
@@ -130,7 +189,12 @@ export const Tienda = () => {
           <div className="flex items-center justify-between ">
             <div className="flex items-center gap-2">
               <i className="pi pi-tag text-gray-500"></i>
-              <span className="font-semibold text-gray-700">
+              <span
+                className="font-semibold text-gray-700"
+                onClick={() => {
+                  console.log("categoria", product.categories);
+                }}
+              >
                 {product.categories && product.categories.length > 0
                   ? product.categories.join(", ") // Unir las categorías con comas
                   : "Sin categoría"}
@@ -148,7 +212,7 @@ export const Tienda = () => {
               className="shadow-lg rounded-lg"
               src={`${product.image}`}
               alt={product.name}
-              style={{ width: "200px", height: "200px" }}
+              style={{ width: "200px", height: "250px" }}
             />
             <div className="text-2xl font-bold text-gray-900">
               {product.name}
@@ -219,7 +283,7 @@ export const Tienda = () => {
 
   const header = () => {
     return (
-      <div className="flex justify-between">
+      <div className="flex justify-between rounded-lg">
         <Dropdown
           options={sortOptions}
           value={sortKey}
@@ -231,23 +295,63 @@ export const Tienda = () => {
 
         <DataViewLayoutOptions
           layout={layout}
-          className="text-gray-600"
+          className="text-gray-600 botones-tienda"
           onChange={(e) => setLayout(e.value)}
         />
       </div>
     );
   };
-
+  const headertree = () => {
+    return (
+      <div>
+        <h3 className="font-bold">Categorias</h3>
+      </div>
+    );
+  };
+  const footertree = () => {
+    return (
+      <div>
+        {!disabledFiltroCate && (
+          <Button
+            label="Filtrar Categoria"
+            className="bg-green-500 border-green-600 hover:bg-green-400 hover:border-green-500"
+            onClick={() => {
+              filtrarCategoria(selectedKey);
+            }}
+          />
+        )}
+      </div>
+    );
+  };
   return (
-    <div className="card">
-      <DataView
-        value={products}
-        listTemplate={listTemplate}
-        layout={layout}
-        header={header()}
-        sortField={sortField}
-        sortOrder={sortOrder}
-      />
+    <div className="grid grid-cols-1 md:grid-cols-12 ">
+      <div className="col-span-12 md:col-span-3 ">
+        <div className="flex justify-center bg-gray-100">
+          <h1 className="font-extrabold text-2xl p-2 rounded-sm">FILTROS</h1>
+        </div>
+        <Tree
+          value={nodeCategoria}
+          selectionMode="single"
+          selectionKeys={selectedKey}
+          onSelectionChange={(e) => setSelectedKey(e.value)}
+          className="w-full md:w-30rem mt-1 "
+          header={headertree}
+          footer={footertree}
+        />
+      </div>
+      <div className="card col-span-12 md:col-span-9">
+        <DataView
+          value={products}
+          listTemplate={listTemplate}
+          layout={layout}
+          header={header()}
+          sortField={sortField}
+          sortOrder={sortOrder}
+          paginator
+          rows={12}
+          emptyMessage="No se encontraron productos"
+        />
+      </div>
     </div>
   );
 };

@@ -233,7 +233,7 @@ export const NavBar = () => {
     <img
       alt="logo"
       src={chameleonLargo}
-      className="mr-2 w-24 h-10 md:w-64 md:h-20"
+      className="mr-2 w-auto h-10 md:w-64 md:h-20"
     ></img>
   );
   const end = (
@@ -285,7 +285,7 @@ export const NavBar = () => {
         <img
           alt="logo"
           src={icono_color}
-          className="mr-1 sm:w-1rem w-56"
+          className="mr-1 sm:w-1rem w-14"
         ></img>
 
         {vistaLog === 1 ? (
