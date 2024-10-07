@@ -233,7 +233,7 @@ export const NavBar = () => {
     <img
       alt="logo"
       src={chameleonLargo}
-      className="mr-2 w-auto h-10 md:w-64 md:h-20"
+      className="mr-2 w-48 h-14 md:w-64 md:h-20"
     ></img>
   );
   const end = (
@@ -306,7 +306,7 @@ export const NavBar = () => {
         model={admin ? itemsAdmin : items}
         start={start}
         end={end}
-        className="rounded-none"
+        className="rounded-none h-auto"
       />
       <Dialog
         header={headerDialog}
