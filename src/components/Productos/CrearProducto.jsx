@@ -10,6 +10,12 @@ import { TreeSelect } from "primereact/treeselect";
 import { CrearCategoria } from "./CrearCategoria";
 import { Dialog } from "primereact/dialog";
 import useControlProductos from "../../hooks/useControlProductos";
+import { Toast } from "primereact/toast";
+import { ProgressBar } from "primereact/progressbar";
+import { Tooltip } from "primereact/tooltip";
+import { Tag } from "primereact/tag";
+import { Galleria } from "primereact/galleria";
+
 export const CrearProducto = ({ producto }) => {
   const {
     categorias,
@@ -19,12 +25,16 @@ export const CrearProducto = ({ producto }) => {
     crearProducto,
     editarProducto,
   } = useControlProductos();
+  const toast = useRef(null);
+  const [totalSize, setTotalSize] = useState(0);
+
   const [product, setProduct] = useState(producto || { is_active: true });
   const [submitted, setSubmitted] = useState(false);
   const [nodeCategoria, setnodeCategoria] = useState("");
   const [disableDiscountPrice, setDisableDiscountPrice] = useState(true);
-  const [disableDiscountPercentage, setDisableDiscountPercentage] =
-    useState(true);
+  const [disableDiscountPercentage, setDisableDiscountPercentage] = useState(
+    true
+  );
   const [imageFile, setImageFile] = useState(null);
   const fileUploadRef = useRef(null);
   // Cuando se carga el producto existente, inicializar el estado
@@ -41,34 +51,38 @@ export const CrearProducto = ({ producto }) => {
     } else {
       // Construir el árbol de categorías cuando estén disponibles
       const cate = buildCategoryTree(categorias);
-  
+
       // Si estamos editando un producto, mapear sus categorías a un objeto
       if (producto && producto.categories) {
-        console.log('entro')
-        
+        console.log("entro");
+
         // Crear un objeto con los IDs de categorías como clave y true como valor
-        const selectedCategories = product.categories.reduce((acc, categoryName) => {
-          const categoriaEncontrada = categorias.find((cat) => cat.name === categoryName);
-          if (categoriaEncontrada) {
-            acc[categoriaEncontrada.id] = true;
-          }
-          return acc;
-        }, {});
+        const selectedCategories = product.categories.reduce(
+          (acc, categoryName) => {
+            const categoriaEncontrada = categorias.find(
+              (cat) => cat.name === categoryName
+            );
+            if (categoriaEncontrada) {
+              acc[categoriaEncontrada.id] = true;
+            }
+            return acc;
+          },
+          {}
+        );
 
         console.log(selectedCategories); // Esto imprimirá el objeto con categorías en el formato {1: true, 2: true}
-        
+
         // Asignar el objeto de categorías seleccionadas al producto
         setProduct((prevProduct) => ({
           ...prevProduct,
           categories: selectedCategories,
         }));
       }
-  
+
       // Setear el árbol de categorías para el TreeSelect
       setnodeCategoria(cate);
     }
   }, [categorias, producto]);
-
 
   useEffect(() => {
     console.log(product);
@@ -106,8 +120,8 @@ export const CrearProducto = ({ producto }) => {
       setDisableDiscountPrice(false); // Habilitar precio con descuento
       setDisableDiscountPercentage(true);
     }
-    if (field === "stock" && value >= 0 ) {
-      console.log('entro')
+    if (field === "stock" && value >= 0) {
+      console.log("entro");
       setProduct({ ...product, [field]: value });
     }
     if (field === "price" && value > 100) {
@@ -124,19 +138,28 @@ export const CrearProducto = ({ producto }) => {
       });
     }
   };
+  const [imageFiles, setImageFiles] = useState([]); // Para almacenar múltiples imágenes
+
   const onImageSelect = (e) => {
-    const file = e.files[0];
-    setImageFile(file); // Guardamos la imagen seleccionada
-    setProduct({ ...product, ["image"]: file });
+    const selectedFiles = Array.from(e.files); // Obtener las nuevas imágenes seleccionadas
+
+    // Filtrar las imágenes que no están ya en imageFiles
+    const filteredFiles = selectedFiles.filter((newFile) => {
+      return !imageFiles.some(
+        (existingFile) => existingFile.name === newFile.name
+      ); // Verificar que no se repitan
+    });
+
+    if (filteredFiles.length > 0) {
+      setImageFiles([...imageFiles, ...filteredFiles]); // Agregar solo las imágenes no repetidas
+      setProduct({ ...product, images: [...imageFiles, ...filteredFiles] }); // Actualizar el estado del producto
+    } else {
+      console.log("Las imágenes ya están seleccionadas.");
+    }
   };
   const onSaveProduct = () => {
     setSubmitted(true);
-    if (
-      product.name &&
-      product.price &&
-      product.code &&
-      product.categories
-    ) {
+    if (product.name && product.price && product.code && product.categories) {
       // Si el producto ya tiene un id, actualiza el producto, de lo contrario crea uno nuevo
       if (product.id) {
         editarProducto(product);
@@ -185,8 +208,185 @@ export const CrearProducto = ({ producto }) => {
 
     return tree;
   };
+
+  /* Subir imagenes*/
+  const onTemplateSelect = (e) => {
+    let _totalSize = totalSize;
+    let files = e.files;
+
+    Object.keys(files).forEach((key) => {
+      _totalSize += files[key].size || 0;
+    });
+    onImageSelect(e);
+    setTotalSize(_totalSize);
+  };
+
+  const onTemplateUpload = (e) => {
+    let _totalSize = 0;
+
+    e.files.forEach((file) => {
+      _totalSize += file.size || 0;
+    });
+
+    setTotalSize(_totalSize);
+    toast.current.show({
+      severity: "info",
+      summary: "Success",
+      detail: "File Uploaded",
+    });
+  };
+
+  const onTemplateRemove = (file, callback) => {
+    setTotalSize(totalSize - file.size);
+    callback();
+  };
+
+  const onTemplateClear = () => {
+    setTotalSize(0);
+  };
+
+  const headerTemplate = (options) => {
+    const { className, chooseButton, uploadButton, cancelButton } = options;
+    const value = totalSize / 10000;
+    const formatedValue =
+      fileUploadRef && fileUploadRef.current
+        ? fileUploadRef.current.formatSize(totalSize)
+        : "0 B";
+
+    return (
+      <div
+        className={className}
+        style={{
+          backgroundColor: "transparent",
+          display: "flex",
+          alignItems: "center",
+        }}
+      >
+        {chooseButton}
+        {uploadButton}
+        {cancelButton}
+        <div className="flex align-items-center gap-3 ml-auto">
+          <span>{formatedValue} / 1 MB</span>
+          <ProgressBar
+            value={value}
+            showValue={false}
+            style={{ width: "10rem", height: "12px" }}
+          ></ProgressBar>
+        </div>
+      </div>
+    );
+  };
+
+  const itemTemplate = (file, props) => {
+    return (
+      <div className="flex align-items-center flex-wrap">
+        <div className="flex align-items-center" style={{ width: "40%" }}>
+          <img
+            alt={file?.name}
+            role="presentation"
+            src={file?.objectURL}
+            width={50}
+          />
+          <span className="flex flex-column text-left ml-3 mx-2<">
+            {file?.name}
+            <small>{new Date().toLocaleDateString()}</small>
+          </span>
+        </div>
+        <Tag
+          value={props?.formatSize}
+          severity="warning"
+          className="px-3 py-2 mx-2"
+        />
+        <Button
+          type="button"
+          icon="pi pi-times"
+          className="p-button-outlined p-button-rounded p-button-danger ml-auto"
+          onClick={() => onTemplateRemove(file, props?.onRemove)}
+        />
+      </div>
+    );
+  };
+
+  const emptyTemplate = () => {
+    return (
+      <div className="flex align-items-center flex-column">
+        <i
+          className="pi pi-image mt-3 p-5"
+          style={{
+            fontSize: "5em",
+            borderRadius: "50%",
+            backgroundColor: "var(--surface-b)",
+            color: "var(--surface-d)",
+          }}
+        ></i>
+        <span
+          style={{ fontSize: "1.2em", color: "var(--text-color-secondary)" }}
+          className="my-2"
+        >
+          Arrastra y suelta la imagen aca
+        </span>
+      </div>
+    );
+  };
+
+  const chooseOptions = {
+    icon: "pi pi-fw pi-images",
+    iconOnly: true,
+    className: "custom-choose-btn p-button-rounded p-button-outlined",
+  };
+  const uploadOptions = {
+    icon: "pi pi-fw pi-cloud-upload",
+    iconOnly: true,
+    className:
+      "custom-upload-btn p-button-success p-button-rounded p-button-outlined",
+  };
+  const cancelOptions = {
+    icon: "pi pi-fw pi-times",
+    iconOnly: true,
+    className:
+      "custom-cancel-btn p-button-danger p-button-rounded p-button-outlined",
+  };
+  const itemTemplateImg = (item) => {
+    console.log("itemtemplateimage", item);
+    return (
+      <img
+        alt={item?.name}
+        src={item?.objectURL}
+        style={{ width: "250", display: "block" }}
+      />
+    );
+  };
+
+  const thumbnailTemplate = (item) => {
+    return (
+      <img
+        alt={item?.name}
+        src={item?.objectURL}
+        style={{ width: "50%", display: "block" }}
+      />
+    );
+  };
+  const responsiveOptions = [
+    {
+      breakpoint: "991px",
+      numVisible: 4,
+    },
+    {
+      breakpoint: "767px",
+      numVisible: 3,
+    },
+    {
+      breakpoint: "575px",
+      numVisible: 1,
+    },
+  ];
   return (
     <div className="p-fluid">
+      <Toast ref={toast}></Toast>
+
+      <Tooltip target=".custom-choose-btn" content="Choose" position="bottom" />
+      <Tooltip target=".custom-upload-btn" content="Upload" position="bottom" />
+      <Tooltip target=".custom-cancel-btn" content="Clear" position="bottom" />
       <Dialog
         visible={vistaCrearCat}
         style={{ width: "30rem" }}
@@ -202,23 +402,43 @@ export const CrearProducto = ({ producto }) => {
         <CrearCategoria />
       </Dialog>
       {/* Imagen centrada arriba */}
-      {product?.image && (
-        <div className="text-center">
-          <img
-            src={`${
-              producto.image ? producto.image : product?.image.objectURL
-            }`}
-            alt={product?.image}
-            className="product-image block m-auto pb-3 rounded-md  w-48 h-3/5"
+      {product?.images && (
+        <div className=" card text-center flex justify-center ">
+          <Galleria
+            style={{ maxWidth: '800px' }}
+            value={producto.images ? producto.images : product?.images}
+            responsiveOptions={responsiveOptions}
+            numVisible={5}
+            item={itemTemplateImg}
+            circular 
+            thumbnailsPosition="right"
+            thumbnail={thumbnailTemplate}
           />
+         
         </div>
       )}
 
+      <FileUpload
+        ref={fileUploadRef}
+        name="demo[]"
+        multiple
+        accept="image/*"
+        maxFileSize={10000000}
+        onUpload={onTemplateUpload}
+        onSelect={onTemplateSelect}
+        onError={onTemplateClear}
+        onClear={onTemplateClear}
+        headerTemplate={headerTemplate}
+        itemTemplate={itemTemplate}
+        emptyTemplate={emptyTemplate}
+        chooseOptions={chooseOptions}
+        uploadOptions={uploadOptions}
+        cancelOptions={cancelOptions}
+      />
       {/* Organizar el formulario en dos columnas */}
-      <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 gap-3">
         {/* Subir Imagen */}
-        <div className="field text-center">
-          <FileUpload
+        {/*   <FileUpload
             ref={fileUploadRef}
             name="image"
             customUpload
@@ -231,11 +451,10 @@ export const CrearProducto = ({ producto }) => {
             mode="basic"
             chooseLabel="Seleccionar Imagen"
             className="input-productos"
-          />
-        </div>
+          /> */}
 
         {/* Botón para borrar imagen */}
-        <div className="field text-center">
+        {/*    <div className="field text-center">
           <Button
             disabled={!imageFile}
             label="Borrar Imagen"
@@ -249,7 +468,7 @@ export const CrearProducto = ({ producto }) => {
             severity="danger"
             className="mt-4 "
           />
-        </div>
+        </div> */}
         <div className="field col-6">
           <label htmlFor="code" className="font-bold">
             Código del Producto

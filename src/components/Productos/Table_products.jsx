@@ -427,8 +427,8 @@ export default function ProductsDemo() {
 
       <Dialog
         visible={productDialog}
-        style={{ width: "50rem" }}
-        breakpoints={{ "960px": "75vw", "641px": "90vw" }}
+        style={{ width: "70rem" }}
+        breakpoints={{ "960px": "90vw", "641px": "90vw" }}
         header="Crear producto"
         headerClassName="custom-header2"
         modal
