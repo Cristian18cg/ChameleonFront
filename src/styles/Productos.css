@@ -23,3 +23,64 @@
 .input-productos .p-treeselect{
     width: 100% !important;
 }
+.custom-cancel-btn{
+    color: red;
+    border: 1px;
+    border-radius: 100%;
+    border-color: red;
+    background-color: transparent;
+    border-style:double;
+    padding: .7rem;
+
+} 
+.custom-cancel-btn:disabled{
+    color: rgb(236, 125, 125);
+    border: 1px;
+    border-radius: 100%;
+    border-color: rgb(236, 125, 125);
+    background-color: transparent;
+    border-style:double;
+    padding: .7rem;
+
+} 
+.custom-cancel-btn:hover{
+    cursor: pointer;
+    color: rgb(240, 231, 231);
+    border-color: red;
+    background-color: red;
+    
+} 
+
+.custom-choose-btn{
+    color: rgb(255, 174, 0);
+    border: 1px;
+    border-radius: 100%;
+    border-color: rgb(255, 174, 0);
+    background-color: transparent;
+    border-style:double;
+    padding: .7rem;
+    align-items: center;    
+    display: flex;
+    justify-content: center;
+} .custom-choose-btn .p-button-icon{
+    margin:1;
+}
+.custom-choose-btn:hover{
+    cursor: pointer;
+    color: rgb(240, 231, 231);
+    background-color:  rgb(255, 174, 0);;
+    
+} 
+.p-galleria-indicator {
+    width: 12px; /* Ajusta según el tamaño deseado */
+    height: 12px;
+    margin: 0 5px; /* Espacio entre indicadores */
+    background-color: rgb(196, 196, 196);
+    border-radius: 50%;
+    padding: 0;
+}
+
+.p-galleria-indicator.p-highlight {
+    background-color: rgb(23, 175, 235);
+    border-radius: 50%;
+}

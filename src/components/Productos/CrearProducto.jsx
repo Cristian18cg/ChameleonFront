@@ -17,6 +17,7 @@ import { Tag } from "primereact/tag";
 import { Galleria } from "primereact/galleria";
 
 export const CrearProducto = ({ producto }) => {
+
   const {
     categorias,
     listarCategorias,
@@ -32,9 +33,8 @@ export const CrearProducto = ({ producto }) => {
   const [submitted, setSubmitted] = useState(false);
   const [nodeCategoria, setnodeCategoria] = useState("");
   const [disableDiscountPrice, setDisableDiscountPrice] = useState(true);
-  const [disableDiscountPercentage, setDisableDiscountPercentage] = useState(
-    true
-  );
+  const [disableDiscountPercentage, setDisableDiscountPercentage] =
+    useState(true);
   const [imageFile, setImageFile] = useState(null);
   const fileUploadRef = useRef(null);
   // Cuando se carga el producto existente, inicializar el estado
@@ -244,26 +244,35 @@ export const CrearProducto = ({ producto }) => {
   const onTemplateClear = () => {
     setTotalSize(0);
   };
+  const chooseOptions = {
+    icon: "pi pi-images",
+    iconOnly: true,
+    className: "custom-choose-btn p-button-rounded p-button-outlined",
+  };
+
+  const cancelOptions = {
+    icon: "pi  pi-times",
+    iconOnly: true,
+    className:
+      "custom-cancel-btn p-button-danger p-button-rounded p-button-outlined",
+  };
 
   const headerTemplate = (options) => {
-    const { className, chooseButton, uploadButton, cancelButton } = options;
+    const { className, chooseButton, cancelButton } = options;
     const value = totalSize / 10000;
     const formatedValue =
       fileUploadRef && fileUploadRef.current
         ? fileUploadRef.current.formatSize(totalSize)
         : "0 B";
-
     return (
       <div
-        className={className}
+        className={`${className} border-gray-300 border border-b-0`}
         style={{
-          backgroundColor: "transparent",
           display: "flex",
           alignItems: "center",
         }}
       >
         {chooseButton}
-        {uploadButton}
         {cancelButton}
         <div className="flex align-items-center gap-3 ml-auto">
           <span>{formatedValue} / 1 MB</span>
@@ -329,59 +338,52 @@ export const CrearProducto = ({ producto }) => {
     );
   };
 
-  const chooseOptions = {
-    icon: "pi pi-fw pi-images",
-    iconOnly: true,
-    className: "custom-choose-btn p-button-rounded p-button-outlined",
-  };
-  const uploadOptions = {
-    icon: "pi pi-fw pi-cloud-upload",
-    iconOnly: true,
-    className:
-      "custom-upload-btn p-button-success p-button-rounded p-button-outlined",
-  };
-  const cancelOptions = {
-    icon: "pi pi-fw pi-times",
-    iconOnly: true,
-    className:
-      "custom-cancel-btn p-button-danger p-button-rounded p-button-outlined",
+  const thumbnailTemplate = (item) => {
+    return (
+      <img
+        src={item.objectURL}
+        alt={item.name}
+        style={{
+          width: "80px", // Ajusta el tamaño de la miniatura
+          height: "80px", // Asegura que las miniaturas tengan dimensiones adecuadas
+          display: "block",
+          objectFit: "cover", // Esto mantendrá la proporción de la imagen
+        }}
+      />
+    );
   };
   const itemTemplateImg = (item) => {
-    console.log("itemtemplateimage", item);
     return (
       <img
         alt={item?.name}
         src={item?.objectURL}
-        style={{ width: "250", display: "block" }}
+        style={{ width: "300px", display: "block" }}
+        className="rounded"
       />
     );
   };
 
-  const thumbnailTemplate = (item) => {
-    return (
-      <img
-        alt={item?.name}
-        src={item?.objectURL}
-        style={{ width: "50%", display: "block" }}
-      />
-    );
-  };
   const responsiveOptions = [
     {
-      breakpoint: "991px",
+      breakpoint: "1200px",
       numVisible: 4,
     },
     {
-      breakpoint: "767px",
+      breakpoint: "991px",
       numVisible: 3,
+    },
+    {
+      breakpoint: "767px",
+      numVisible: 2,
     },
     {
       breakpoint: "575px",
       numVisible: 1,
     },
   ];
+
   return (
-    <div className="p-fluid">
+    <div className=" ">
       <Toast ref={toast}></Toast>
 
       <Tooltip target=".custom-choose-btn" content="Choose" position="bottom" />
@@ -403,21 +405,18 @@ export const CrearProducto = ({ producto }) => {
       </Dialog>
       {/* Imagen centrada arriba */}
       {product?.images && (
-        <div className=" card text-center flex justify-center ">
+        <div className="card ">
           <Galleria
-            style={{ maxWidth: '800px' }}
             value={producto.images ? producto.images : product?.images}
             responsiveOptions={responsiveOptions}
-            numVisible={5}
+            numVisible={4}
             item={itemTemplateImg}
-            circular 
-            thumbnailsPosition="right"
-            thumbnail={thumbnailTemplate}
+            showThumbnails={false}
+             showIndicators 
+             indicatorsPosition="bottom"
           />
-         
         </div>
       )}
-
       <FileUpload
         ref={fileUploadRef}
         name="demo[]"
@@ -432,43 +431,11 @@ export const CrearProducto = ({ producto }) => {
         itemTemplate={itemTemplate}
         emptyTemplate={emptyTemplate}
         chooseOptions={chooseOptions}
-        uploadOptions={uploadOptions}
         cancelOptions={cancelOptions}
       />
       {/* Organizar el formulario en dos columnas */}
       <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 gap-3">
-        {/* Subir Imagen */}
-        {/*   <FileUpload
-            ref={fileUploadRef}
-            name="image"
-            customUpload
-            uploadHandler={(e) => {
-              onImageSelect(e); // Guardar la imagen seleccionada
-            }}
-            auto
-            accept="image/*"
-            maxFileSize={1000000}
-            mode="basic"
-            chooseLabel="Seleccionar Imagen"
-            className="input-productos"
-          /> */}
-
-        {/* Botón para borrar imagen */}
-        {/*    <div className="field text-center">
-          <Button
-            disabled={!imageFile}
-            label="Borrar Imagen"
-            onClick={() => {
-              setProduct({ ...product, ["image"]: "" });
-              setImageFile("");
-              if (fileUploadRef.current) {
-                fileUploadRef.current.clear(); // Limpiar el input
-              }
-            }}
-            severity="danger"
-            className="mt-4 "
-          />
-        </div> */}
+   
         <div className="field col-6">
           <label htmlFor="code" className="font-bold">
             Código del Producto
@@ -637,7 +604,7 @@ export const CrearProducto = ({ producto }) => {
         label="Guardar Producto"
         icon="pi pi-check"
         onClick={onSaveProduct}
-        className=" mt-2 input-productos"
+        className="rounded-full mt-2 input-productos"
       />
     </div>
   );
