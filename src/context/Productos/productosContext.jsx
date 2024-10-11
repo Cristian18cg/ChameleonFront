@@ -236,9 +236,14 @@ const ProductosProvider = ({ children }) => {
           formData.append("category_ids", categoryId); // Sin índice, para que el backend lo trate como array
         });
 
-        if (producto.image) {
-          formData.append("image", producto.image); // Si estás subiendo una imagen
+        const uniqueImages = new Set();
+      producto.images.forEach((file) => {
+        if (!uniqueImages.has(file.name)) {  // Validar si la imagen ya fue agregada
+          formData.append("images", file);
+          uniqueImages.add(file.name);  // Agregar el nombre de la imagen al Set
         }
+      });
+
 
         console.log([...formData.entries()]); // Depuración para ver qué se está enviando
 
