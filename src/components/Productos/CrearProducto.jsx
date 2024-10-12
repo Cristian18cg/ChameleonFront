@@ -16,8 +16,10 @@ import { Tooltip } from "primereact/tooltip";
 import { Tag } from "primereact/tag";
 import { Galleria } from "primereact/galleria";
 
-export const CrearProducto = ({ producto }) => {
+import { ConfirmPopup } from "primereact/confirmpopup"; // To use <ConfirmPopup> tag
+import { confirmPopup } from "primereact/confirmpopup"; // To use confirmPopup method
 
+export const CrearProducto = ({ producto }) => {
   const {
     categorias,
     listarCategorias,
@@ -25,6 +27,7 @@ export const CrearProducto = ({ producto }) => {
     vistaCrearCat,
     crearProducto,
     editarProducto,
+    eliminarImagenProducto,
   } = useControlProductos();
   const toast = useRef(null);
   const [totalSize, setTotalSize] = useState(0);
@@ -53,11 +56,11 @@ export const CrearProducto = ({ producto }) => {
       const cate = buildCategoryTree(categorias);
 
       // Si estamos editando un producto, mapear sus categorías a un objeto
-      if (producto && producto.categories) {
+      if (producto && Array.isArray(producto.categories)) {
         console.log("entro");
 
         // Crear un objeto con los IDs de categorías como clave y true como valor
-        const selectedCategories = product.categories.reduce(
+        const selectedCategories = producto.categories.reduce(
           (acc, categoryName) => {
             const categoriaEncontrada = categorias.find(
               (cat) => cat.name === categoryName
@@ -141,6 +144,7 @@ export const CrearProducto = ({ producto }) => {
   const [imageFiles, setImageFiles] = useState([]); // Para almacenar múltiples imágenes
 
   const onImageSelect = (e) => {
+    console.log('entro imagenes',e)
     const selectedFiles = Array.from(e.files); // Obtener las nuevas imágenes seleccionadas
 
     // Filtrar las imágenes que no están ya en imageFiles
@@ -338,27 +342,16 @@ export const CrearProducto = ({ producto }) => {
     );
   };
 
-  const thumbnailTemplate = (item) => {
-    return (
-      <img
-        src={item.objectURL}
-        alt={item.name}
-        style={{
-          width: "80px", // Ajusta el tamaño de la miniatura
-          height: "80px", // Asegura que las miniaturas tengan dimensiones adecuadas
-          display: "block",
-          objectFit: "cover", // Esto mantendrá la proporción de la imagen
-        }}
-      />
-    );
-  };
+
   const itemTemplateImg = (item) => {
+    console.log("itemmostrado", item);
+    setImageFile(item);
     return (
       <img
-        alt={item?.name}
-        src={item?.objectURL}
+        alt={producto.images ? producto.name : item?.name}
+        src={producto.images ? item.image : item?.objectURL}
         style={{ width: "300px", display: "block" }}
-        className="rounded"
+        className="rounded imagen-galeria"
       />
     );
   };
@@ -381,9 +374,42 @@ export const CrearProducto = ({ producto }) => {
       numVisible: 1,
     },
   ];
+  const elimiarImagen = async () => {
+    // Eliminar la imagen del backend primero
+     eliminarImagenProducto(product.id, imageFile.id);
+
+    // Luego, actualizar el estado del producto para eliminar la imagen
+    setProduct((prevProduct) => {
+      // Filtra las imágenes para excluir la que se eliminó
+      const updatedImages = prevProduct.images.filter(
+        (image) => image.id !== imageFile.id
+      );
+      return {
+        ...prevProduct, // Mantiene el resto de las propiedades del producto
+        images: updatedImages, // Actualiza la lista de imágenes
+      };
+    });
+  };
+  const accept = () => {
+    elimiarImagen();
+  };
+  const reject = () => {};
+  const confirm1 = (event) => {
+    confirmPopup({
+      target: event.currentTarget,
+      message: "Estas seguro de eliminar la imagen?",
+      icon: "pi pi-exclamation-triangle",
+      defaultFocus: "accept",
+      acceptClassName: "p-button-danger",
+      unstyled: false,
+      accept,
+      reject,
+    });
+  };
 
   return (
     <div className=" ">
+      <ConfirmPopup />
       <Toast ref={toast}></Toast>
 
       <Tooltip target=".custom-choose-btn" content="Choose" position="bottom" />
@@ -405,18 +431,30 @@ export const CrearProducto = ({ producto }) => {
       </Dialog>
       {/* Imagen centrada arriba */}
       {product?.images && (
-        <div className="card ">
+        <div className="card flex-col justify-center">
           <Galleria
             value={producto.images ? producto.images : product?.images}
             responsiveOptions={responsiveOptions}
-            numVisible={4}
+            numVisible={6}
             item={itemTemplateImg}
             showThumbnails={false}
-             showIndicators 
-             indicatorsPosition="bottom"
+            showIndicators
+            indicatorsPosition="bottom"
           />
+          {producto.images && (
+            <div className="flex justify-center items-center mb-3">
+              <Button
+                icon="pi pi-trash"
+                label="Eliminar Imagen"
+                style={{ maxWidth: "12rem" }}
+                onClick={confirm1}
+                severity="danger"
+              />
+            </div>
+          )}
         </div>
       )}
+      <h3 className="font-bold">Elegir imagen del producto</h3>
       <FileUpload
         ref={fileUploadRef}
         name="demo[]"
@@ -435,7 +473,6 @@ export const CrearProducto = ({ producto }) => {
       />
       {/* Organizar el formulario en dos columnas */}
       <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 gap-3">
-   
         <div className="field col-6">
           <label htmlFor="code" className="font-bold">
             Código del Producto

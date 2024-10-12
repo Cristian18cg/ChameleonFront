@@ -1,4 +1,4 @@
-import "primereact/resources/themes/saga-blue/theme.css"; // Tema
+/* import 'primevue/resources/themes/aura-light-green/theme.css' */
 import "primereact/resources/primereact.min.css"; // Estilos base
 import "primeicons/primeicons.css";
 import { Router_Home } from "./components/Home/Router_Home";
@@ -11,6 +11,11 @@ import {
 } from "primereact/api";
 import Tailwind from "primereact/passthrough/tailwind";
 
+import './styles/styles.css'
+import './styles/FormularioL.css'
+import './styles/general.css'
+import './styles/Navbar.css'
+import './styles/Productos.css'
 function App() {
   const value = {
     ripple: true,

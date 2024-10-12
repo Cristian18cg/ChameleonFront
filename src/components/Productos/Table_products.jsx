@@ -200,7 +200,7 @@ export default function ProductsDemo() {
   const imageBodyTemplate = (rowData) => {
     return (
       <img
-        src={`${rowData.image}`}
+        src={`${rowData.images[0]?.image}`}
         alt={rowData.name}
         className="shadow-md shadow-slate-200 rounded"
         style={{ width: "64px" }}
@@ -427,7 +427,7 @@ export default function ProductsDemo() {
 
       <Dialog
         visible={productDialog}
-        style={{ width: "70rem", height:"100vh" }}
+        style={{ width: "80vw", height:"100vh" }}
         breakpoints={{ "960px": "90vw", "641px": "90vw" }}
         header="Crear producto"
         headerClassName="custom-header2"

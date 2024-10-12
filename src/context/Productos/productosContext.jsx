@@ -237,13 +237,13 @@ const ProductosProvider = ({ children }) => {
         });
 
         const uniqueImages = new Set();
-      producto.images.forEach((file) => {
-        if (!uniqueImages.has(file.name)) {  // Validar si la imagen ya fue agregada
-          formData.append("images", file);
-          uniqueImages.add(file.name);  // Agregar el nombre de la imagen al Set
-        }
-      });
-
+        producto.images.forEach((file) => {
+          if (!uniqueImages.has(file.name)) {
+            // Validar si la imagen ya fue agregada
+            formData.append("images", file);
+            uniqueImages.add(file.name); // Agregar el nombre de la imagen al Set
+          }
+        });
 
         console.log([...formData.entries()]); // Depuración para ver qué se está enviando
 
@@ -255,8 +255,8 @@ const ProductosProvider = ({ children }) => {
         });
 
         showSuccess(`Producto ${producto.name} creado con éxito`);
-        obtenerProductos();
         setProductDialog(false);
+        obtenerProductos();
       } catch (error) {
         console.log(error);
         if (error.response) {
@@ -332,11 +332,14 @@ const ProductosProvider = ({ children }) => {
           formData.append("category_ids", categoryId); // Sin índice, para que el backend lo trate como array
         });
 
-        if (producto.image && producto.image instanceof File) {
-          formData.append("image", producto.image); // Solo agregar si es un archivo
-        }
-
-        console.log([...formData.entries()]); // Depuración para ver qué se está enviando
+        const uniqueImages = new Set();
+        producto.images.forEach((file) => {
+          if (!uniqueImages.has(file.name)) {
+            // Validar si la imagen ya fue agregada
+            formData.append("images", file);
+            uniqueImages.add(file.name); // Agregar el nombre de la imagen al Set
+          }
+        });
 
         await clienteAxios.put(`products/products/${producto.id}/`, formData, {
           headers: {
@@ -345,7 +348,7 @@ const ProductosProvider = ({ children }) => {
           },
         });
 
-        showSuccess(`Producto ${producto.name} creado con éxito`);
+        showSuccess(`Producto ${producto.name} editado con éxito`);
         obtenerProductos();
         setProductDialog(false);
       } catch (error) {
@@ -454,6 +457,55 @@ const ProductosProvider = ({ children }) => {
     },
     [token]
   );
+  const eliminarImagenProducto = useCallback(
+    async (productId, imageId) => {
+      try {
+        // Petición DELETE para eliminar el producto
+        await clienteAxios.delete(
+          `products/products/${productId}/images/${imageId}/delete/`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        // Si la petición fue exitosa, muestra un mensaje de éxito
+        showSuccess(`Imagen eliminada con éxito`);
+        obtenerProductos();
+      } catch (error) {
+        // Manejo de errores
+        if (error.response) {
+          // Mostrar el mensaje de error consolidado en SweetAlert
+          Swal.fire({
+            icon: "error",
+            title: "Error al eliminar imagen del producto",
+            text:
+              error.response?.data?.detail ||
+              "Hubo un error al intentar eliminar imagen del producto.",
+          });
+
+          console.error("Error de respuesta del servidor:", error.response);
+        } else if (error.request) {
+          Swal.fire({
+            icon: "error",
+            title: "No se recibió respuesta del servidor",
+            text: "Por favor, inténtelo de nuevo más tarde.",
+          });
+          console.error("No se recibió respuesta del servidor", error.request);
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Error inesperado",
+            text: error.message || "Ocurrió un error inesperado.",
+          });
+        }
+
+        console.error("Error al intentar eliminar el producto:", error);
+      }
+    },
+    [token, obtenerProductos]
+  );
 
   const contextValue = useMemo(() => {
     return {
@@ -470,6 +522,7 @@ const ProductosProvider = ({ children }) => {
       setProduct,
       editarProducto,
       filtrarCategoria,
+      eliminarImagenProducto,
       product,
       deleteProductDialog,
       productDialog,
@@ -479,6 +532,7 @@ const ProductosProvider = ({ children }) => {
     };
   }, [
     crearCategoria,
+    eliminarImagenProducto,
     listarCategorias,
     setCategorias,
     setvistaCrearCat,

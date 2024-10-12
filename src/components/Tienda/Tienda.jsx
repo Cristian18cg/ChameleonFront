@@ -111,7 +111,7 @@ export const Tienda = () => {
           {/* Imagen del producto */}
           <img
             className="w-full sm:w-64 xl:w-40 shadow-lg mx-auto rounded-lg"
-            src={`${product.image}`}
+            src={`${product?.images[0].image}`}
             alt={product.name}
           />
 
@@ -181,7 +181,20 @@ export const Tienda = () => {
     return null;
   };
   // Grid Item View
+  const [isHovering, setIsHovering] = useState(false);
+  const handleMouseEnter = () => {
+    setIsHovering(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovering(false);
+  };
+
   const gridItem = (product) => {
+    // Estado para manejar el hover
+
+    // Funciones para manejar el mouse enter y leave
+
     return (
       <div className="p-2" key={product.id}>
         <div className="p-4 border border-gray-200 rounded-lg shadow-md">
@@ -200,35 +213,53 @@ export const Tienda = () => {
                   : "Sin categoría"}
               </span>
             </div>
-            <Tag
-              value={getMessage(product)}
-              severity={getSeverity(product)}
-            ></Tag>
+            <Tag value={getMessage(product)} severity={getSeverity(product)} />
           </div>
 
           {/* Imagen y nombre del producto */}
           <div className="flex flex-col items-center gap-1 py-5">
-            <img
-              className="shadow-lg rounded-lg"
-              src={`${product.image}`}
-              alt={product.name}
-              style={{ width: "200px", height: "250px" }}
-            />
+            <div className="relative">
+              <img
+                className={`shadow-lg rounded-lg transition-opacity duration-300 ${
+                  isHovering ? "opacity-0" : "opacity-100"
+                }`}
+                src={product?.images[0]?.image}
+                alt={product.name}
+                onMouseEnter={handleMouseEnter} // Maneja el evento mouse enter
+                onMouseLeave={handleMouseLeave} // Maneja el evento mouse leave
+                style={{ width: "200px", height: "250px" }}
+              />
+              {product?.images[1] && (
+                <img
+                  className={`absolute inset-0 shadow-lg rounded-lg transition-opacity duration-300 ${
+                    isHovering ? "opacity-100" : "opacity-0"
+                  }`}
+                  src={product?.images[1]?.image}
+                  alt={`${product.name} hover`}
+                  style={{ width: "200px", height: "250px" }}
+                />
+              )}
+            </div>
             <div className="text-2xl font-bold text-gray-900">
               {product.name}
             </div>
-            <Rating
-              value={product.rating}
-              readOnly
-              cancel={false}
-              className="text-yellow-500"
-            ></Rating>
+            {product?.rating > 0 && (
+              <>
+                <Rating
+                  value={product.rating}
+                  cancel={false}
+                  readOnly
+                  className="text-yellow-500 "
+                />
+                <p>({product.rating})</p>
+              </>
+            )}
           </div>
 
           {/* Precio y botón */}
-          <div className="grid grid-cols-3 ">
-            <div className="flex justify-center ">
-              <span className="text-lg font-semibold text-red-600 line-through mt-2 ">
+          <div className="grid grid-cols-3">
+            <div className="flex justify-center">
+              <span className="text-lg font-semibold text-red-600 line-through mt-2">
                 {new Intl.NumberFormat("es-CO", {
                   style: "currency",
                   currency: "COP",
@@ -238,7 +269,7 @@ export const Tienda = () => {
               </span>
             </div>
             <div className="flex justify-center">
-              <span className="text-2xl font-semibold text-gray-900 mt-1 ">
+              <span className="text-2xl font-semibold text-gray-900 mt-1">
                 {new Intl.NumberFormat("es-CO", {
                   style: "currency",
                   currency: "COP",
@@ -250,9 +281,9 @@ export const Tienda = () => {
             <div className="flex justify-end">
               <Button
                 icon="pi pi-shopping-cart"
-                className="rounded-full bg-green-500 hover:bg-green-600 text-white  border-green-500  hover:border-green-600 p-5"
+                className="rounded-full bg-green-500 hover:bg-green-600 text-white border-green-500 hover:border-green-600 p-5"
                 disabled={product.stock === 0}
-              ></Button>
+              />
             </div>
           </div>
         </div>
@@ -283,7 +314,7 @@ export const Tienda = () => {
 
   const header = () => {
     return (
-      <div className="flex justify-between rounded-lg">
+      <div className="flex justify-between  bg-transparent unded-lg">
         <Dropdown
           options={sortOptions}
           value={sortKey}
@@ -324,9 +355,10 @@ export const Tienda = () => {
     );
   };
   return (
-    <div className="grid grid-cols-1 md:grid-cols-12 ">
-      <div className="col-span-12 md:col-span-3 ">
-        <div className="flex justify-center bg-gray-100">
+    <div className="w-full flex justify-center">
+    <div className=" sm:w-11/12 md:w-5/6 grid grid-cols-2  sm:grid-cols-12 md:grid-cols-12 ">
+      <div className="col-span-12 sm:col-span-12 md:col-span-3 ">
+        <div className="flex justify-center ">
           <h1 className="font-extrabold text-2xl p-2 rounded-sm">FILTROS</h1>
         </div>
         <Tree
@@ -339,7 +371,7 @@ export const Tienda = () => {
           footer={footertree}
         />
       </div>
-      <div className="card col-span-12 md:col-span-9">
+      <div className="card col-span-12  sm:col-span-12 md:col-span-9">
         <DataView
           value={products}
           listTemplate={listTemplate}
@@ -352,6 +384,7 @@ export const Tienda = () => {
           emptyMessage="No se encontraron productos"
         />
       </div>
+    </div>
     </div>
   );
 };
