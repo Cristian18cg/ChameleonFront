@@ -1,6 +1,7 @@
 {
   "name": "Chameleon",
   "version": "0.1.0",
+  "build": "CI=false react-scripts build",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
@@ -15,10 +16,8 @@
     "formik": "^2.4.5",
     "path-browserify": "^1.0.1",
     "pdfjs-dist": "^4.2.67",
-    "primefaces": "^13.0.0",
     "primeicons": "^7.0.0",
     "primereact": "^10.6.2",
-    "primevue": "^3.50.0",
     "react": "^18.2.0",
     "react-bootstrap": "^2.10.2",
     "react-dom": "^18.2.0",
@@ -27,6 +26,7 @@
     "react-primer": "^1.2.1",
     "react-router-dom": "^6.26.1",
     "react-scripts": "5.0.1",
+    "serve": "^14.2.4",
     "sweetalert2": "^11.12.4",
     "tailwind-merge": "^2.5.2",
     "web-vitals": "^2.1.4",
