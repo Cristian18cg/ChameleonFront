@@ -24,7 +24,14 @@ export const Tienda = () => {
   const [nodeCategoria, setnodeCategoria] = useState("");
   const [selectedKey, setSelectedKey] = useState("");
   const [disabledFiltroCate, setdisabledFiltroCate] = useState(true);
+  const [isHovering, setIsHovering] = useState(false);
+  const handleMouseEnter = () => {
+    setIsHovering(true);
+  };
 
+  const handleMouseLeave = () => {
+    setIsHovering(false);
+  };
   const sortOptions = [
     { label: "Precio Mayor a Menor", value: "!price" },
     { label: "Precio Menos a Mayor", value: "price" },
@@ -181,20 +188,8 @@ export const Tienda = () => {
     return null;
   };
   // Grid Item View
-  const [isHovering, setIsHovering] = useState(false);
-  const handleMouseEnter = () => {
-    setIsHovering(true);
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovering(false);
-  };
 
   const gridItem = (product) => {
-    // Estado para manejar el hover
-
-    // Funciones para manejar el mouse enter y leave
-
     return (
       <div className="p-2" key={product.id}>
         <div className="p-4 border border-gray-200 rounded-lg shadow-md">
@@ -256,35 +251,39 @@ export const Tienda = () => {
             )}
           </div>
 
-          {/* Precio y botón */}
-          <div className="grid grid-cols-3">
-            <div className="flex justify-center">
-              <span className="text-lg font-semibold text-red-600 line-through mt-2">
-                {new Intl.NumberFormat("es-CO", {
-                  style: "currency",
-                  currency: "COP",
-                  minimumFractionDigits: 0,
-                  maximumFractionDigits: 2,
-                }).format(product.price)}
-              </span>
+          {/* Precio  */}
+          <div className="flex justify-center">
+            <div className="grid  grid-cols-1 md:grid-cols-2">
+              <div className="flex justify-center">
+                <span className="text-lg font-semibold text-red-600 line-through mt-1">
+                  {new Intl.NumberFormat("es-CO", {
+                    style: "currency",
+                    currency: "COP",
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 2,
+                  }).format(product.price)}
+                </span>
+              </div>
+              <div className="flex justify-start">
+                <span className="text-2xl font-semibold text-gray-900 ">
+                  {new Intl.NumberFormat("es-CO", {
+                    style: "currency",
+                    currency: "COP",
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 2,
+                  }).format(product.discount_price)}
+                </span>
+              </div>
             </div>
-            <div className="flex justify-center">
-              <span className="text-2xl font-semibold text-gray-900 mt-1">
-                {new Intl.NumberFormat("es-CO", {
-                  style: "currency",
-                  currency: "COP",
-                  minimumFractionDigits: 0,
-                  maximumFractionDigits: 2,
-                }).format(product.discount_price)}
-              </span>
-            </div>
-            <div className="flex justify-end">
-              <Button
-                icon="pi pi-shopping-cart"
-                className="rounded-full bg-green-500 hover:bg-green-600 text-white border-green-500 hover:border-green-600 p-5"
-                disabled={product.stock === 0}
-              />
-            </div>
+          </div>
+          <div className="flex justify-center">
+            <Button
+              label="Agregar al carrito"
+              iconPos="right"
+              icon="pi pi-shopping-cart"
+              className=" mt-2 first-line:rounded-full bg-green-500 hover:bg-green-600 text-white border-green-500 hover:border-green-600 p-5"
+              disabled={product.stock === 0}
+            />
           </div>
         </div>
       </div>
@@ -356,35 +355,36 @@ export const Tienda = () => {
   };
   return (
     <div className="w-full flex justify-center">
-    <div className=" sm:w-11/12 md:w-5/6 grid grid-cols-2  sm:grid-cols-12 md:grid-cols-12 ">
-      <div className="col-span-12 sm:col-span-12 md:col-span-3 ">
-        <div className="flex justify-center ">
-          <h1 className="font-extrabold text-2xl p-2 rounded-sm">FILTROS</h1>
+      <div className=" sm:w-11/12 md:w-5/6 grid grid-cols-2  sm:grid-cols-12 md:grid-cols-12 ">
+        <div className=" hidden sm:block col-span-12 sm:col-span-12 md:col-span-3 ">
+          <div className="flex justify-center ">
+            <h1 className="font-extrabold text-2xl p-2 rounded-sm">FILTROS</h1>
+          </div>
+          <Tree
+            value={nodeCategoria}
+            selectionMode="single"
+            selectionKeys={selectedKey}
+            onSelectionChange={(e) => setSelectedKey(e.value)}
+            className="w-full md:w-30rem mt-1 "
+            header={headertree}
+            footer={footertree}
+          />
         </div>
-        <Tree
-          value={nodeCategoria}
-          selectionMode="single"
-          selectionKeys={selectedKey}
-          onSelectionChange={(e) => setSelectedKey(e.value)}
-          className="w-full md:w-30rem mt-1 "
-          header={headertree}
-          footer={footertree}
-        />
+        <div className="card col-span-12  sm:col-span-12 md:col-span-9">
+          <DataView
+            value={products}
+            listTemplate={listTemplate}
+            layout={layout}
+            header={header()}
+            sortField={sortField}
+            sortOrder={sortOrder}
+            paginator
+            rows={12}
+            className="data-view-custom"
+            emptyMessage="No se encontraron productos"
+          />
+        </div>
       </div>
-      <div className="card col-span-12  sm:col-span-12 md:col-span-9">
-        <DataView
-          value={products}
-          listTemplate={listTemplate}
-          layout={layout}
-          header={header()}
-          sortField={sortField}
-          sortOrder={sortOrder}
-          paginator
-          rows={12}
-          emptyMessage="No se encontraron productos"
-        />
-      </div>
-    </div>
     </div>
   );
 };

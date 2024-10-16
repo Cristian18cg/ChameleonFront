@@ -16,6 +16,7 @@ import './styles/FormularioL.css'
 import './styles/general.css'
 import './styles/Navbar.css'
 import './styles/Productos.css'
+import './styles/Tienda.css'
 function App() {
   const value = {
     ripple: true,
