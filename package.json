@@ -1,7 +1,6 @@
 {
   "name": "Chameleon",
   "version": "0.1.0",
-  "build": "CI=false react-scripts build",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",

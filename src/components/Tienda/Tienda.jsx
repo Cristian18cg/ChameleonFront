@@ -5,7 +5,6 @@ import { Rating } from "primereact/rating";
 import { Tag } from "primereact/tag";
 import { Dropdown } from "primereact/dropdown";
 import { classNames } from "primereact/utils";
-import { PanelMenu } from "primereact/panelmenu";
 import useControlProductos from "../../hooks/useControlProductos";
 import { Tree } from "primereact/tree";
 export const Tienda = () => {

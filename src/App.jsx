@@ -18,7 +18,7 @@ import './styles/Navbar.css'
 import './styles/Productos.css'
 import './styles/Tienda.css'
 function App() {
-  const value = {
+/*   const value = {
     ripple: true,
     zIndex: {
       modal: 1100, // dialog, sidebar
@@ -30,7 +30,7 @@ function App() {
     autoZIndex: true,
     locale: "es",
     pt: Tailwind,
-  };
+  }; */
   addLocale("es", {
     firstDayOfWeek: 1,
     dayNames: [
