@@ -16,7 +16,7 @@
     "pdfjs-dist": "^4.2.67",
     "primeicons": "^7.0.0",
     "primereact": "^10.6.2",
-    "react": "^18.2.0",
+    "react": "18",
     "react-bootstrap": "^2.10.2",
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",
