@@ -215,9 +215,9 @@ export const NavBar = () => {
               icon: "pi pi-palette",
               badge: 3,
               template: itemRenderer,
-            },
+            }
           ],
-        },
+        }
       ],
     } /*
     {
@@ -227,7 +227,7 @@ export const NavBar = () => {
       template: itemRenderer,
     },
    */,
-    ,
+    
   ];
   const start = (
     <img

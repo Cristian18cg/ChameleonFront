@@ -427,14 +427,14 @@ export default function ProductsDemo() {
 
       <Dialog
         visible={productDialog}
-        style={{ width: "80vw", height:"100vh" }}
-        breakpoints={{ "960px": "90vw", "641px": "90vw" }}
+        style={{ width: "80vw", height: "100vh" }}
+        breakpoints={{ "960px": "90vw", "641px": "90vw" , "430px": "98vw" }}
         header="Crear producto"
         headerClassName="custom-header2"
         modal
         maximizable
         className="p-fluid custom-dialog"
-        /*  footer={productDialogFooter} */ onHide={hideDialog}
+        onHide={hideDialog}
       >
         <CrearProducto producto={product} />
       </Dialog>
