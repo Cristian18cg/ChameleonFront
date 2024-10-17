@@ -10,6 +10,7 @@ const ProductosProvider = ({ children }) => {
   const [vistaCrearCat, setvistaCrearCat] = useState(false);
   const [categorias, setCategorias] = useState("");
   const [productos, setProductos] = useState("");
+  const [producto, setProducto] = useState("");
   const categoriapadre = [{ name: "Sin categoria", id: null }];
   const [productDialog, setProductDialog] = useState(false);
   const [deleteProductDialog, setDeleteProductDialog] = useState(false);
@@ -300,6 +301,49 @@ const ProductosProvider = ({ children }) => {
     },
     [obtenerProductos, token]
   );
+  const obtenerProducto = useCallback(
+    async (producto) => {
+      if (!producto) {
+        Swal.fire({
+          icon: "error",
+          title: "Producto no válido",
+          text: "El producto seleccionado no es válido.",
+        });
+        return;
+      }
+  
+      try {
+        const response = await clienteAxios.get(`products/products/${producto}/`);
+  
+        setProducto(response.data);
+      } catch (error) {
+        console.error("Error obteniendo el producto:", error);
+  
+        if (error.response) {
+          const mensajeError = error.response.data?.detail || "Hubo un error obteniendo el producto.";
+          Swal.fire({
+            icon: "error",
+            title: "Error obteniendo producto",
+            text: mensajeError,
+          });
+        } else if (error.request) {
+          Swal.fire({
+            icon: "error",
+            title: "No se recibió respuesta del servidor",
+            text: "Por favor, inténtelo de nuevo más tarde.",
+          });
+          console.error("No se recibió respuesta del servidor:", error.request);
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Error inesperado",
+            text: error.message || "Ocurrió un error inesperado.",
+          });
+        }
+      }
+    },
+    [token]
+  )
   const editarProducto = useCallback(
     async (producto) => {
       try {
@@ -521,8 +565,11 @@ const ProductosProvider = ({ children }) => {
       setDeleteProductDialog,
       setProduct,
       editarProducto,
+      obtenerProducto,
       filtrarCategoria,
       eliminarImagenProducto,
+      setProducto,
+      producto,
       product,
       deleteProductDialog,
       productDialog,
@@ -543,8 +590,11 @@ const ProductosProvider = ({ children }) => {
     eliminarProducto,
     setDeleteProductDialog,
     setProduct,
-    editarProducto,
+    obtenerProducto,
     filtrarCategoria,
+    setProducto,
+    editarProducto,
+    producto,
     product,
     deleteProductDialog,
     productDialog,

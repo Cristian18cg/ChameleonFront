@@ -11,9 +11,13 @@ import { Formulario_Login } from "../Login/Formularios/Formulario_Login";
 import { FormularioRegistro } from "../Login/Formularios/Formulario_registro";
 import { FooterLogin } from "../Login/Formularios/FooterLogin";
 import { PanelMenu } from "primereact/panelmenu";
-
+import { AutoComplete } from "primereact/autocomplete";
 import useControl from "../../hooks/useControl";
+import useControlProductos from "../../hooks/useControlProductos";
 export const NavBar = () => {
+  const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState(null);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const navigate = useNavigate();
   const {
     vistaLog,
@@ -30,7 +34,7 @@ export const NavBar = () => {
     admin,
     setAdmin,
   } = useControl();
-
+  const { productos, obtenerProductos } = useControlProductos();
   /* Funcion para verificar que no se ha vencido el token */
   const getItemWithExpiration = (key) => {
     const itemStr = localStorage.getItem(key);
@@ -52,7 +56,15 @@ export const NavBar = () => {
 
     return item.value; // Retorna el valor si no ha expirado
   };
-
+  useEffect(() => {
+    if (productos.length === 0) {
+      obtenerProductos();
+    } else {
+      console.log(productos);
+      setProducts(productos);
+    }
+    console.log(productos);
+  }, [productos]);
   useEffect(() => {
     const accessToken = getItemWithExpiration("accessToken");
     const usuarioo = getItemWithExpiration("user");
@@ -215,9 +227,9 @@ export const NavBar = () => {
               icon: "pi pi-palette",
               badge: 3,
               template: itemRenderer,
-            }
+            },
           ],
-        }
+        },
       ],
     } /*
     {
@@ -227,7 +239,6 @@ export const NavBar = () => {
       template: itemRenderer,
     },
    */,
-    
   ];
   const start = (
     <img
@@ -236,14 +247,91 @@ export const NavBar = () => {
       className="mr-2 w-48 h-14 md:w-64 md:h-20"
     ></img>
   );
+  const panelFooterTemplate = () => {
+    const isProductSelected = (filteredProducts || []).some(
+      (product) => product["name"] === selectedProduct
+    );
+    return (
+      <div className="py-2 px-3">
+        {isProductSelected ? (
+          <span>
+            <b>{selectedProduct}</b> Selecciondo.
+          </span>
+        ) : (
+          "Producto no seleccionado."
+        )}
+      </div>
+    );
+  };
+
+  const itemTemplate = (item) => {
+    // Formatear el precio en pesos colombianos
+    const formattedPrice = item.price.toLocaleString('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+    });
+  
+    return (
+      <div className="flex items-center">
+        {/* Imagen del producto */}
+        <img
+          alt={item.name}
+          src={item.images[0].image_url}
+          className="rounded-md mr-3"
+          style={{ width: "40px" }}
+        />
+  
+        {/* Nombre del producto y precio */}
+        <div>
+          <div className="font-bold">{item.name}</div> {/* Nombre */}
+          <div className="text-sm text-gray-500">{formattedPrice}</div> {/* Precio formateado */}
+        </div>
+      </div>
+    );
+  };
+  
+  const search = (event) => {
+    // Timeout to emulate a network connection
+    setTimeout(() => {
+      let _filteredProducts;
+
+      if (!event.query.trim().length) {
+        _filteredProducts = [...products];
+      } else {
+        _filteredProducts = products.filter((country) => {
+          return country.name
+            .toLowerCase()
+            .startsWith(event.query.toLowerCase());
+        });
+      }
+
+      setFilteredProducts(_filteredProducts);
+    }, 250);
+  };
+    // Cuando se selecciona un producto
+    const handleProductSelect = (e) => {
+      const selected = e.value;
+      setSelectedProduct(selected);
+  
+      // Redirigir a la ruta del producto con el id
+      if (selected && selected.id) {
+        navigate(`/tienda/${selected.id}`);
+      }
+    };
   const end = (
     <div className="flex align-items-center gap-3">
-      <InputText
-        placeholder="Buscar"
-        type="text"
+    
+      <AutoComplete
+      placeholder="Buscar producto"
+        field="name"
+        value={selectedProduct}
+        suggestions={filteredProducts}
+        completeMethod={search}
+        onChange={handleProductSelect}
+        itemTemplate={itemTemplate}
+        panelFooterTemplate={panelFooterTemplate}
         className="  m-2.5 hidden md:block w-auto"
       />
-
       {isLoggedIn ? (
         <>
           <div className="p-menuitem-content">
@@ -282,11 +370,7 @@ export const NavBar = () => {
   const headerDialog = () => {
     return (
       <div className="flex items-center h-3 justify-center bg-gray-500 bg-opacity-10 custom-header">
-        <img
-          alt="logo"
-          src={icono_color}
-          className="mr-1 sm:w-1rem w-14"
-        ></img>
+        <img alt="logo" src={icono_color} className="mr-1 sm:w-1rem w-14"></img>
 
         {vistaLog === 1 ? (
           <>

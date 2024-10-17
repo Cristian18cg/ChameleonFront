@@ -7,7 +7,11 @@ import { Dropdown } from "primereact/dropdown";
 import { classNames } from "primereact/utils";
 import useControlProductos from "../../hooks/useControlProductos";
 import { Tree } from "primereact/tree";
+import { useNavigate } from "react-router-dom";
+
 export const Tienda = () => {
+  const navigate = useNavigate();
+
   const {
     productos,
     obtenerProductos,
@@ -190,7 +194,7 @@ export const Tienda = () => {
 
   const gridItem = (product) => {
     return (
-      <div className="p-2" key={product.id}>
+      <div className="p-2 " key={product.id}>
         <div className="p-4 border border-gray-200 rounded-lg shadow-md">
           {/* Categoría y estado de inventario */}
           <div className="flex items-center justify-between ">
@@ -212,9 +216,14 @@ export const Tienda = () => {
 
           {/* Imagen y nombre del producto */}
           <div className="flex flex-col items-center gap-1 py-5">
-            <div className="relative">
+            <div
+              className="relative hover:cursor-pointer"
+              onClick={() => {
+                navigate(`/tienda/${product.id}`);
+              }}
+            >
               <img
-                className={`shadow-lg rounded-lg transition-opacity duration-300 ${
+                className={` shadow-lg rounded-lg transition-opacity duration-300 ${
                   isHovering ? "opacity-0" : "opacity-100"
                 }`}
                 src={product?.images[0]?.image_url}
