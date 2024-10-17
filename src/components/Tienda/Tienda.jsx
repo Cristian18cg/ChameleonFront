@@ -117,7 +117,7 @@ export const Tienda = () => {
           {/* Imagen del producto */}
           <img
             className="w-full sm:w-64 xl:w-40 shadow-lg mx-auto rounded-lg"
-            src={`${product?.images[0].image}`}
+            src={`${product?.images[0].image_url}`}
             alt={product.name}
           />
 
@@ -217,7 +217,7 @@ export const Tienda = () => {
                 className={`shadow-lg rounded-lg transition-opacity duration-300 ${
                   isHovering ? "opacity-0" : "opacity-100"
                 }`}
-                src={product?.images[0]?.image}
+                src={product?.images[0]?.image_url}
                 alt={product.name}
                 onMouseEnter={handleMouseEnter} // Maneja el evento mouse enter
                 onMouseLeave={handleMouseLeave} // Maneja el evento mouse leave

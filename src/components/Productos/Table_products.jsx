@@ -200,7 +200,7 @@ export default function ProductsDemo() {
   const imageBodyTemplate = (rowData) => {
     return (
       <img
-        src={`${rowData.images[0]?.image}`}
+        src={`${rowData.images[0]?.image_url}`}
         alt={rowData.name}
         className="shadow-md shadow-slate-200 rounded"
         style={{ width: "64px" }}

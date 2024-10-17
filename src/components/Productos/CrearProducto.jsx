@@ -349,7 +349,7 @@ export const CrearProducto = ({ producto }) => {
     return (
       <img
         alt={producto.images ? producto.name : item?.name}
-        src={producto.images ? item.image : item?.objectURL}
+        src={producto.images ? item.image_url : item?.objectURL}
         style={{ width: "300px", display: "block" }}
         className="rounded imagen-galeria"
       />
