@@ -1,6 +1,7 @@
 /* import 'primevue/resources/themes/aura-light-green/theme.css' */
-import "primereact/resources/primereact.min.css"; // Estilos base
 import "primeicons/primeicons.css";
+import 'primereact/resources/themes/saga-blue/theme.css';
+import 'primereact/resources/primereact.min.css';
 import { Router_Home } from "./components/Home/Router_Home";
 import { LoginProvider } from "./context/login/loginContext";
 import { ProductosProvider } from "./context/Productos/productosContext";
@@ -11,12 +12,8 @@ import {
 } from "primereact/api";
 import Tailwind from "primereact/passthrough/tailwind";
 
-import './styles/styles.css'
-import './styles/FormularioL.css'
-import './styles/general.css'
-import './styles/Navbar.css'
-import './styles/Productos.css'
-import './styles/Tienda.css'
+  import './styles/styles.css' 
+
 function App() {
 /*   const value = {
     ripple: true,
@@ -95,8 +92,8 @@ function App() {
   return (
     <PrimeReactProvider
       value={{
+        pt:Tailwind,
         unstyled: false,
-        pt: Tailwind,
         ripple: true,
         zIndex: {
           modal: 1100, // dialog, sidebar

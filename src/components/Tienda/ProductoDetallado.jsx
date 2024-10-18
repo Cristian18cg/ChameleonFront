@@ -30,12 +30,12 @@ export const ProductoDetallado = () => {
   }, [producto, id]);
 
   const itemTemplateImg = (item) => {
-    console.log("itemmostrado", item);
     return (
+      
       <img
         alt={producto.images ? producto.name : item?.name}
         src={producto.images ? item.image_url : item?.objectURL}
-        style={{ width: "300px", display: "block" }}
+        style={{ width: "300px", }}
         className="rounded imagen-galeria"
       />
     );
@@ -81,9 +81,11 @@ export const ProductoDetallado = () => {
                 responsiveOptions={responsiveOptions}
                 numVisible={6}
                 item={itemTemplateImg}
-                className="w-11/12 rounded-md shadow-md gallery-thumbnail-custom"
+                className="w-full custom-galleria relative" // Ajustar el ancho de la galería
                 thumbnail={thumbnailTemplate}
                 thumbnailsPosition="left"
+                autoPlay
+                circular
               />
             </div>
           )}
@@ -97,7 +99,7 @@ export const ProductoDetallado = () => {
 
             {/* Precio con y sin descuento */}
             <div className="mb-3">
-              {producto.discount_percentage && (
+              {producto.discount_percentage && producto.discount_percentage >0 && (
                 <span className="text-lg text-red-500 font-semibold">
                   {producto.discount_percentage}% de descuento
                 </span>
@@ -134,6 +136,7 @@ export const ProductoDetallado = () => {
                 incrementButtonClassName="p-button-success"
                 incrementButtonIcon="pi pi-plus"
                 decrementButtonIcon="pi pi-minus"
+                className="max-w-14 mx-2"
               />
               <Button
                 label="Agregar al carrito"

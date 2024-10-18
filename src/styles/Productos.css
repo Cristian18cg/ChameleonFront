@@ -3,78 +3,94 @@
 }
 
 .input-productos .p-button {
-    background-color: rgb(34 197 94 / var(--tw-bg-opacity))!important;
-    border-color:rgb(14, 224, 91) ;
+    background-color: rgb(34 197 94 / var(--tw-bg-opacity)) !important;
+    border-color: rgb(14, 224, 91);
 }
 
 
 .input-productos .p-button:active {
-    background-color: rgb(34 197 94 / var(--tw-bg-opacity))!important; /* Color personalizado en estado activo */
-    border-color: rgb(129, 241, 170)!important; /* Borde personalizado */
-    box-shadow: 0 5px 15px rgba(7, 246, 95, 0.616); /* Box-shadow en estado activo */
+    background-color: rgb(34 197 94 / var(--tw-bg-opacity)) !important;
+    /* Color personalizado en estado activo */
+    border-color: rgb(129, 241, 170) !important;
+    /* Borde personalizado */
+    box-shadow: 0 5px 15px rgba(7, 246, 95, 0.616);
+    /* Box-shadow en estado activo */
 }
 
 .input-productos .p-button:hover {
-    box-shadow: 0px 2px 5px 0 rgba(54, 207, 30, 0.482); /* Box-shadow en hover */
+    box-shadow: 0px 2px 5px 0 rgba(54, 207, 30, 0.482);
+    /* Box-shadow en hover */
 }
-.input-productos .p-fileupload-choose{
+
+.input-productos .p-fileupload-choose {
     width: 100% !important;
 }
-.input-productos .p-treeselect{
+
+.input-productos .p-treeselect {
     width: 100% !important;
 }
-.custom-cancel-btn{
+
+.custom-cancel-btn {
     color: red;
     border: 1px;
     border-radius: 100%;
     border-color: red;
     background-color: transparent;
-    border-style:double;
+    border-style: double;
     padding: .7rem;
 
-} 
-.custom-cancel-btn:disabled{
+}
+
+.custom-cancel-btn:disabled {
     color: rgb(236, 125, 125);
     border: 1px;
     border-radius: 100%;
     border-color: rgb(236, 125, 125);
     background-color: transparent;
-    border-style:double;
+    border-style: double;
     padding: .7rem;
 
-} 
-.custom-cancel-btn:hover{
+}
+
+.custom-cancel-btn:hover {
     cursor: pointer;
     color: rgb(240, 231, 231);
     border-color: red;
     background-color: red;
-    
-} 
 
-.custom-choose-btn{
+}
+
+.custom-choose-btn {
     color: rgb(255, 174, 0);
     border: 1px;
     border-radius: 100%;
     border-color: rgb(255, 174, 0);
     background-color: transparent;
-    border-style:double;
+    border-style: double;
     padding: .7rem;
-    align-items: center;    
+    align-items: center;
     display: flex;
     justify-content: center;
-} .custom-choose-btn .p-button-icon{
-    margin:1;
 }
-.custom-choose-btn:hover{
+
+.custom-choose-btn .p-button-icon {
+    margin: 1;
+}
+
+.custom-choose-btn:hover {
     cursor: pointer;
     color: rgb(240, 231, 231);
-    background-color:  rgb(255, 174, 0);;
-    
-} 
+    background-color: rgb(255, 174, 0);
+    ;
+
+}
+
 .p-galleria-indicator {
-    width: 12px; /* Ajusta según el tamaño deseado */
+    width: 12px;
+    /* Ajusta según el tamaño deseado */
     height: 12px;
-    margin: 0 5px; /* Espacio entre indicadores */
+    margin: 0 5px;
+    /* Espacio entre indicadores */
     background-color: rgb(196, 196, 196);
     border-radius: 50%;
     padding: 0;
@@ -85,7 +101,34 @@
     border-radius: 50%;
 }
 
-.gallery-thumbnail-custom .p-galleria-thumbnail-container{
-background-color: rgb(15, 14, 14);
-border-radius: 12px;
+.gallery-thumbnail-custom .p-galleria-thumbnail-container {
+    background-color: rgb(15, 14, 14);
+    border-radius: 12px;
+}
+.gallery-thumbnail-custom .p-galleria-item-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) !important;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.gallery-thumbnail-custom .p-galleria-thumbnail-container {
+    z-index: 0;
+    /* Mantén las miniaturas detrás de la imagen principal */
+}
+
+.gallery-thumbnail-custom img {
+    max-height: 100%;
+    /* Ajusta la altura de la imagen principal al contenedor */
+    max-width: 100%;
+    /* Asegura que la imagen no se desborde del contenedor */
+    object-fit: cover;
+    /* Asegura que la imagen se ajuste adecuadamente */
+    z-index: 0;
+    /* Asegúrate de que la imagen principal esté encima de las miniaturas */
 }
