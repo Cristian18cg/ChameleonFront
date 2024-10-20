@@ -18,7 +18,7 @@ import { Galleria } from "primereact/galleria";
 
 export const ProductoDetallado = () => {
   const { producto, obtenerProducto } = useControlProductos();
-  const[unidades, setunidades] = useState(1)
+  const [unidades, setunidades] = useState(1);
   const { id } = useParams(); // Captura el id de la URL
 
   useEffect(() => {
@@ -31,11 +31,10 @@ export const ProductoDetallado = () => {
 
   const itemTemplateImg = (item) => {
     return (
-      
       <img
         alt={producto.images ? producto.name : item?.name}
         src={producto.images ? item.image_url : item?.objectURL}
-        style={{ width: "300px", }}
+        style={{ width: "300px" }}
         className="rounded imagen-galeria"
       />
     );
@@ -75,7 +74,8 @@ export const ProductoDetallado = () => {
         <div className="grid  grid-cols-1 md:grid-cols-2 gap-4 p-5">
           {/* Imagen del producto */}
           {producto?.images && (
-            <div className="card  col-span-1 flex-col ">
+            <div className="card  col-span-1 flex-col
+             ">
               <Galleria
                 value={producto?.images}
                 responsiveOptions={responsiveOptions}
@@ -91,21 +91,33 @@ export const ProductoDetallado = () => {
           )}
 
           {/* Detalles del producto */}
-          <div className="col-span-1">
+          <div className="col-span-1 flex-col items-center justify-center text-center">
             {/* Nombre del producto */}
-            <h1 className="font-bold text-4xl text-gray-900 mb-3">
+            <h1 className="font-bold text-4xl text-gray-900 mb-3 ">
               {producto.name}
             </h1>
 
             {/* Precio con y sin descuento */}
             <div className="mb-3">
-              {producto.discount_percentage && producto.discount_percentage >0 && (
-                <span className="text-lg text-red-500 font-semibold">
-                  {producto.discount_percentage}% de descuento
-                </span>
-              )}
-              <div className="flex items-center mt-1 space-x-4">
-                <span className="text-2xl font-semibold text-red-600 line-through">
+              {producto.discount_percentage &&
+                producto.discount_percentage > 0 && (
+                  <span className="text-lg text-red-500 font-semibold">
+                    {producto.discount_percentage}% de descuento
+                  </span>
+                )}
+              <div className="flex  justify-center items-center mt-1 space-x-4">
+                {producto.discount_percentage &&
+                  producto.discount_percentage > 0 && (
+                    <span className="text-2xl font-semibold text-red-600 line-through">
+                      {new Intl.NumberFormat("es-CO", {
+                        style: "currency",
+                        currency: "COP",
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 2,
+                      }).format(producto.discount_price)}
+                    </span>
+                  )}
+                <span className="text-4xl font-semibold text-gray-900">
                   {new Intl.NumberFormat("es-CO", {
                     style: "currency",
                     currency: "COP",
@@ -113,36 +125,29 @@ export const ProductoDetallado = () => {
                     maximumFractionDigits: 2,
                   }).format(producto.price)}
                 </span>
-                <span className="text-4xl font-semibold text-gray-900">
-                  {new Intl.NumberFormat("es-CO", {
-                    style: "currency",
-                    currency: "COP",
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 2,
-                  }).format(producto.discount_price)}
-                </span>
               </div>
             </div>
-
+            <InputNumber
+              inputId="horizontal-buttons"
+              value={unidades}
+              onValueChange={(e) => setunidades(e.value)}
+              showButtons
+              min={0}
+              buttonLayout="horizontal"
+              decrementButtonClassName="p-button-danger"
+              incrementButtonClassName="p-button-success"
+              incrementButtonIcon="pi pi-plus"
+              decrementButtonIcon="pi pi-minus"
+              className="input-number-cart mb-2"
+            />
+            <div className="flex justify-center items-center align-middle"></div>
             {/* Botón Agregar al carrito */}
             <div className="mb-4">
-              <InputNumber
-                inputId="horizontal-buttons"
-                value={unidades}
-                onValueChange={(e) => setunidades(e.value)}
-                showButtons
-                buttonLayout="horizontal"
-                decrementButtonClassName="p-button-danger"
-                incrementButtonClassName="p-button-success"
-                incrementButtonIcon="pi pi-plus"
-                decrementButtonIcon="pi pi-minus"
-                className="max-w-14 mx-2"
-              />
               <Button
                 label="Agregar al carrito"
                 iconPos="right"
                 icon="pi pi-shopping-cart"
-                className="rounded-full bg-green-500 hover:bg-green-600 text-white border-green-500 hover:border-green-600 p-3"
+                className=" button-green rounded-full bg-green-500 hover:bg-green-600 text-white border-green-500 hover:border-green-600 p-3"
                 disabled={producto.stock === 0}
               />
             </div>
@@ -177,13 +182,13 @@ export const ProductoDetallado = () => {
                 Detalle de Pago
               </h2>
               <p className="text-gray-700">
-                <strong>Total a pagar:</strong>{" "}
+                <strong>Total a pagar por este producto:</strong>{" "}
                 {new Intl.NumberFormat("es-CO", {
                   style: "currency",
                   currency: "COP",
                   minimumFractionDigits: 0,
                   maximumFractionDigits: 2,
-                }).format(producto.discount_price)}
+                }).format(producto.discount_price * unidades)}
               </p>
               <Button
                 label="Ver métodos de pago"

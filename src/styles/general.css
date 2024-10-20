@@ -75,3 +75,8 @@ padding: 0;
   top: 0;
   left: 0;
 }
+
+.button-green .p-button:hover{
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 1), 0 0 0 4px rgb(15, 176, 77), 0 1px 2px 0 rgba(0, 0, 0, 1) ;
+
+}
