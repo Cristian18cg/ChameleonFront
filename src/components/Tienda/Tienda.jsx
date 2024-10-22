@@ -263,6 +263,19 @@ export const Tienda = () => {
           <div className="flex justify-center">
             <div className="grid  grid-cols-1 md:grid-cols-2">
               <div className="flex justify-center">
+              {product.discount_percentage &&
+                  product.discount_percentage > 0 && (
+                    <span className=" text-2xl font-semibold text-red-600 line-through">
+                      {new Intl.NumberFormat("es-CO", {
+                        style: "currency",
+                        currency: "COP",
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 2,
+                      }).format(product.price)}
+                    </span>
+                  )}
+                   {product.discount_percentage &&
+                  product.discount_percentage > 0 && (
                 <span className="text-lg font-semibold text-red-600 line-through mt-1">
                   {new Intl.NumberFormat("es-CO", {
                     style: "currency",
@@ -271,6 +284,8 @@ export const Tienda = () => {
                     maximumFractionDigits: 2,
                   }).format(product.price)}
                 </span>
+                  )}
+
               </div>
               <div className="flex justify-start">
                 <span className="text-2xl font-semibold text-gray-900 ">

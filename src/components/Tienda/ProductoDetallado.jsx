@@ -49,7 +49,7 @@ export const ProductoDetallado = () => {
       <img
         alt={producto.images ? producto.name : item?.name}
         src={producto.images ? item.image_url : item?.objectURL}
-        className="rounded  object-cover md:w-44 lg:w-64 xl:w-full"
+        className="rounded  object-cover  md:w-44 lg:w-64 xl:w-full"
       />
     );
   };
@@ -122,7 +122,7 @@ export const ProductoDetallado = () => {
               <div className="flex justify-center items-center mt-1 space-x-4">
                 {producto.discount_percentage &&
                   producto.discount_percentage > 0 && (
-                    <span className=" cpñtext-2xl font-semibold text-red-600 line-through">
+                    <span className=" text-2xl font-semibold text-red-600 line-through">
                       {new Intl.NumberFormat("es-CO", {
                         style: "currency",
                         currency: "COP",
