@@ -241,7 +241,7 @@ export const Tienda = () => {
                 onMouseLeave={() => handleMouseLeave(product.id)}
               >
                 <img
-                  className={`w-full h-auto shadow-lg rounded-lg transition-opacity duration-300 ${
+                  className={`w-full h-auto max-h-screen shadow-lg rounded-lg transition-opacity duration-300 ${
                     isHovering ? "opacity-0" : "opacity-100"
                   }`}
                   src={product?.images[0]?.image_url}
@@ -342,7 +342,7 @@ export const Tienda = () => {
               label="Agregar"
               iconPos="right"
               icon="pi pi-shopping-cart"
-              className="mt-2 bg-green-600 font-semibold hover:bg-green-600 text-white border-green-500 hover:border-green-600 mx-auto"
+              className="mt-2 w-full bg-green-600 font-semibold hover:bg-green-600 text-white border-green-500 hover:border-green-600 mx-auto"
               disabled={product.stock === 0}
               onClick={() =>
                 handleUnitChange(product, unidades[product.id] || 1)
@@ -366,7 +366,7 @@ export const Tienda = () => {
       <div
         className={
           layout === "grid"
-            ? "grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-4"
+            ? "grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 md:gap-4 "
             : "grid grid-cols-1"
         }
       >
