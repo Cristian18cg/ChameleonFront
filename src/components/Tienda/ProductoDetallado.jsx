@@ -20,6 +20,21 @@ export const ProductoDetallado = () => {
   const { producto, obtenerProducto } = useControlProductos();
   const [unidades, setunidades] = useState(1);
   const { id } = useParams(); // Captura el id de la URL
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768); // Definir 768px como límite para pantallas móviles
+    };
+
+    // Ejecutar cuando el componente se monta y cuando la ventana cambia de tamaño
+    window.addEventListener("resize", handleResize);
+    handleResize(); // Inicializar al cargar
+
+    return () => {
+      window.removeEventListener("resize", handleResize); // Limpiar cuando el componente se desmonta
+    };
+  }, []);
 
   useEffect(() => {
     if (id) {
@@ -34,8 +49,7 @@ export const ProductoDetallado = () => {
       <img
         alt={producto.images ? producto.name : item?.name}
         src={producto.images ? item.image_url : item?.objectURL}
-        style={{ width: "300px" }}
-        className="rounded imagen-galeria"
+        className="rounded  object-cover md:w-56 lg:w-96 xl:w-96"
       />
     );
   };
@@ -44,7 +58,7 @@ export const ProductoDetallado = () => {
       <img
         alt={producto.images ? producto.name : item?.name}
         src={producto.images ? item.image_url : item?.objectURL}
-        style={{ width: "80px" }}
+        className="w-12 md:w-20"
       />
     );
   };
@@ -74,18 +88,18 @@ export const ProductoDetallado = () => {
         <div className="grid  grid-cols-1 md:grid-cols-2 gap-4 p-5">
           {/* Imagen del producto */}
           {producto?.images && (
-            <div className="card  col-span-1 flex-col
-             ">
+            <div
+              className=" card  col-span-1 flex-col justify-center items-center
+             "
+            >
               <Galleria
                 value={producto?.images}
                 responsiveOptions={responsiveOptions}
                 numVisible={6}
                 item={itemTemplateImg}
-                className="w-full custom-galleria relative" // Ajustar el ancho de la galería
-                thumbnail={thumbnailTemplate}
+                className="gallery-thumbnail-custom  relative" // Ajustar el ancho de la galería
+                thumbnail={isMobile ? false : thumbnailTemplate}
                 thumbnailsPosition="left"
-                autoPlay
-                circular
               />
             </div>
           )}
@@ -105,10 +119,10 @@ export const ProductoDetallado = () => {
                     {producto.discount_percentage}% de descuento
                   </span>
                 )}
-              <div className="flex  justify-center items-center mt-1 space-x-4">
+              <div className="flex justify-center items-center mt-1 space-x-4">
                 {producto.discount_percentage &&
                   producto.discount_percentage > 0 && (
-                    <span className="text-2xl font-semibold text-red-600 line-through">
+                    <span className=" cpñtext-2xl font-semibold text-red-600 line-through">
                       {new Intl.NumberFormat("es-CO", {
                         style: "currency",
                         currency: "COP",
