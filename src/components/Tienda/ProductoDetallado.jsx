@@ -24,7 +24,7 @@ export const ProductoDetallado = () => {
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768); // Definir 768px como límite para pantallas móviles
+      setIsMobile(window.innerWidth <= 936); // Definir 768px como límite para pantallas móviles
     };
 
     // Ejecutar cuando el componente se monta y cuando la ventana cambia de tamaño
@@ -42,14 +42,14 @@ export const ProductoDetallado = () => {
       obtenerProducto(id);
     }
     console.log(producto);
-  }, [producto, id]);
+  }, [id]);
 
   const itemTemplateImg = (item) => {
     return (
       <img
         alt={producto.images ? producto.name : item?.name}
         src={producto.images ? item.image_url : item?.objectURL}
-        className="rounded  object-cover md:w-56 lg:w-96 xl:w-96"
+        className="rounded  object-cover md:w-44 lg:w-64 xl:w-full"
       />
     );
   };
@@ -58,7 +58,7 @@ export const ProductoDetallado = () => {
       <img
         alt={producto.images ? producto.name : item?.name}
         src={producto.images ? item.image_url : item?.objectURL}
-        className="w-12 md:w-20"
+        className="w-12  md:w-12 lg:w-14 xl:w-24"
       />
     );
   };
@@ -74,11 +74,11 @@ export const ProductoDetallado = () => {
     },
     {
       breakpoint: "767px",
-      numVisible: 2,
+      numVisible: 3,
     },
     {
       breakpoint: "575px",
-      numVisible: 1,
+      numVisible: 3,
     },
   ];
   return (
@@ -97,9 +97,9 @@ export const ProductoDetallado = () => {
                 responsiveOptions={responsiveOptions}
                 numVisible={6}
                 item={itemTemplateImg}
-                className="gallery-thumbnail-custom  relative" // Ajustar el ancho de la galería
-                thumbnail={isMobile ? false : thumbnailTemplate}
-                thumbnailsPosition="left"
+                className={isMobile ? "" : "gallery-thumbnail-custom  relative"} // Ajustar el ancho de la galería
+                thumbnail={ thumbnailTemplate}
+                thumbnailsPosition={isMobile ? "bottom" : "left"}
               />
             </div>
           )}
