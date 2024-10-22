@@ -11,6 +11,7 @@ import {
 
 } from "primereact/api";
 import Tailwind from "primereact/passthrough/tailwind";
+import { twMerge } from 'tailwind-merge';
 
   import './styles/styles.css' 
 
@@ -92,8 +93,9 @@ function App() {
   return (
     <PrimeReactProvider
       value={{
-        pt:Tailwind,
-        unstyled: false,
+        pt:{Tailwind},
+        ptOptions: { mergeSections: true, mergeProps: true, classNameMergeFunction: twMerge },
+        
         ripple: true,
         zIndex: {
           modal: 1100, // dialog, sidebar

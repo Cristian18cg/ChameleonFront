@@ -1,8 +1,9 @@
 /* Importamos PrimeReact antes que cualquier otra cosa */
-@import 'primereact/resources/themes/saga-blue/theme.css';
-@import 'primereact/resources/primereact.min.css';
 
+@layer tailwind-base, primereact, tailwind-utilities;
 /* Luego, los estilos base de Tailwind */
+@import 'primereact/resources/themes/saga-blue/theme.css';
+
 @layer tailwind-base {
   @tailwind base;
 }
@@ -12,6 +13,8 @@
   @tailwind components;
   @tailwind utilities;
 }
+
+@import 'primereact/resources/primereact.min.css';
 
 /* Si tienes otros estilos personalizados, los importas al final */
 @import './general.css';

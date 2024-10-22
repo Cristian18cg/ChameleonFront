@@ -49,7 +49,7 @@ export const ProductoDetallado = () => {
       <img
         alt={producto.images ? producto.name : item?.name}
         src={producto.images ? item.image_url : item?.objectURL}
-        className="rounded  object-cover  md:w-44 lg:w-64 xl:w-full"
+        className="rounded  block md:w-44 lg:w-64 xl:w-full"
       />
     );
   };
@@ -58,7 +58,7 @@ export const ProductoDetallado = () => {
       <img
         alt={producto.images ? producto.name : item?.name}
         src={producto.images ? item.image_url : item?.objectURL}
-        className="w-12  md:w-12 lg:w-14 xl:w-24"
+        className="w-12 block md:w-12 lg:w-14 xl:w-24"
       />
     );
   };
@@ -97,7 +97,7 @@ export const ProductoDetallado = () => {
                 responsiveOptions={responsiveOptions}
                 numVisible={6}
                 item={itemTemplateImg}
-                className={isMobile ? "" : "gallery-thumbnail-custom  relative"} // Ajustar el ancho de la galería
+                className={isMobile ? "" : "gallery-thumbnail-custom  "} // Ajustar el ancho de la galería
                 thumbnail={ thumbnailTemplate}
                 thumbnailsPosition={isMobile ? "bottom" : "left"}
               />
