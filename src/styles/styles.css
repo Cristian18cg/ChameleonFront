@@ -2,7 +2,7 @@
 
 @layer tailwind-base, primereact, tailwind-utilities;
 /* Luego, los estilos base de Tailwind */
-@import 'primereact/resources/themes/saga-blue/theme.css';
+@import 'primereact/resources/themes/saga-green/theme.css';
 
 @layer tailwind-base {
   @tailwind base;

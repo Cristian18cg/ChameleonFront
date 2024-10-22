@@ -144,7 +144,7 @@ export const CrearProducto = ({ producto }) => {
   const [imageFiles, setImageFiles] = useState([]); // Para almacenar múltiples imágenes
 
   const onImageSelect = (e) => {
-    console.log('entro imagenes',e)
+    console.log("entro imagenes", e);
     const selectedFiles = Array.from(e.files); // Obtener las nuevas imágenes seleccionadas
 
     // Filtrar las imágenes que no están ya en imageFiles
@@ -180,7 +180,7 @@ export const CrearProducto = ({ producto }) => {
           setvistaCrearCat(true);
         }}
         label="Crear categoria"
-        className=" bg-gray-700 h-3 border-black rounded-none hover:bg-slate-50 hover:text-black input-productos w-full"
+        className=" bg-green-800-700 h-6 border-green-600 rounded-none hover:bg-green-200 hover:text-black input-productos w-full"
       />
     );
   };
@@ -300,7 +300,7 @@ export const CrearProducto = ({ producto }) => {
             src={file?.objectURL}
             width={50}
           />
-          <span className="flex flex-column text-left ml-3 mx-2<">
+          <span className="flex flex-column text-left ml-3 mx-2">
             {file?.name}
             <small>{new Date().toLocaleDateString()}</small>
           </span>
@@ -308,12 +308,12 @@ export const CrearProducto = ({ producto }) => {
         <Tag
           value={props?.formatSize}
           severity="warning"
-          className="px-3 py-2 mx-2"
+          className="px-3 py-2 mx-4"
         />
         <Button
           type="button"
           icon="pi pi-times"
-          className="p-button-outlined p-button-rounded p-button-danger ml-auto"
+          className="custom-cancel-btn p-button-outlined p-button-rounded p-button-danger ml-auto"
           onClick={() => onTemplateRemove(file, props?.onRemove)}
         />
       </div>
@@ -341,7 +341,6 @@ export const CrearProducto = ({ producto }) => {
       </div>
     );
   };
-
 
   const itemTemplateImg = (item) => {
     console.log("itemmostrado", item);
@@ -376,7 +375,7 @@ export const CrearProducto = ({ producto }) => {
   ];
   const elimiarImagen = async () => {
     // Eliminar la imagen del backend primero
-     eliminarImagenProducto(product.id, imageFile.id);
+    eliminarImagenProducto(product.id, imageFile.id);
 
     // Luego, actualizar el estado del producto para eliminar la imagen
     setProduct((prevProduct) => {
@@ -635,14 +634,15 @@ export const CrearProducto = ({ producto }) => {
           <label htmlFor="is_active">¿Producto activo?</label>
         </div>
       </div>
-
-      {/* Botón para guardar */}
-      <Button
-        label="Guardar Producto"
-        icon="pi pi-check"
-        onClick={onSaveProduct}
-        className="rounded-full mt-2 input-productos"
-      />
+      <div className="flex justify-center">
+        {/* Botón para guardar */}
+        <Button
+          label="Guardar Producto"
+          icon="pi pi-check"
+          onClick={onSaveProduct}
+          className=" max-w-xl rounded-md mt-4 input-productos"
+        />
+      </div>
     </div>
   );
 };

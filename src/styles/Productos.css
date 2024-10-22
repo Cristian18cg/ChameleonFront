@@ -31,18 +31,11 @@
 }
 
 .custom-cancel-btn {
-    color: red;
-    border: 1px;
-    border-radius: 100%;
-    border-color: red;
-    background-color: transparent;
-    border-style: double;
-    padding: .7rem;
 
+    padding: .7rem;
 }
 
-.custom-cancel-btn:disabled {
-    color: rgb(236, 125, 125);
+/* .custom-cancel-btn:disabled {
     border: 1px;
     border-radius: 100%;
     border-color: rgb(236, 125, 125);
@@ -59,7 +52,7 @@
     background-color: red;
 
 }
-
+ */
 .custom-choose-btn {
     color: rgb(255, 174, 0);
     border: 1px;
@@ -85,22 +78,19 @@
 
 }
 
-.p-galleria-indicator {
-    width: 12px;
-    /* Ajusta según el tamaño deseado */
-    height: 12px;
-    margin: 0 5px;
-    /* Espacio entre indicadores */
-    background-color: rgb(196, 196, 196);
-    border-radius: 50%;
-    padding: 0;
+.p-galleria .p-galleria-indicators .p-galleria-indicator.p-highlight button {
+    background-color: #4caf50!important;
 }
-
+.p-galleria-indicator .p-link {
+ 
+    background-color: rgb(196, 196, 196);
+}
+/* 
 .p-galleria-indicator.p-highlight {
     background-color: rgb(73, 235, 23);
     border-radius: 50%;
 }
-
+ */
 /* .gallery-thumbnail-custom .p-galleria-thumbnail-container {
     border-radius: 12px;
 

@@ -41,20 +41,26 @@ html {
 }
 /* header dialog */
 .custom-header2 {
-  padding: 1rem 1rem 1rem 1rem;
+  padding: 1rem 1rem 1rem 1rem!important;
   /* Añade espaciado al contenido */
   border-top-left-radius: 0.5rem;
-  background-color: rgb(11, 199, 92);
+  background-color: rgb(12, 202, 94)!important;
   /* verde translúcido */
 
 }
-.custom-header2 .p-dialog-header-icons {
-  background-color: rgba(11, 199, 92, 0);
+.custom-header2 .p-dialog-header-icon {
+  /* Añade espaciado al contenido */
+  color: rgb(255, 255, 255);
+padding: 0;
+}
+.custom-header2 .p-dialog-header-icon:hover {
+  background-color: rgba(13, 95, 49, 0.815)!important;
   /* verde translúcido */
   /* Añade espaciado al contenido */
   color: rgb(255, 255, 255);
 padding: 0;
 }
+
 
 .image-container {
   position: relative;
@@ -79,4 +85,15 @@ padding: 0;
 .button-green .p-button:hover{
   box-shadow: 0 0 0 2px rgba(255, 255, 255, 1), 0 0 0 4px rgb(15, 176, 77), 0 1px 2px 0 rgba(0, 0, 0, 1) ;
 
+}
+.p-button-success{
+  background-color: rgb(11, 199, 92);
+}
+.p-tag-success{
+  background-color: rgb(11, 199, 92);
+
+}
+.p-treenode-selectable:hover{
+  background-color: rgba(10, 224, 103, 0.438);
+  
 }
