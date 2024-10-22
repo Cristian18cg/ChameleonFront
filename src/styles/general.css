@@ -89,11 +89,16 @@ padding: 0;
 .p-button-success{
   background-color: rgb(11, 199, 92);
 }
+
 .p-tag-success{
   background-color: rgb(11, 199, 92);
 
 }
 .p-treenode-selectable:hover{
   background-color: rgba(10, 224, 103, 0.438);
+  
+}
+.p-treenode-selectable .p-tree-toggler:hover{
+  background-color: rgba(10, 182, 84, 0.438);
   
 }

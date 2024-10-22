@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Menubar } from "primereact/menubar";
-import { InputText } from "primereact/inputtext";
+import { Button } from "primereact/button";
+
 import { Badge } from "primereact/badge";
 import { Avatar } from "primereact/avatar";
 import chameleonLargo from "../../img/chameleonlargo.png";
@@ -10,7 +11,6 @@ import { Dialog } from "primereact/dialog";
 import { Formulario_Login } from "../Login/Formularios/Formulario_Login";
 import { FormularioRegistro } from "../Login/Formularios/Formulario_registro";
 import { FooterLogin } from "../Login/Formularios/FooterLogin";
-import { PanelMenu } from "primereact/panelmenu";
 import { AutoComplete } from "primereact/autocomplete";
 import useControl from "../../hooks/useControl";
 import useControlProductos from "../../hooks/useControlProductos";
@@ -266,11 +266,11 @@ export const NavBar = () => {
 
   const itemTemplate = (item) => {
     // Formatear el precio en pesos colombianos
-    const formattedPrice = item.price.toLocaleString('es-CO', {
-      style: 'currency',
-      currency: 'COP',
+    const formattedPrice = item.price.toLocaleString("es-CO", {
+      style: "currency",
+      currency: "COP",
     });
-  
+
     return (
       <div className="flex items-center">
         {/* Imagen del producto */}
@@ -280,16 +280,17 @@ export const NavBar = () => {
           className="rounded-md mr-3"
           style={{ width: "40px" }}
         />
-  
+
         {/* Nombre del producto y precio */}
         <div>
           <div className="font-bold">{item.name}</div> {/* Nombre */}
-          <div className="text-sm text-gray-500">{formattedPrice}</div> {/* Precio formateado */}
+          <div className="text-sm text-gray-500">{formattedPrice}</div>{" "}
+          {/* Precio formateado */}
         </div>
       </div>
     );
   };
-  
+
   const search = (event) => {
     // Timeout to emulate a network connection
     setTimeout(() => {
@@ -308,21 +309,20 @@ export const NavBar = () => {
       setFilteredProducts(_filteredProducts);
     }, 250);
   };
-    // Cuando se selecciona un producto
-    const handleProductSelect = (e) => {
-      const selected = e.value;
-      setSelectedProduct(selected);
-  
-      // Redirigir a la ruta del producto con el id
-      if (selected && selected.id) {
-        navigate(`/tienda/${selected.id}`);
-      }
-    };
+  // Cuando se selecciona un producto
+  const handleProductSelect = (e) => {
+    const selected = e.value;
+    setSelectedProduct(selected);
+
+    // Redirigir a la ruta del producto con el id
+    if (selected && selected.id) {
+      navigate(`/tienda/${selected.id}`);
+    }
+  };
   const end = (
     <div className="flex align-items-center gap-3">
-    
       <AutoComplete
-      placeholder="Buscar producto"
+        placeholder="Buscar producto"
         field="name"
         value={selectedProduct}
         suggestions={filteredProducts}
@@ -422,6 +422,12 @@ export const NavBar = () => {
           </>
         )}
       </Dialog>
+      <div className="fixed bottom-5 right-5 bg-transparent p-4 rounded-lg z-50">
+        <div className=" bg-transparent flex items-center justify-between">
+          <Button  icon="pi pi-shopping-cart" className="rounded-full" />
+        </div>
+        {/* Aquí puedes añadir el contenido del carrito */}
+      </div>
     </div>
   );
 };

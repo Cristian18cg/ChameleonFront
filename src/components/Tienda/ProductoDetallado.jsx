@@ -1,19 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import useControlProductos from "../../hooks/useControlProductos";
-import { InputText } from "primereact/inputtext";
-import { InputTextarea } from "primereact/inputtextarea";
+
 import { InputNumber } from "primereact/inputnumber";
 import { Button } from "primereact/button";
-import { RadioButton } from "primereact/radiobutton";
-import { FileUpload } from "primereact/fileupload";
-import { Checkbox } from "primereact/checkbox";
-import { TreeSelect } from "primereact/treeselect";
-import { Dialog } from "primereact/dialog";
-import { Toast } from "primereact/toast";
-import { ProgressBar } from "primereact/progressbar";
-import { Tooltip } from "primereact/tooltip";
-import { Tag } from "primereact/tag";
+
 import { Galleria } from "primereact/galleria";
 
 export const ProductoDetallado = () => {
@@ -83,7 +74,7 @@ export const ProductoDetallado = () => {
   ];
   return (
     <div className="flex justify-center">
-      <div className="card border-2 w-3/4 rounded-md border-gray-200 mt-5 shadow-lg">
+      <div className="card border-2 w-full md:w-3/4 rounded-md border-gray-200 mt-5 shadow-lg">
         {/* Grid con dos columnas */}
         <div className="grid  grid-cols-1 md:grid-cols-2 gap-4 p-5">
           {/* Imagen del producto */}

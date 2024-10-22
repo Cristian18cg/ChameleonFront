@@ -278,7 +278,7 @@ export default function ProductsDemo() {
           unstyled
           onInput={(e) => setGlobalFilter(e.target.value)}
           placeholder="Buscar..."
-          className=""
+          className="input-productos p-inputtext p-component p-input "
         />
       </IconField>
     </div>
@@ -339,7 +339,7 @@ export default function ProductsDemo() {
           <Column selectionMode="multiple" exportable={false}></Column>
           <Column
             field="code"
-            header="Code"
+            header="Codigo"
             sortable
             style={{ minWidth: "6rem" }}
           ></Column>

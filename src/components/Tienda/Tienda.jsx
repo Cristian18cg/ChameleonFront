@@ -8,9 +8,19 @@ import { classNames } from "primereact/utils";
 import useControlProductos from "../../hooks/useControlProductos";
 import { Tree } from "primereact/tree";
 import { useNavigate } from "react-router-dom";
+import { InputNumber } from "primereact/inputnumber";
 
 export const Tienda = () => {
   const navigate = useNavigate();
+  const [unidades, setUnidades] = useState({}); // Estado para manejar las unidades por producto
+
+  // Función para actualizar las unidades por producto
+  const handleUnitChange = (productId, value) => {
+    setUnidades((prevUnidades) => ({
+      ...prevUnidades,
+      [productId]: value, // Actualiza la cantidad solo del producto específico
+    }));
+  };
 
   const {
     productos,
@@ -27,13 +37,14 @@ export const Tienda = () => {
   const [nodeCategoria, setnodeCategoria] = useState("");
   const [selectedKey, setSelectedKey] = useState("");
   const [disabledFiltroCate, setdisabledFiltroCate] = useState(true);
-  const [isHovering, setIsHovering] = useState(false);
-  const handleMouseEnter = () => {
-    setIsHovering(true);
+  const [hoverStates, setHoverStates] = useState({});
+
+  const handleMouseEnter = (id) => {
+    setHoverStates((prev) => ({ ...prev, [id]: true }));
   };
 
-  const handleMouseLeave = () => {
-    setIsHovering(false);
+  const handleMouseLeave = (id) => {
+    setHoverStates((prev) => ({ ...prev, [id]: false }));
   };
   const sortOptions = [
     { label: "Precio Mayor a Menor", value: "!price" },
@@ -193,11 +204,13 @@ export const Tienda = () => {
   // Grid Item View
 
   const gridItem = (product) => {
+    const isHovering = hoverStates[product.id] || false;
+
     return (
-      <div className="p-2 " key={product.id}>
+      <div className="p-2" key={product.id}>
         <div className="p-4 border border-gray-200 rounded-lg shadow-md">
           {/* Categoría y estado de inventario */}
-          <div className="flex items-center justify-between ">
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <i className="pi pi-tag text-gray-500"></i>
               <span
@@ -207,7 +220,7 @@ export const Tienda = () => {
                 }}
               >
                 {product.categories && product.categories.length > 0
-                  ? product.categories.join(", ") // Unir las categorías con comas
+                  ? product.categories.join(", ")
                   : "Sin categoría"}
               </span>
             </div>
@@ -216,36 +229,40 @@ export const Tienda = () => {
 
           {/* Imagen y nombre del producto */}
           <div className="flex flex-col items-center gap-1 py-5">
-            <div
-              className="relative hover:cursor-pointer"
-              onClick={() => {
-                navigate(`/tienda/${product.id}`);
-              }}
-            >
-              <img
-                className={` shadow-lg rounded-lg transition-opacity duration-300 ${
-                  isHovering ? "opacity-0" : "opacity-100"
-                }`}
-                src={product?.images[0]?.image_url}
-                alt={product.name}
-                onMouseEnter={handleMouseEnter} // Maneja el evento mouse enter
-                onMouseLeave={handleMouseLeave} // Maneja el evento mouse leave
-                style={{ width: "200px", height: "250px" }}
-              />
-              {product?.images[1] && (
+        
+            {/* Imagen y nombre del producto */}
+            <div className="flex flex-col items-center  py-5">
+              <div
+                onClick={() => {
+                  navigate(`/tienda/${product.id}`);
+                }}
+                className="hover:cursor-pointer relative w-full h-auto max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg"
+                onMouseEnter={() => handleMouseEnter(product.id)}
+                onMouseLeave={() => handleMouseLeave(product.id)}
+              >
                 <img
-                  className={`absolute inset-0 shadow-lg rounded-lg transition-opacity duration-300 ${
-                    isHovering ? "opacity-100" : "opacity-0"
+                  className={`w-full h-auto shadow-lg rounded-lg transition-opacity duration-300 ${
+                    isHovering ? "opacity-0" : "opacity-100"
                   }`}
-                  src={product?.images[1]?.image}
-                  alt={`${product.name} hover`}
-                  style={{ width: "200px", height: "250px" }}
+                  src={product?.images[0]?.image_url}
+                  alt={product.name}
                 />
-              )}
+                {product?.images[1] && (
+                  <img
+                    className={`w-full h-auto absolute inset-0 shadow-lg rounded-lg transition-opacity duration-400 ${
+                      isHovering ? "opacity-100" : "opacity-0"
+                    }`}
+                    src={product?.images[1]?.image_url}
+                    alt={`${product.name} hover`}
+                  />
+                )}
+              </div>
+
+              <div className="text-2xl font-bold text-gray-900">
+                {product.name}
+              </div>
             </div>
-            <div className="text-2xl font-bold text-gray-900">
-              {product.name}
-            </div>
+
             {product?.rating > 0 && (
               <>
                 <Rating
@@ -259,13 +276,19 @@ export const Tienda = () => {
             )}
           </div>
 
-          {/* Precio  */}
+          {/* Precio */}
           <div className="flex justify-center">
-            <div className="grid  grid-cols-1 md:grid-cols-2">
-              <div className="flex justify-center">
+            <div
+              className={`grid ${
+                product.discount_percentage && product.discount_percentage > 0
+                  ? "grid-cols-1 md:grid-cols-2 "
+                  : "grid-cols-1"
+              }`}
+            >
               {product.discount_percentage &&
-                  product.discount_percentage > 0 && (
-                    <span className=" text-2xl font-semibold text-red-600 line-through">
+                product.discount_percentage > 0 && (
+                  <div className="flex justify-center">
+                    <span className="text-xl font-semibold text-red-600 line-through mt-1 mx-2">
                       {new Intl.NumberFormat("es-CO", {
                         style: "currency",
                         currency: "COP",
@@ -273,39 +296,57 @@ export const Tienda = () => {
                         maximumFractionDigits: 2,
                       }).format(product.price)}
                     </span>
-                  )}
-                   {product.discount_percentage &&
-                  product.discount_percentage > 0 && (
-                <span className="text-lg font-semibold text-red-600 line-through mt-1">
-                  {new Intl.NumberFormat("es-CO", {
-                    style: "currency",
-                    currency: "COP",
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 2,
-                  }).format(product.price)}
-                </span>
-                  )}
+                  </div>
+                )}
 
-              </div>
-              <div className="flex justify-start">
-                <span className="text-2xl font-semibold text-gray-900 ">
+              <div
+                className={`flex ${
+                  product.discount_percentage && product.discount_percentage > 0
+                    ? "justify-start"
+                    : "justify-center"
+                }`}
+              >
+                <span className="text-2xl font-semibold text-gray-900">
                   {new Intl.NumberFormat("es-CO", {
                     style: "currency",
                     currency: "COP",
                     minimumFractionDigits: 0,
                     maximumFractionDigits: 2,
-                  }).format(product.discount_price)}
+                  }).format(
+                    product.discount_percentage &&
+                      product.discount_percentage > 0
+                      ? product.discount_price
+                      : product.price
+                  )}
                 </span>
               </div>
             </div>
           </div>
-          <div className="flex justify-center">
+
+          {/* Unidades y botón de agregar al carrito */}
+          <div className="mt-1 flex flex-col justify-center items-center w-full">
+            <InputNumber
+              inputId="horizontal-buttons"
+              value={unidades[product.id] || 0}
+              onValueChange={(e) => handleUnitChange(product.id, e.value)}
+              showButtons
+              min={0}
+              buttonLayout="horizontal"
+              decrementButtonClassName="p-button-danger"
+              incrementButtonClassName="p-button-success"
+              incrementButtonIcon="pi pi-plus"
+              decrementButtonIcon="pi pi-minus"
+              className="input-number-cart"
+            />
             <Button
-              label="Agregar al carrito"
+              label="Agregar"
               iconPos="right"
               icon="pi pi-shopping-cart"
-              className=" mt-2 first-line:rounded-full bg-green-500 hover:bg-green-600 text-white border-green-500 hover:border-green-600 p-5"
+              className="mt-2 bg-green-600 font-semibold hover:bg-green-600 text-white border-green-500 hover:border-green-600 mx-auto"
               disabled={product.stock === 0}
+              onClick={() =>
+                handleUnitChange(product, unidades[product.id] || 1)
+              }
             />
           </div>
         </div>
@@ -325,7 +366,7 @@ export const Tienda = () => {
       <div
         className={
           layout === "grid"
-            ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
+            ? "grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-4"
             : "grid grid-cols-1"
         }
       >

@@ -1,3 +1,17 @@
 .data-view-custom .p-dataview-header{
  background-color: transparent;
 }
+.input-number-cart .p-inputnumber-input {
+    max-width:35% !important;
+    text-align: center;
+    border-radius: 0;
+
+}
+.input-number-cart{
+    justify-content: center;
+    height: 2rem;
+}
+.input-number-cart .pi {
+font-size: 0.7rem;
+
+}
