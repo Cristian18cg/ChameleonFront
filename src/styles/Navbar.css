@@ -15,3 +15,7 @@
 .p-menuitem-content:hover{
 background-color: transparent;    
 }
+
+.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled).p-focus > .p-menuitem-content{
+    background-color: #9dfa983c!important;
+}

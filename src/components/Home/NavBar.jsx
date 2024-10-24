@@ -385,13 +385,16 @@ export const NavBar = () => {
     );
   };
   return (
-    <div className="card">
+    <div className="sticky top-0  z-50">
+      <div className="sticky top-0">
       <Menubar
+    
         model={admin ? itemsAdmin : items}
         start={start}
         end={end}
-        className="rounded-none h-auto"
+        className="rounded-none h-auto  "
       />
+      </div>
       <Dialog
         header={headerDialog}
         modal
@@ -422,7 +425,7 @@ export const NavBar = () => {
           </>
         )}
       </Dialog>
-      <div className="fixed bottom-5 right-5 bg-transparent p-4 rounded-lg z-50">
+      <div className="fixed bottom-5 right-10 bg-transparent p-4 rounded-lg z-50">
         <div className=" bg-transparent flex items-center justify-between">
           <Button  icon="pi pi-shopping-cart" className="rounded-full" />
         </div>

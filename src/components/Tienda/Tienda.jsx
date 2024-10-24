@@ -207,8 +207,8 @@ export const Tienda = () => {
     const isHovering = hoverStates[product.id] || false;
 
     return (
-      <div className="p-2" key={product.id}>
-        <div className="p-4 border border-gray-200 rounded-lg shadow-md">
+      <div className="p-1" key={product.id}>
+        <div className="p-2 md:p-4 border border-gray-200 rounded-lg shadow-md">
           {/* Categoría y estado de inventario */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -377,7 +377,7 @@ export const Tienda = () => {
 
   const header = () => {
     return (
-      <div className="flex justify-between  bg-transparent unded-lg">
+      <div className="flex justify-between  bg-transparent unded-lg ">
         <Dropdown
           options={sortOptions}
           value={sortKey}
@@ -419,7 +419,7 @@ export const Tienda = () => {
   };
   return (
     <div className="w-full flex justify-center">
-      <div className=" sm:w-11/12 md:w-5/6 grid grid-cols-2  sm:grid-cols-12 md:grid-cols-12 ">
+      <div className=" w-full md:w-5/6 grid grid-cols-2  sm:grid-cols-12 md:grid-cols-12 ">
         <div className=" hidden sm:block col-span-12 sm:col-span-12 md:col-span-3 ">
           <div className="flex justify-center ">
             <h1 className="font-extrabold text-2xl p-2 rounded-sm">FILTROS</h1>
