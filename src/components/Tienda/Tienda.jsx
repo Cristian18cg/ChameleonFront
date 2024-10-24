@@ -6,13 +6,13 @@ import { Tag } from "primereact/tag";
 import { Dropdown } from "primereact/dropdown";
 import { classNames } from "primereact/utils";
 import useControlProductos from "../../hooks/useControlProductos";
+import useControlPedidos from "../../hooks/useControlPedidos";
 import { Tree } from "primereact/tree";
 import { useNavigate } from "react-router-dom";
 import { InputNumber } from "primereact/inputnumber";
 
 export const Tienda = () => {
   const navigate = useNavigate();
-  const [unidades, setUnidades] = useState({}); // Estado para manejar las unidades por producto
 
   // Función para actualizar las unidades por producto
   const handleUnitChange = (productId, value) => {
@@ -21,7 +21,7 @@ export const Tienda = () => {
       [productId]: value, // Actualiza la cantidad solo del producto específico
     }));
   };
-
+  const {unidades, setUnidades } = useControlPedidos();
   const {
     productos,
     obtenerProductos,
@@ -228,10 +228,9 @@ export const Tienda = () => {
           </div>
 
           {/* Imagen y nombre del producto */}
-          <div className="flex flex-col items-center gap-1 py-5">
-        
+          <div className="flex flex-col items-center  py-5">
             {/* Imagen y nombre del producto */}
-            <div className="flex flex-col items-center  py-5">
+            <div className="flex flex-col items-center  ">
               <div
                 onClick={() => {
                   navigate(`/tienda/${product.id}`);
@@ -258,7 +257,7 @@ export const Tienda = () => {
                 )}
               </div>
 
-              <div className="text-2xl font-bold text-gray-900">
+              <div className="text-xl font-bold text-gray-900">
                 {product.name}
               </div>
             </div>
@@ -277,7 +276,7 @@ export const Tienda = () => {
           </div>
 
           {/* Precio */}
-          <div className="flex justify-center">
+          <div className="flex justify-center mb-3">
             <div
               className={`grid ${
                 product.discount_percentage && product.discount_percentage > 0
@@ -285,19 +284,18 @@ export const Tienda = () => {
                   : "grid-cols-1"
               }`}
             >
-              {product.discount_percentage &&
-                product.discount_percentage > 0 && (
-                  <div className="flex justify-center">
-                    <span className="text-xl font-semibold text-red-600 line-through mt-1 mx-2">
-                      {new Intl.NumberFormat("es-CO", {
-                        style: "currency",
-                        currency: "COP",
-                        minimumFractionDigits: 0,
-                        maximumFractionDigits: 2,
-                      }).format(product.price)}
-                    </span>
-                  </div>
-                )}
+              {product.discount_percentage && product.discount_percentage > 0 && (
+                <div className="flex justify-center">
+                  <span className="text-lg md:text-xl font-semibold text-red-400 line-through md:mt-1  ">
+                    {new Intl.NumberFormat("es-CO", {
+                      style: "currency",
+                      currency: "COP",
+                      minimumFractionDigits: 0,
+                      maximumFractionDigits: 2,
+                    }).format(product.price)}
+                  </span>
+                </div>
+              )}
 
               <div
                 className={`flex ${
@@ -306,7 +304,7 @@ export const Tienda = () => {
                     : "justify-center"
                 }`}
               >
-                <span className="text-2xl font-semibold text-gray-900">
+                <span className=" text-2xl md:text-3xl font-semibold text-gray-900">
                   {new Intl.NumberFormat("es-CO", {
                     style: "currency",
                     currency: "COP",
@@ -330,7 +328,7 @@ export const Tienda = () => {
               value={unidades[product.id] || 0}
               onValueChange={(e) => handleUnitChange(product.id, e.value)}
               showButtons
-              min={0}
+              min={1}
               buttonLayout="horizontal"
               decrementButtonClassName="p-button-danger"
               incrementButtonClassName="p-button-success"

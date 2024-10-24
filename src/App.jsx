@@ -1,22 +1,20 @@
 /* import 'primevue/resources/themes/aura-light-green/theme.css' */
 import "primeicons/primeicons.css";
-import 'primereact/resources/themes/saga-blue/theme.css';
-import 'primereact/resources/primereact.min.css';
+import "primereact/resources/themes/saga-blue/theme.css";
+import "primereact/resources/primereact.min.css";
 import { Router_Home } from "./components/Home/Router_Home";
 import { LoginProvider } from "./context/login/loginContext";
 import { ProductosProvider } from "./context/Productos/productosContext";
+import { PedidosProvider } from "./context/Pedidos/pedidosContext";
 import { PrimeReactProvider } from "primereact/api";
-import {
-  addLocale,
-
-} from "primereact/api";
+import { addLocale } from "primereact/api";
 import Tailwind from "primereact/passthrough/tailwind";
-import { twMerge } from 'tailwind-merge';
+import { twMerge } from "tailwind-merge";
 
-  import './styles/styles.css' 
+import "./styles/styles.css";
 
 function App() {
-/*   const value = {
+  /*   const value = {
     ripple: true,
     zIndex: {
       modal: 1100, // dialog, sidebar
@@ -93,9 +91,13 @@ function App() {
   return (
     <PrimeReactProvider
       value={{
-        pt:{Tailwind},
-        ptOptions: { mergeSections: true, mergeProps: true, classNameMergeFunction: twMerge },
-        
+        pt: { Tailwind },
+        ptOptions: {
+          mergeSections: true,
+          mergeProps: true,
+          classNameMergeFunction: twMerge,
+        },
+
         ripple: true,
         zIndex: {
           modal: 1100, // dialog, sidebar
@@ -109,9 +111,11 @@ function App() {
       }}
     >
       <LoginProvider>
-        <ProductosProvider>
-          <Router_Home />
-        </ProductosProvider>
+        <PedidosProvider>
+          <ProductosProvider>
+            <Router_Home />
+          </ProductosProvider>
+        </PedidosProvider>
       </LoginProvider>
     </PrimeReactProvider>
   );

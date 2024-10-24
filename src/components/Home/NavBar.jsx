@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Menubar } from "primereact/menubar";
 import { Button } from "primereact/button";
+import { Sidebar } from "primereact/sidebar";
 
 import { Badge } from "primereact/badge";
 import { Avatar } from "primereact/avatar";
@@ -12,12 +13,14 @@ import { Formulario_Login } from "../Login/Formularios/Formulario_Login";
 import { FormularioRegistro } from "../Login/Formularios/Formulario_registro";
 import { FooterLogin } from "../Login/Formularios/FooterLogin";
 import { AutoComplete } from "primereact/autocomplete";
+import { Carritocompras } from "../Tienda/CarritoCompras";
 import useControl from "../../hooks/useControl";
 import useControlProductos from "../../hooks/useControlProductos";
 export const NavBar = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [visibleCarrito, setVisibleCarrito] = useState(false);
   const navigate = useNavigate();
   const {
     vistaLog,
@@ -386,14 +389,13 @@ export const NavBar = () => {
   };
   return (
     <div className="sticky top-0  z-50">
-      <div className="sticky top-0">
-      <Menubar
-    
-        model={admin ? itemsAdmin : items}
-        start={start}
-        end={end}
-        className="rounded-none h-auto  "
-      />
+      <div className="">
+        <Menubar
+          model={admin ? itemsAdmin : items}
+          start={start}
+          end={end}
+          className="rounded-none h-auto  z-50"
+        />
       </div>
       <Dialog
         header={headerDialog}
@@ -425,9 +427,26 @@ export const NavBar = () => {
           </>
         )}
       </Dialog>
-      <div className="fixed bottom-5 right-10 bg-transparent p-4 rounded-lg z-50">
+      <div className="card flex justify-content-center">
+        <Sidebar
+          visible={visibleCarrito}
+          position="right"
+          className="w-11/12 md:w-1/3"
+          onHide={() => setVisibleCarrito(false)}
+        >
+          <Carritocompras />
+        </Sidebar>
+      </div>
+
+      <div className="fixed bottom-5 right-10 bg-transparent p-5 rounded-lg z-50">
         <div className=" bg-transparent flex items-center justify-between">
-          <Button  icon="pi pi-shopping-cart" className="rounded-full" />
+          <Button
+            icon="pi pi-shopping-cart"
+            onClick={() => {
+              setVisibleCarrito(!visibleCarrito);
+            }}
+            className=" p-4  text-md mx-1 font-medium bg-green-300 text-black border-green-300 w-full rounded-full"
+          />
         </div>
         {/* Aquí puedes añadir el contenido del carrito */}
       </div>
