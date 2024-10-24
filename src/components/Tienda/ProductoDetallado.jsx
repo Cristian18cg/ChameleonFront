@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import useControlProductos from "../../hooks/useControlProductos";
+import useControlPedidos from "../../hooks/useControlPedidos";
 
 import { InputNumber } from "primereact/inputnumber";
 import { Button } from "primereact/button";
@@ -9,9 +10,15 @@ import { Galleria } from "primereact/galleria";
 
 export const ProductoDetallado = () => {
   const { producto, obtenerProducto } = useControlProductos();
-  const [unidades, setunidades] = useState(1);
   const { id } = useParams(); // Captura el id de la URL
   const [isMobile, setIsMobile] = useState(false);
+  const handleUnitChange = (productId, value) => {
+    setUnidades((prevUnidades) => ({
+      ...prevUnidades,
+      [productId]: value, // Actualiza la cantidad solo del producto específico
+    }));
+  };
+  const {unidades, setUnidades } = useControlPedidos();
 
   useEffect(() => {
     const handleResize = () => {
@@ -40,7 +47,7 @@ export const ProductoDetallado = () => {
       <img
         alt={producto.images ? producto.name : item?.name}
         src={producto.images ? item.image_url : item?.objectURL}
-        className="rounded  block md:w-44 lg:w-64 xl:w-full"
+        className="rounded-r-xl  block md:w-44 lg:w-64 xl:w-full"
       />
     );
   };
@@ -134,25 +141,25 @@ export const ProductoDetallado = () => {
             </div>
             <InputNumber
               inputId="horizontal-buttons"
-              value={unidades}
-              onValueChange={(e) => setunidades(e.value)}
+              value={unidades[producto.id] || 0}
+              onValueChange={(e) => handleUnitChange(producto.id, e.value)}
               showButtons
-              min={0}
+              min={1}
               buttonLayout="horizontal"
               decrementButtonClassName="p-button-danger"
               incrementButtonClassName="p-button-success"
               incrementButtonIcon="pi pi-plus"
               decrementButtonIcon="pi pi-minus"
-              className="input-number-cart mb-2"
+              className="input-number-cart mb-1"
             />
             <div className="flex justify-center items-center align-middle"></div>
             {/* Botón Agregar al carrito */}
             <div className="mb-4">
               <Button
-                label="Agregar al carrito"
+                label="Agregar"
                 iconPos="right"
                 icon="pi pi-shopping-cart"
-                className=" button-green rounded-full bg-green-500 hover:bg-green-600 text-white border-green-500 hover:border-green-600 p-3"
+                className=" button-green rounded-md bg-green-500 hover:bg-green-600 text-white border-green-500 hover:border-green-600 p-3"
                 disabled={producto.stock === 0}
               />
             </div>
