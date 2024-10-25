@@ -15,13 +15,16 @@ export const Tienda = () => {
   const navigate = useNavigate();
 
   // Función para actualizar las unidades por producto
-  const handleUnitChange = (productId, value) => {
-    setUnidades((prevUnidades) => ({
-      ...prevUnidades,
-      [productId]: value, // Actualiza la cantidad solo del producto específico
-    }));
-  };
-  const {unidades, setUnidades } = useControlPedidos();
+
+  const {
+    carrito,
+    agregarAlCarrito,
+    handleUnitChange,
+    setCarrito,
+    unidades,
+    setUnidades,
+    isProductoEnCarrito
+  } = useControlPedidos();
   const {
     productos,
     obtenerProductos,
@@ -336,14 +339,34 @@ export const Tienda = () => {
               decrementButtonIcon="pi pi-minus"
               className="input-number-cart"
             />
-            <Button
+           {/*  <Button
               label="Agregar"
               iconPos="right"
               icon="pi pi-shopping-cart"
               className="mt-2 w-full bg-green-600 font-semibold hover:bg-green-600 text-white border-green-500 hover:border-green-600 mx-auto"
               disabled={product.stock === 0}
               onClick={() =>
-                handleUnitChange(product, unidades[product.id] || 1)
+                agregarAlCarrito(product, unidades[product.id] || 1)
+              }
+            /> */}
+            <Button
+              label={
+                isProductoEnCarrito(product.id)
+                  ? "Agregado"
+                  : "Agregar al Carrito"
+              }
+              icon={
+                isProductoEnCarrito(product.id)
+                  ? "pi pi-check"
+                  : "pi pi-shopping-cart"
+              }
+              className={`p-button ${
+                isProductoEnCarrito(product.id)
+                  ? "p-button-success"
+                  : "p-button-primary"
+              }`}
+              onClick={() =>
+                agregarAlCarrito(product, unidades[product.id] || 1)
               }
             />
           </div>
@@ -404,13 +427,25 @@ export const Tienda = () => {
     return (
       <div>
         {!disabledFiltroCate && (
-          <Button
-            label="Filtrar Categoria"
-            className="bg-green-500 border-green-600 hover:bg-green-400 hover:border-green-500"
-            onClick={() => {
-              filtrarCategoria(selectedKey);
-            }}
-          />
+          <div className="grid md:grid-cols-2 grid-cols-1">
+            <Button
+              label="Filtrar Categoria"
+              className="bg-green-500 border-green-600 hover:bg-green-400 hover:border-green-500"
+              onClick={() => {
+                filtrarCategoria(selectedKey);
+              }}
+            />
+            <Button
+              label="Borrar Filtro"
+              severity="danger"
+              onClick={() => {
+                obtenerProductos();
+                setdisabledFiltroCate(true);
+                setSelectedKey(null);
+              }}
+              className="md:mx-2"
+            />
+          </div>
         )}
       </div>
     );
