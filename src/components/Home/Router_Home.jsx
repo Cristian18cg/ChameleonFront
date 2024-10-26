@@ -23,7 +23,7 @@ export const Router_Home = () => {
     setManager(admin);
   }, [admin]);
   return (
-    <>
+    <div className="w-full">
       {Manager ? (
         <Router>
           <NavBar />
@@ -46,6 +46,6 @@ export const Router_Home = () => {
           </Routes>
         </Router>
       )}
-    </>
+    </div>
   );
 };

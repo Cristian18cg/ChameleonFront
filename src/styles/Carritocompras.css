@@ -1,0 +1,6 @@
+.carrito-compras .p-sidebar-header{
+    background: linear-gradient(to right, #7fe9b8, #A5D6A7, #9cd69e);
+}
+.carrito-compras .p-sidebar-icon:hover{
+    background-color: rgb(158, 232, 158);
+}

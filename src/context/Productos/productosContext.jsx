@@ -11,6 +11,7 @@ const ProductosProvider = ({ children }) => {
   const [categorias, setCategorias] = useState("");
   const [productos, setProductos] = useState("");
   const [producto, setProducto] = useState("");
+  const [btndelCate, setbtndelCate] = useState(true);
   const categoriapadre = [{ name: "Sin categoria", id: null }];
   const [productDialog, setProductDialog] = useState(false);
   const [deleteProductDialog, setDeleteProductDialog] = useState(false);
@@ -126,7 +127,7 @@ const ProductosProvider = ({ children }) => {
     try {
       const response = await clienteAxios.get("products/products/", {});
       const productos = response.data;
-      console.log(productos);
+      setbtndelCate(true)
       setProductos(productos); // Guardar productos en el estado
     } catch (error) {
       if (error.response) {
@@ -177,6 +178,7 @@ const ProductosProvider = ({ children }) => {
         `products/products/category/${idcategoria}/`
       );
       const productos = response.data;
+      setbtndelCate(false)
       setProductos(productos); // Guardar productos en el estado
     } catch (error) {
       if (error.response) {
@@ -569,6 +571,8 @@ const ProductosProvider = ({ children }) => {
       filtrarCategoria,
       eliminarImagenProducto,
       setProducto,
+      setbtndelCate,
+      btndelCate, 
       producto,
       product,
       deleteProductDialog,
@@ -594,6 +598,8 @@ const ProductosProvider = ({ children }) => {
     filtrarCategoria,
     setProducto,
     editarProducto,
+    setbtndelCate,
+    btndelCate, 
     producto,
     product,
     deleteProductDialog,

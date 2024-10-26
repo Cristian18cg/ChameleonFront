@@ -9,7 +9,7 @@ import { Button } from "primereact/button";
 import { Galleria } from "primereact/galleria";
 
 export const ProductoDetallado = () => {
-  const { producto, obtenerProducto } = useControlProductos();
+  const { producto, obtenerProducto, } = useControlProductos();
   const { id } = useParams(); // Captura el id de la URL
   const [isMobile, setIsMobile] = useState(false);
   const handleUnitChange = (productId, value) => {
@@ -18,7 +18,7 @@ export const ProductoDetallado = () => {
       [productId]: value, // Actualiza la cantidad solo del producto específico
     }));
   };
-  const {unidades, setUnidades } = useControlPedidos();
+  const {unidades, setUnidades,isProductoEnCarrito,agregarAlCarrito  } = useControlPedidos();
 
   useEffect(() => {
     const handleResize = () => {
@@ -36,10 +36,8 @@ export const ProductoDetallado = () => {
 
   useEffect(() => {
     if (id) {
-      console.log("id", id);
       obtenerProducto(id);
     }
-    console.log(producto);
   }, [id]);
 
   const itemTemplateImg = (item) => {
@@ -47,7 +45,7 @@ export const ProductoDetallado = () => {
       <img
         alt={producto.images ? producto.name : item?.name}
         src={producto.images ? item.image_url : item?.objectURL}
-        className="rounded-r-xl  block md:w-44 lg:w-64 xl:w-full"
+        className=" rounded-t-lg  xl:rounded-tl-none xl:rounded-r-xl  block md:w-full lg:w-full xl:w-full"
       />
     );
   };
@@ -98,6 +96,7 @@ export const ProductoDetallado = () => {
                 className={isMobile ? "" : "gallery-thumbnail-custom  "} // Ajustar el ancho de la galería
                 thumbnail={ thumbnailTemplate}
                 thumbnailsPosition={isMobile ? "bottom" : "left"}
+                circular
               />
             </div>
           )}
@@ -155,13 +154,26 @@ export const ProductoDetallado = () => {
             <div className="flex justify-center items-center align-middle"></div>
             {/* Botón Agregar al carrito */}
             <div className="mb-4">
-              <Button
-                label="Agregar"
-                iconPos="right"
-                icon="pi pi-shopping-cart"
-                className=" button-green rounded-md bg-green-500 hover:bg-green-600 text-white border-green-500 hover:border-green-600 p-3"
-                disabled={producto.stock === 0}
-              />
+            <Button
+              label={
+                isProductoEnCarrito(producto.id)
+                  ? "Agregado"
+                  : "Agregar al Carrito"
+              }
+              icon={
+                isProductoEnCarrito(producto.id)
+                  ? "pi pi-check"
+                  : "pi pi-shopping-cart"
+              }
+              className={`p-button mt-2 ${
+                isProductoEnCarrito(producto.id)
+                  ? "p-button-success"
+                  : "p-button-primary"
+              }`}
+              onClick={() =>
+                agregarAlCarrito(producto, unidades[producto.id] || 1)
+              }
+            />
             </div>
 
             {/* Descripción del producto */}

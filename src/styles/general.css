@@ -1,64 +1,79 @@
-.swal2-container,.swal2-toast-shown{
-    z-index: 50000!important; 
-  
-  }
-  body::-webkit-scrollbar {
-    width: 7px;   
-    max-height: 7px;            /* ancho de toda la barra de desplazamiento */
-  }
-  
-  body::-webkit-scrollbar-track {
-    background: #33333300;        /* color del área de seguimiento */
-  }
-  
-  
-  body::-webkit-scrollbar-thumb {
-  
-    background-color: #49494962;    /* color del pulgar de desplazamiento */
-    border-radius: 20px;       /* redondez del pulgar de desplazamiento */
-    border: 1px solid #9999991e;   /* crea un borde alrededor del pulgar de desplazamiento */
-  }
-  
-  div::-webkit-scrollbar {
-    width: 7px;   
-    max-height: 7px;      
-        /* ancho de toda la barra de desplazamiento */
-  }
-  div::-webkit-scrollbar-track {
-    background: #33333300;        /* color del área de seguimiento */
-  }
-  
-  div::-webkit-scrollbar-thumb {
-  
-    background-color: #49494962;    /* color del pulgar de desplazamiento */
-    border-radius: 20px;       /* redondez del pulgar de desplazamiento */
-    border: 1px solid #9999991e;   /* crea un borde alrededor del pulgar de desplazamiento */
-  }
+.swal2-container,
+.swal2-toast-shown {
+  z-index: 50000 !important;
 
-  
+}
+
+body::-webkit-scrollbar {
+  width: 7px;
+  max-height: 7px;
+  /* ancho de toda la barra de desplazamiento */
+}
+
+body::-webkit-scrollbar-track {
+  background: #33333300;
+  /* color del área de seguimiento */
+}
+
+
+body::-webkit-scrollbar-thumb {
+
+  background-color: #49494962;
+  /* color del pulgar de desplazamiento */
+  border-radius: 20px;
+  /* redondez del pulgar de desplazamiento */
+  border: 1px solid #9999991e;
+  /* crea un borde alrededor del pulgar de desplazamiento */
+}
+
+div::-webkit-scrollbar {
+  width: 7px;
+  max-height: 7px;
+  /* ancho de toda la barra de desplazamiento */
+}
+
+div::-webkit-scrollbar-track {
+  background: #33333300;
+  /* color del área de seguimiento */
+}
+
+div::-webkit-scrollbar-thumb {
+
+  background-color: #49494962;
+  /* color del pulgar de desplazamiento */
+  border-radius: 20px;
+  /* redondez del pulgar de desplazamiento */
+  border: 1px solid #9999991e;
+  /* crea un borde alrededor del pulgar de desplazamiento */
+}
+
+
 html {
   font-size: 14px;
 }
+
 /* header dialog */
 .custom-header2 {
-  padding: 1rem 1rem 1rem 1rem!important;
+  padding: 1rem 1rem 1rem 1rem !important;
   /* Añade espaciado al contenido */
   border-top-left-radius: 0.5rem;
-  background-color: rgb(12, 202, 94)!important;
+  background-color: rgb(12, 202, 94) !important;
   /* verde translúcido */
 
 }
+
 .custom-header2 .p-dialog-header-icon {
   /* Añade espaciado al contenido */
   color: rgb(255, 255, 255);
-padding: 0;
+  padding: 0;
 }
+
 .custom-header2 .p-dialog-header-icon:hover {
-  background-color: rgba(13, 95, 49, 0.815)!important;
+  background-color: rgba(13, 95, 49, 0.815) !important;
   /* verde translúcido */
   /* Añade espaciado al contenido */
   color: rgb(255, 255, 255);
-padding: 0;
+  padding: 0;
 }
 
 
@@ -72,33 +87,73 @@ padding: 0;
   width: 100%;
   height: 100%;
   border-radius: 8px;
-  transition: opacity 0.3s ease; /* Transición suave de opacidad */
+  transition: opacity 0.3s ease;
+  /* Transición suave de opacidad */
 }
 
 .image-hover {
   opacity: 0;
-  position: absolute; /* Para superponer la segunda imagen */
+  position: absolute;
+  /* Para superponer la segunda imagen */
   top: 0;
   left: 0;
 }
 
-.button-green .p-button:hover{
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 1), 0 0 0 4px rgb(15, 176, 77), 0 1px 2px 0 rgba(0, 0, 0, 1) ;
-
-}
-.p-button-success{
-  background-color: rgb(11, 199, 92);
+.button-green .p-button:hover {
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 1), 0 0 0 4px rgb(15, 176, 77), 0 1px 2px 0 rgba(0, 0, 0, 1);
 }
 
-.p-tag-success{
-  background-color: rgb(11, 199, 92);
+.p-button-primary {
+  background-color: rgb(74, 233, 143) !important;
+  border-color: rgb(90, 232, 151);
+}
+
+.p-button-primary:hover {
+  background-color: rgb(62, 232, 136) !important;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 1), 0 0 0 4px rgb(54, 219, 117), 0 1px 2px 0 rgba(0, 0, 0, 1);
 
 }
-.p-treenode-selectable:hover{
+
+
+.p-button-success {
+  background-color: rgb(52, 232, 130) !important;
+
+  border-color: rgb(90, 232, 151);
+}
+
+.p-button-success:hover {
+  background-color: rgb(34, 235, 121) !important;
+
+}
+.p-button-success:focus {
+  box-shadow:  0px 0px 2px 2px rgba(86, 255, 151, 0.607)
+
+}
+
+
+.p-selectbutton .p-button.p-highlight {
+  background-color: rgb(38, 207, 111) !important;
+  
+  border-color: rgb(51, 194, 113);
+  color: #ffffff;
+}
+.p-tag-success {
+  background-color: rgb(34, 235, 121);
+
+}
+
+.p-selectbutton .p-button.p-highlight {
+  background: #4caf50;
+  border-color: #4caf50;
+  color: #ffffff;
+}
+
+.p-treenode-selectable:hover {
   background-color: rgba(10, 224, 103, 0.438);
-  
+
 }
-.p-treenode-selectable .p-tree-toggler:hover{
+
+.p-treenode-selectable .p-tree-toggler:hover {
   background-color: rgba(10, 182, 84, 0.438);
-  
+
 }

@@ -23,7 +23,7 @@ export const Tienda = () => {
     setCarrito,
     unidades,
     setUnidades,
-    isProductoEnCarrito
+    isProductoEnCarrito,
   } = useControlPedidos();
   const {
     productos,
@@ -31,6 +31,8 @@ export const Tienda = () => {
     listarCategorias,
     categorias,
     filtrarCategoria,
+    btndelCate,
+    setbtndelCate,
   } = useControlProductos();
   const [products, setProducts] = useState([]);
   const [layout, setLayout] = useState("grid");
@@ -210,7 +212,7 @@ export const Tienda = () => {
     const isHovering = hoverStates[product.id] || false;
 
     return (
-      <div className="p-1" key={product.id}>
+      <div className=" p-1" key={product.id}>
         <div className="p-2 md:p-4 border border-gray-200 rounded-lg shadow-md">
           {/* Categoría y estado de inventario */}
           <div className="flex items-center justify-between">
@@ -260,7 +262,7 @@ export const Tienda = () => {
                 )}
               </div>
 
-              <div className="text-xl font-bold text-gray-900">
+              <div className="text-xl xl:text-2xl font-bold text-gray-900">
                 {product.name}
               </div>
             </div>
@@ -339,16 +341,7 @@ export const Tienda = () => {
               decrementButtonIcon="pi pi-minus"
               className="input-number-cart"
             />
-           {/*  <Button
-              label="Agregar"
-              iconPos="right"
-              icon="pi pi-shopping-cart"
-              className="mt-2 w-full bg-green-600 font-semibold hover:bg-green-600 text-white border-green-500 hover:border-green-600 mx-auto"
-              disabled={product.stock === 0}
-              onClick={() =>
-                agregarAlCarrito(product, unidades[product.id] || 1)
-              }
-            /> */}
+
             <Button
               label={
                 isProductoEnCarrito(product.id)
@@ -360,7 +353,7 @@ export const Tienda = () => {
                   ? "pi pi-check"
                   : "pi pi-shopping-cart"
               }
-              className={`p-button ${
+              className={`p-button mt-2 ${
                 isProductoEnCarrito(product.id)
                   ? "p-button-success"
                   : "p-button-primary"
@@ -436,6 +429,7 @@ export const Tienda = () => {
               }}
             />
             <Button
+              disabled={btndelCate}
               label="Borrar Filtro"
               severity="danger"
               onClick={() => {

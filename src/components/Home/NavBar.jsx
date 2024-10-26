@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Menubar } from "primereact/menubar";
-import { Button } from "primereact/button";
 import { Sidebar } from "primereact/sidebar";
 
 import { Badge } from "primereact/badge";
@@ -16,10 +15,12 @@ import { AutoComplete } from "primereact/autocomplete";
 import { Carritocompras } from "../Tienda/CarritoCompras";
 import useControl from "../../hooks/useControl";
 import useControlProductos from "../../hooks/useControlProductos";
+import useControlPedidos from "../../hooks/useControlPedidos";
 export const NavBar = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [cantidadCarrito, setCantidadCarrito] = useState(0);
   const [visibleCarrito, setVisibleCarrito] = useState(false);
   const navigate = useNavigate();
   const {
@@ -37,6 +38,9 @@ export const NavBar = () => {
     admin,
     setAdmin,
   } = useControl();
+  const {
+    carrito
+  } = useControlPedidos();
   const { productos, obtenerProductos } = useControlProductos();
   /* Funcion para verificar que no se ha vencido el token */
   const getItemWithExpiration = (key) => {
@@ -59,6 +63,13 @@ export const NavBar = () => {
 
     return item.value; // Retorna el valor si no ha expirado
   };
+  useEffect(() => {
+    if (carrito.length > 0) {
+      // Sumar todas las cantidades en el carrito
+      const totalUnidades = carrito.reduce((acc, item) => acc + item.cantidad, 0);
+      setCantidadCarrito(totalUnidades);
+    }
+  }, [carrito]);
   useEffect(() => {
     if (productos.length === 0) {
       obtenerProductos();
@@ -387,8 +398,15 @@ export const NavBar = () => {
       </div>
     );
   };
+  const headerCarrito = () => {
+    return (
+      <div className=" flex justify-center">
+        <h1 className="font-bold">CARRITO DE COMPRAS</h1>
+      </div>
+    );
+  };
   return (
-    <div className="sticky top-0  z-50">
+    <div className="w- full sticky top-0  z-50">
       <div className="">
         <Menubar
           model={admin ? itemsAdmin : items}
@@ -431,22 +449,24 @@ export const NavBar = () => {
         <Sidebar
           visible={visibleCarrito}
           position="right"
-          className="w-11/12 md:w-1/3"
+          className="w-11/12 md:w-1/3 carrito-compras"
           onHide={() => setVisibleCarrito(false)}
+          header={headerCarrito}
         >
           <Carritocompras />
         </Sidebar>
       </div>
-
       <div className="fixed bottom-5 right-10 bg-transparent p-5 rounded-lg z-50">
         <div className=" bg-transparent flex items-center justify-between">
-          <Button
-            icon="pi pi-shopping-cart"
+          <i
+            className=" hover:cursor-pointer p-3 text-md ml-1  p-overlay-badge font-medium bg-green-400 text-gray-50 border-green-300 w-full rounded-full pi pi-shopping-cart p-overlay-badge"
+            style={{ fontSize: "1.5rem" }}
             onClick={() => {
               setVisibleCarrito(!visibleCarrito);
             }}
-            className=" p-4  text-md mx-1 font-medium bg-green-300 text-black border-green-300 w-full rounded-full"
-          />
+          >
+             <Badge value={cantidadCarrito}></Badge>
+          </i>
         </div>
         {/* Aquí puedes añadir el contenido del carrito */}
       </div>
