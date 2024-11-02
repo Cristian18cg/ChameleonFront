@@ -158,7 +158,6 @@ export const FormularioRegistro = () => {
               name="nombres"
               value={usuario.nombres}
               onChange={handleInputChange}
-              unstyled={true}
               keyfilter={/[A-Za-zÁÉÍÓÚáéíóúñÑ\s]+/}
               style={{ width: "100%" }}
             />
@@ -177,7 +176,6 @@ export const FormularioRegistro = () => {
               name="apellidos"
               value={usuario.apellidos}
               onChange={handleInputChange}
-              unstyled={true}
               keyfilter={/[A-Za-zÁÉÍÓÚáéíóúñÑ\s]+/}
               style={{ width: "100%" }}
             />
@@ -200,7 +198,6 @@ export const FormularioRegistro = () => {
               name="correo"
               value={usuario.correo}
               onChange={handleInputChange}
-              unstyled={true}
               style={{ width: "100%" }}
             />
             <label htmlFor="email">Correo Electrónico</label>
@@ -219,7 +216,6 @@ export const FormularioRegistro = () => {
               value={usuario.telefono}
               onChange={handleInputChange}
               mask="(+99) 999-999-9999"
-              unstyled={true}
               style={{ width: "100%" }}
             />
             <label htmlFor="telefono">Teléfono</label>
@@ -262,7 +258,6 @@ export const FormularioRegistro = () => {
               name="numeroIdentificacion"
               value={usuario.numeroIdentificacion}
               onChange={handleInputChange}
-              unstyled={true}
               style={{ width: "100%" }}
             />
             <label htmlFor="numeroIdentificacion">
@@ -302,7 +297,6 @@ export const FormularioRegistro = () => {
               name="direccion"
               value={usuario.direccion}
               onChange={handleInputChange}
-              unstyled={true}
               style={{ width: "100%" }}
             />
             <label htmlFor="direccion">Dirección</label>
@@ -334,18 +328,17 @@ export const FormularioRegistro = () => {
         </div>
 
         {/* Confirmar Contraseña */}
-        <div  className=" min-w-full ">
+        <div  className=" flex flex-col  min-w-full ">
           <FloatLabel>
             
             <Password
-                        readonly onfocus="this.removeAttribute('readonly');"
-                        autoComplete="off"
-
+              readonly onfocus="this.removeAttribute('readonly');"
+              autoComplete="off"
               inputId="confirmarContrasena"
               name="confirmarContrasena"
               value={usuario.confirmarContrasena}
               onChange={handleInputChange}
-              className="input-login min-w-full "
+              className="input-login w-full "
               toggleMask
             />
             <label htmlFor="confirmarContrasena">Confirmar Contraseña</label>

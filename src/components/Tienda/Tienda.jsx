@@ -393,6 +393,7 @@ export const Tienda = () => {
   const header = () => {
     return (
       <div className="flex justify-between  bg-transparent unded-lg ">
+        
         <Dropdown
           options={sortOptions}
           value={sortKey}

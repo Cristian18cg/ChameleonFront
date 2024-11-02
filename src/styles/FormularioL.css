@@ -56,8 +56,12 @@
 .input-login .p-inputtext {
     min-width: 15.3rem !important;
 }
-.input-login .p-input-icon {
-    margin-top: 0.1vw;
-    min-width: 15rem !important;
-    
+.input-login.p-password{
+    width: 100% !important;
+    display: block;
+}
+.input-login .p-password-input{
+    width: 100% !important;
+
+
 }
