@@ -358,6 +358,7 @@ export const Tienda = () => {
                   ? "p-button-success"
                   : "p-button-primary"
               }`}
+              disabled={isProductoEnCarrito(product.id) ? true : false}
               onClick={() =>
                 agregarAlCarrito(product, unidades[product.id] || 1)
               }
@@ -445,8 +446,8 @@ export const Tienda = () => {
     );
   };
   return (
-    <div className="w-full flex justify-center">
-      <div className=" w-full md:w-5/6 grid grid-cols-2  sm:grid-cols-12 md:grid-cols-12 ">
+    <div className=" min-w-full flex justify-center overflow-hidden">
+      <div className="  md:w-5/6 grid grid-cols-2  sm:grid-cols-12 md:grid-cols-12 ">
         <div className=" hidden sm:block col-span-12 sm:col-span-12 md:col-span-3 ">
           <div className="flex justify-center ">
             <h1 className="font-extrabold text-2xl p-2 rounded-sm">FILTROS</h1>
