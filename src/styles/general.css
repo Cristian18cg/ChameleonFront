@@ -104,8 +104,8 @@ html {
 }
 
 .p-button-primary {
-  background-color: rgb(24, 216, 107) !important;
-  border-color: rgb(90, 232, 151);
+  background-color: rgb(21, 183, 91) !important;
+  border-color: rgb(22, 169, 86);
 }
 
 .p-button-primary:hover {
@@ -142,12 +142,13 @@ html {
   color: #ffffff;
 }
 .p-tag-success {
-  background-color: rgb(34, 235, 121);
+  background-color: rgb(21, 183, 91) !important;
+
 
 }
 
 .p-selectbutton .p-button.p-highlight {
-  background: #4caf50;
+  background: #3c943f;
   border-color: #4caf50;
   color: #ffffff;
 }

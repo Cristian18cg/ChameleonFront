@@ -406,15 +406,13 @@ export const NavBar = () => {
     );
   };
   return (
-    <div className="w- full sticky top-0  z-50">
-      <div className="">
+    <div className="w-full fixed top-0 z-50">
         <Menubar
           model={admin ? itemsAdmin : items}
           start={start}
           end={end}
-          className="rounded-none h-auto  z-50"
+          className="rounded-none h-auto z-50"
         />
-      </div>
       <Dialog
         header={headerDialog}
         modal
@@ -459,13 +457,14 @@ export const NavBar = () => {
       <div className="fixed bottom-5 right-10 bg-transparent p-5 rounded-lg z-50">
         <div className=" bg-transparent flex items-center justify-between">
           <i
-            className=" hover:cursor-pointer p-3 text-md ml-1  p-overlay-badge font-medium bg-green-400 text-gray-50 border-green-300 w-full rounded-full pi pi-shopping-cart p-overlay-badge"
+            className=" hover:cursor-pointer p-3 text-md ml-1  p-overlay-badge font-medium bg-green-600 text-gray-50 border-green-300 w-full rounded-full pi pi-shopping-cart p-overlay-badge"
             style={{ fontSize: "1.5rem" }}
             onClick={() => {
               setVisibleCarrito(!visibleCarrito);
             }}
           >
-             <Badge value={cantidadCarrito}></Badge>
+             <Badge value={cantidadCarrito} className="bg-green-500  mr-2 top-1"> 
+             </Badge>
           </i>
         </div>
         {/* Aquí puedes añadir el contenido del carrito */}
