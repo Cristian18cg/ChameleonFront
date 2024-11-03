@@ -71,7 +71,10 @@ const LoginProvider = ({ children }) => {
           title: "Contraseña incorrecta",
         });
       } else {
+        console.log('login',response)
+        setJsonlogin(response.data)
         ///LOCAL STORAGE
+        setItemWithExpiration("jsonlogin", response.data,1);
         /* Poner en local storage los token */
         setItemWithExpiration("accessToken", dataLogin.access, 1);
         setItemWithExpiration("refreshToken", dataLogin.refresh, 1);
@@ -312,6 +315,7 @@ const LoginProvider = ({ children }) => {
       setLoggedIn,
       setToken,
       setUsuario,
+      setJsonlogin,
       isLoggedIn,
       visibleProfile,
       vistaLog,
@@ -333,6 +337,7 @@ const LoginProvider = ({ children }) => {
     setLoggedIn,
     setToken,
     setUsuario,
+    setJsonlogin,
     visibleProfile,
     isLoggedIn,
     usuario,

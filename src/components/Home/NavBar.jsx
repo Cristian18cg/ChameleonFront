@@ -20,8 +20,7 @@ export const NavBar = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [cantidadCarrito, setCantidadCarrito] = useState(0);
-  const [visibleCarrito, setVisibleCarrito] = useState(false);
+
   const navigate = useNavigate();
   const {
     vistaLog,
@@ -37,9 +36,16 @@ export const NavBar = () => {
     setLoggedIn,
     admin,
     setAdmin,
+    setJsonlogin,
   } = useControl();
   const {
-    carrito
+    visibleCarrito,
+    setVisibleCarrito,
+    carrito,
+    setCarrito,
+    setUnidades,
+    cantidadCarrito,
+    setCantidadCarrito,
   } = useControlPedidos();
   const { productos, obtenerProductos } = useControlProductos();
   /* Funcion para verificar que no se ha vencido el token */
@@ -63,32 +69,36 @@ export const NavBar = () => {
 
     return item.value; // Retorna el valor si no ha expirado
   };
+  // Cargar el carrito desde localStorage al iniciar
   useEffect(() => {
     if (carrito.length > 0) {
       // Sumar todas las cantidades en el carrito
-      const totalUnidades = carrito.reduce((acc, item) => acc + item.cantidad, 0);
+      const totalUnidades = carrito.reduce(
+        (acc, item) => acc + item.cantidad,
+        0
+      );
       setCantidadCarrito(totalUnidades);
     }
   }, [carrito]);
+
   useEffect(() => {
     if (productos.length === 0) {
       obtenerProductos();
     } else {
-      console.log(productos);
       setProducts(productos);
     }
-    console.log(productos);
   }, [productos]);
+
   useEffect(() => {
     const accessToken = getItemWithExpiration("accessToken");
     const usuarioo = getItemWithExpiration("user");
-    console.log(accessToken);
+    const datos = getItemWithExpiration("jsonlogin");
     // Llama a la función asincrónica para obtener los datos
     if (accessToken && token === "" && usuario === "" && isLoggedIn === false) {
       setToken(accessToken);
       setUsuario(usuarioo);
       setLoggedIn(true);
-      console.log(getItemWithExpiration("is_superuser"));
+      setJsonlogin(datos);
       if (getItemWithExpiration("is_superuser") === false) {
         setAdmin(false);
       } else if (getItemWithExpiration("is_superuser") === true) {
@@ -196,63 +206,37 @@ export const NavBar = () => {
     },
     {
       label: "Productos",
-      icon: "pi pi-shop",
+      icon: "pi pi-shopping-bag",
       command: () => {
         navigate("/productos");
       },
     },
     {
-      label: "Projects",
-      icon: "pi pi-search",
+      label: "Pedidos",
+      icon: "pi pi-server",
+      command: () => {
+        navigate("/pedidos");
+      },
+    },
+    {
+      label: "Administración",
+      icon: "pi pi-user",
       items: [
         {
-          label: "Core",
-          icon: "pi pi-bolt",
+          label: "Usuarios",
+          icon: "pi pi-users",
           shortcut: "⌘+S",
           template: itemRenderer,
         },
+
         {
-          label: "Blocks",
-          icon: "pi pi-server",
-          shortcut: "⌘+B",
-          template: itemRenderer,
-        },
-        {
-          label: "UI Kit",
-          icon: "pi pi-pencil",
+          label: "Imagenes",
+          icon: "pi pi-image",
           shortcut: "⌘+U",
           template: itemRenderer,
         },
-        {
-          separator: true,
-        },
-        {
-          label: "Templates",
-          icon: "pi pi-palette",
-          items: [
-            {
-              label: "Apollo",
-              icon: "pi pi-palette",
-              badge: 2,
-              template: itemRenderer,
-            },
-            {
-              label: "Ultima",
-              icon: "pi pi-palette",
-              badge: 3,
-              template: itemRenderer,
-            },
-          ],
-        },
       ],
-    } /*
-    {
-      label: "Contact",
-      icon: "pi pi-envelope",
-      badge: 3,
-      template: itemRenderer,
     },
-   */,
   ];
   const start = (
     <img
@@ -407,12 +391,12 @@ export const NavBar = () => {
   };
   return (
     <div className="w-full fixed top-0 z-50">
-        <Menubar
-          model={admin ? itemsAdmin : items}
-          start={start}
-          end={end}
-          className="rounded-none h-auto z-50"
-        />
+      <Menubar
+        model={admin ? itemsAdmin : items}
+        start={start}
+        end={end}
+        className="rounded-none h-auto z-50"
+      />
       <Dialog
         header={headerDialog}
         modal
@@ -443,17 +427,17 @@ export const NavBar = () => {
           </>
         )}
       </Dialog>
-      <div className="card flex justify-content-center">
-        <Sidebar
-          visible={visibleCarrito}
-          position="right"
-          className="w-11/12 md:w-1/3 carrito-compras"
-          onHide={() => setVisibleCarrito(false)}
-          header={headerCarrito}
-        >
-          <Carritocompras />
-        </Sidebar>
-      </div>
+
+      <Sidebar
+        visible={visibleCarrito}
+        position="right"
+        className="w-11/12 md:w-1/3 carrito-compras"
+        onHide={() => setVisibleCarrito(false)}
+        header={headerCarrito}
+      >
+        <Carritocompras />
+      </Sidebar>
+
       <div className="fixed bottom-5 right-10 bg-transparent p-5 rounded-lg z-50">
         <div className=" bg-transparent flex items-center justify-between">
           <i
@@ -463,8 +447,10 @@ export const NavBar = () => {
               setVisibleCarrito(!visibleCarrito);
             }}
           >
-             <Badge value={cantidadCarrito} className="bg-green-500  mr-2 top-1"> 
-             </Badge>
+            <Badge
+              value={cantidadCarrito}
+              className="bg-green-500  mr-2 top-1"
+            ></Badge>
           </i>
         </div>
         {/* Aquí puedes añadir el contenido del carrito */}

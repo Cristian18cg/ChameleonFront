@@ -447,7 +447,7 @@ export const Tienda = () => {
     );
   };
   return (
-    <div className=" min-w-full flex justify-center overflow-hidden">
+    <div className="mt-20 md:mt-24 min-w-full flex justify-center overflow-hidden">
       <div className="  md:w-5/6 grid grid-cols-2  sm:grid-cols-12 md:grid-cols-12 ">
         <div className=" hidden sm:block col-span-12 sm:col-span-12 md:col-span-3 ">
           <div className="flex justify-center ">

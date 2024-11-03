@@ -12,13 +12,9 @@ export const ProductoDetallado = () => {
   const { producto, obtenerProducto, } = useControlProductos();
   const { id } = useParams(); // Captura el id de la URL
   const [isMobile, setIsMobile] = useState(false);
-  const handleUnitChange = (productId, value) => {
-    setUnidades((prevUnidades) => ({
-      ...prevUnidades,
-      [productId]: value, // Actualiza la cantidad solo del producto específico
-    }));
-  };
-  const {unidades, setUnidades,isProductoEnCarrito,agregarAlCarrito  } = useControlPedidos();
+  const [activeIndex, setActiveIndex] = useState(0)
+  
+  const {unidades, setUnidades,isProductoEnCarrito,agregarAlCarrito,handleUnitChange  } = useControlPedidos();
 
   useEffect(() => {
     const handleResize = () => {
@@ -40,12 +36,13 @@ export const ProductoDetallado = () => {
     }
   }, [id]);
 
+
   const itemTemplateImg = (item) => {
     return (
       <img
         alt={producto.images ? producto.name : item?.name}
         src={producto.images ? item.image_url : item?.objectURL}
-        className=" rounded-t-lg  xl:rounded-tl-none xl:rounded-r-xl  block md:w-full lg:w-full xl:w-full"
+        className=" rounded-t-lg  xl:rounded-tl-none xl:rounded-r-xl   md:w-full lg:w-full xl:w-full"
       />
     );
   };
@@ -54,7 +51,7 @@ export const ProductoDetallado = () => {
       <img
         alt={producto.images ? producto.name : item?.name}
         src={producto.images ? item.image_url : item?.objectURL}
-        className="w-12 block md:w-12 lg:w-14 xl:w-24"
+        className="w-12  md:w-12 lg:w-14 xl:w-24"
       />
     );
   };
@@ -78,7 +75,7 @@ export const ProductoDetallado = () => {
     },
   ];
   return (
-    <div className="flex justify-center">
+    <div className=" mt-20  flex justify-center">
       <div className="card border-2 w-full md:w-3/4 rounded-md border-gray-200 mt-5 shadow-lg">
         {/* Grid con dos columnas */}
         <div className="grid  grid-cols-1 md:grid-cols-2 gap-4 p-5">
@@ -91,12 +88,16 @@ export const ProductoDetallado = () => {
               <Galleria
                 value={producto?.images}
                 responsiveOptions={responsiveOptions}
+                activeIndex={activeIndex}
+                onItemChange={(e) => setActiveIndex(e.index)}
+  
                 numVisible={6}
                 item={itemTemplateImg}
                 className={isMobile ? "" : "gallery-thumbnail-custom  "} // Ajustar el ancho de la galería
                 thumbnail={ thumbnailTemplate}
                 thumbnailsPosition={isMobile ? "bottom" : "left"}
                 circular
+
               />
             </div>
           )}
@@ -170,6 +171,7 @@ export const ProductoDetallado = () => {
                   ? "p-button-success"
                   : "p-button-primary"
               }`}
+              disabled={isProductoEnCarrito(producto.id) ? true : false}
               onClick={() =>
                 agregarAlCarrito(producto, unidades[producto.id] || 1)
               }

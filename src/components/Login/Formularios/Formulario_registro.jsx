@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { InputText } from "primereact/inputtext";
 import { FloatLabel } from "primereact/floatlabel";
 import { Button } from "primereact/button";
@@ -7,9 +7,11 @@ import { Dropdown } from "primereact/dropdown";
 import { Toast } from "primereact/toast";
 import { InputMask } from "primereact/inputmask";
 import useControl from "../../../hooks/useControl";
+import { json } from "react-router-dom";
 
 export const FormularioRegistro = () => {
   const { registro } = useControl();
+ 
   const toast = useRef(null);
   const [usuario, setUsuario] = useState({
     nombres: "",
@@ -151,7 +153,7 @@ export const FormularioRegistro = () => {
         className="grid  grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-5 w-full max-w-lg"
       >
         {/* Nombres */}
-        <div >
+        <div>
           <FloatLabel>
             <InputText
               id="nombres"
@@ -187,12 +189,12 @@ export const FormularioRegistro = () => {
         </div>
 
         {/* Correo Electrónico */}
-        <div >
+        <div>
           <FloatLabel>
             <InputText
-               readonly onfocus="this.removeAttribute('readonly');"
-                        autoComplete="off"
-
+              readonly
+              onfocus="this.removeAttribute('readonly');"
+              autoComplete="off"
               type="email"
               id="correo"
               name="correo"
@@ -226,7 +228,7 @@ export const FormularioRegistro = () => {
         </div>
 
         {/* Tipo de Identificación */}
-        <div >
+        <div>
           <FloatLabel>
             <Dropdown
               id="tipoIdentificacion"
@@ -251,7 +253,7 @@ export const FormularioRegistro = () => {
         </div>
 
         {/* Número de Identificación */}
-        <div >
+        <div>
           <FloatLabel>
             <InputText
               id="numeroIdentificacion"
@@ -310,9 +312,9 @@ export const FormularioRegistro = () => {
         <div>
           <FloatLabel>
             <Password
-             readonly onfocus="this.removeAttribute('readonly');"
-                        autoComplete="off"
-
+              readonly
+              onfocus="this.removeAttribute('readonly');"
+              autoComplete="off"
               inputId="contrasena"
               name="contrasena"
               value={usuario.contrasena}
@@ -328,11 +330,11 @@ export const FormularioRegistro = () => {
         </div>
 
         {/* Confirmar Contraseña */}
-        <div  className=" flex flex-col  min-w-full ">
+        <div className=" flex flex-col  min-w-full ">
           <FloatLabel>
-            
             <Password
-              readonly onfocus="this.removeAttribute('readonly');"
+              readonly
+              onfocus="this.removeAttribute('readonly');"
               autoComplete="off"
               inputId="confirmarContrasena"
               name="confirmarContrasena"
@@ -344,7 +346,9 @@ export const FormularioRegistro = () => {
             <label htmlFor="confirmarContrasena">Confirmar Contraseña</label>
           </FloatLabel>
           {errores.confirmarContrasena && (
-            <small className="p-error min-w-full">{errores.confirmarContrasena}</small>
+            <small className="p-error min-w-full">
+              {errores.confirmarContrasena}
+            </small>
           )}
         </div>
 
