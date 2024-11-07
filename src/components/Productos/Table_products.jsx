@@ -316,7 +316,7 @@ export default function ProductsDemo() {
       <Toast ref={toast} />
       <div className="card">
         <Toolbar
-          className="mb-4"
+          className="mt-24"
           left={leftToolbarTemplate}
           right={rightToolbarTemplate}
         ></Toolbar>

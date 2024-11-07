@@ -9,10 +9,42 @@ import { InputMask } from "primereact/inputmask";
 import useControl from "../../../hooks/useControl";
 import { json } from "react-router-dom";
 
+import { InputSwitch } from "primereact/inputswitch";
+
 export const FormularioRegistro = () => {
-  const { registro } = useControl();
- 
+  const {
+    registro,
+    departments,
+    cities,
+    departamentos,
+    ciudades,
+    loadingRegistro
+  } = useControl();
+  const [selectedDepartment, setSelectedDepartment] = useState(null);
   const toast = useRef(null);
+  useEffect(() => {
+    // Obtener departamentos al cargar el componente
+    if (departamentos.length === 0) {
+      departments();
+    }
+  }, []);
+
+  const handleDepartmentChange = (e) => {
+    const departmentId = e.value;
+    setSelectedDepartment(departmentId);
+    handleInputChange({
+      target: { name: "department", value: departmentId },
+    });
+    cities(departmentId);
+    // Obtener ciudades para el departamento seleccionado
+  };
+
+  const handleCityChange = (e) => {
+    handleInputChange({
+      target: { name: "ciudad", value: e.value },
+    });
+  };
+
   const [usuario, setUsuario] = useState({
     nombres: "",
     apellidos: "",
@@ -20,8 +52,10 @@ export const FormularioRegistro = () => {
     telefono: "",
     correo: "",
     ciudad: "",
+    department: "",
     contrasena: "",
     confirmarContrasena: "",
+    terms_accepted: "",
     tipoIdentificacion: "", // Nuevo campo para tipo de identificación
     numeroIdentificacion: "", // Nuevo campo para número de identificación
   });
@@ -33,13 +67,14 @@ export const FormularioRegistro = () => {
     telefono: "",
     correo: "",
     ciudad: "",
+    department: "",
     contrasena: "",
+    terms_accepted: "",
     confirmarContrasena: "",
     tipoIdentificacion: "", // Error para tipo de identificación
     numeroIdentificacion: "", // Error para número de identificación
   });
 
-  const ciudades = ["Bogotá", "Medellín", "Cali", "Barranquilla", "Cartagena"];
   const tiposIdentificacion = [
     { label: "Cédula de Ciudadanía", value: "CC" },
     { label: "Cédula de Extranjería", value: "CE" },
@@ -270,6 +305,25 @@ export const FormularioRegistro = () => {
             <small className="p-error">{errores.numeroIdentificacion}</small>
           )}
         </div>
+        {/* Departamento */}
+        <div>
+          <FloatLabel>
+            <Dropdown
+              id="department"
+              name="department"
+              value={selectedDepartment}
+              onChange={handleDepartmentChange}
+              options={departamentos}
+              optionLabel="name"
+              optionValue="id"
+              style={{ width: "100%" }}
+            />
+            <label htmlFor="department">Departamento</label>
+          </FloatLabel>
+          {errores.department && (
+            <small className="p-error">{errores.department}</small>
+          )}
+        </div>
         {/* Ciudad */}
         <div>
           <FloatLabel>
@@ -277,13 +331,12 @@ export const FormularioRegistro = () => {
               id="ciudad"
               name="ciudad"
               value={usuario.ciudad}
-              onChange={(e) =>
-                handleInputChange({
-                  target: { name: "ciudad", value: e.value },
-                })
-              }
+              onChange={handleCityChange}
               options={ciudades}
+              optionLabel="name"
+              optionValue="id"
               style={{ width: "100%" }}
+              disabled={!selectedDepartment || ciudades.length === 0}
             />
             <label htmlFor="ciudad">Ciudad</label>
           </FloatLabel>
@@ -292,7 +345,7 @@ export const FormularioRegistro = () => {
           )}
         </div>
         {/* Dirección */}
-        <div>
+        <div className="md:col-span-2">
           <FloatLabel>
             <InputText
               id="direccion"
@@ -330,7 +383,7 @@ export const FormularioRegistro = () => {
         </div>
 
         {/* Confirmar Contraseña */}
-        <div className=" flex flex-col  min-w-full ">
+        <div className="  flex flex-col  min-w-full ">
           <FloatLabel>
             <Password
               readonly
@@ -351,14 +404,42 @@ export const FormularioRegistro = () => {
             </small>
           )}
         </div>
-
+        <div className="card md:col-span-2 flex justify-content-center">
+          <div className="flex items-center gap-2">
+            <InputSwitch
+              id="terms_accepted"
+              name="terms_accepted"
+              checked={usuario.terms_accepted}
+              onChange={handleInputChange}
+            />
+         
+            <label htmlFor="terms_accepted">
+              Acepto los 
+              <a
+                href="/ruta-a-terminos"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-purple-500 mx-1"
+              >
+                 términos y condiciones
+              </a>
+            </label>
+          </div>
+          
+        </div>
+        {errores.terms_accepted && (
+            <small className="p-error min-w-full">
+              {errores.terms_accepted}
+            </small>
+          )}
         {/* Botón de Registro */}
         <div className=" md:col-span-2 flex justify-center mt-4">
           <Button
+          loading={loadingRegistro}
             type="submit"
             label="Registrarse"
-            severity="success"
-            className="w-full"
+            className="w-full bg-purple-500 border-purple-400 hover:bg-purple-800  "
+            
           />
         </div>
       </form>

@@ -326,7 +326,7 @@ export const CrearProducto = ({ producto }) => {
         <i
           className="pi pi-image mt-3 p-5"
           style={{
-            fontSize: "5em",
+            fontSize: "3em",
             borderRadius: "50%",
             backgroundColor: "var(--surface-b)",
             color: "var(--surface-d)",
@@ -334,9 +334,9 @@ export const CrearProducto = ({ producto }) => {
         ></i>
         <span
           style={{ fontSize: "1.2em", color: "var(--text-color-secondary)" }}
-          className="my-2"
+          className="mx-12 mt-12 font-semibold"
         >
-          Arrastra y suelta la imagen aca
+          Arrastra y suelta las imagenes del producto acá
         </span>
       </div>
     );
@@ -481,6 +481,7 @@ export const CrearProducto = ({ producto }) => {
             value={product?.code}
             onChange={(e) => onInputChange(e, "code")}
             required
+            placeholder="Ej: 11001"
             className="input-productos"
           />
           {submitted && !product.code && (
@@ -490,7 +491,7 @@ export const CrearProducto = ({ producto }) => {
         {/* Nombre del producto */}
         <div className="field col-6">
           <label htmlFor="name" className="font-bold">
-            Nombre
+            Nombre del producto
           </label>
           <InputText
             id="name"
@@ -498,6 +499,8 @@ export const CrearProducto = ({ producto }) => {
             onChange={(e) => onInputChange(e, "name")}
             required
             autoFocus
+            placeholder=""
+
             className="input-productos"
           />
           {submitted && !product.name && (
@@ -566,6 +569,7 @@ export const CrearProducto = ({ producto }) => {
             mode="currency"
             currency="COP"
             locale="es-CO"
+            placeholder="$ 0,00"
             max={product?.price}
             disabled={disableDiscountPrice}
             className="input-productos"
@@ -586,6 +590,7 @@ export const CrearProducto = ({ producto }) => {
             maxFractionDigits={2} // Permitir máximo 2 decimales
             min={0}
             max={100}
+            placeholder="0%"
             disabled={disableDiscountPercentage}
             className="input-productos"
           />
@@ -598,6 +603,7 @@ export const CrearProducto = ({ producto }) => {
           </label>
           <InputTextarea
             id="description"
+            placeholder="Escribe una descripción detallada del producto"
             value={product?.description}
             onChange={(e) => onInputChange(e, "description")}
             required
@@ -616,6 +622,7 @@ export const CrearProducto = ({ producto }) => {
             id="stock"
             value={product?.stock}
             onChange={(e) => onInputNumberChange(e, "stock")}
+            placeholder="Unidades del producto"
             className="input-productos"
           />
           {submitted && !product.stock && (
@@ -629,9 +636,9 @@ export const CrearProducto = ({ producto }) => {
             inputId="is_active"
             checked={product?.is_active ? false : true}
             onChange={(e) => onInputChange(e, "is_active")}
-            className="input-productos"
+            className="input-productos xl:mt-7"
           />
-          <label htmlFor="is_active">¿Producto activo?</label>
+          <label htmlFor="is_active " className="mx-2 font-semibold">¿Producto activo?</label>
         </div>
       </div>
       <div className="flex justify-center">
@@ -640,7 +647,7 @@ export const CrearProducto = ({ producto }) => {
           label="Guardar Producto"
           icon="pi pi-check"
           onClick={onSaveProduct}
-          className=" max-w-xl rounded-md mt-4 input-productos"
+          className=" max-w-xl rounded-md mt-4 input-productos bg-purple-600 hover:bg-purple-800 border-purple-500"
         />
       </div>
     </div>

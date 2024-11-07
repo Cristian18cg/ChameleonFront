@@ -217,7 +217,7 @@ export const Carritocompras = () => {
         // Contenido para datos de envio
         <>
           {isLoggedIn ? (
-            <div className="flex-grow">
+            <div className="flex-grow w-full">
              <FormularioUsuario/>
             </div>
           ) : (

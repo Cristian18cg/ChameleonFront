@@ -16,6 +16,9 @@ const LoginProvider = ({ children }) => {
   const [refresh_token, setrefresh_Token] = useState("");
   const [contraseñanueva, setcontraseñanueva] = useState(null);
   const [visibleProfile, setVisibleProfile] = useState(false);
+  const [departamentos, setDepartamentos] = useState([]);
+  const [ciudades, setCiudades] = useState([]);
+  const [loadingRegistro, setloadingRegistro] = useState(false);
 
   const showSuccess = (mensaje) => {
     const Toast = Swal.mixin({
@@ -71,10 +74,10 @@ const LoginProvider = ({ children }) => {
           title: "Contraseña incorrecta",
         });
       } else {
-        console.log('login',response)
-        setJsonlogin(response.data)
+        console.log("login", response);
+        setJsonlogin(response.data);
         ///LOCAL STORAGE
-        setItemWithExpiration("jsonlogin", response.data,1);
+        setItemWithExpiration("jsonlogin", response.data, 1);
         /* Poner en local storage los token */
         setItemWithExpiration("accessToken", dataLogin.access, 1);
         setItemWithExpiration("refreshToken", dataLogin.refresh, 1);
@@ -148,8 +151,8 @@ const LoginProvider = ({ children }) => {
   const registro = useCallback(
     async (usuario) => {
       try {
-        console.log(usuario.telefono);
-        // Asegúrate de que estás utilizando la URL correcta para el registro de usuarios
+        setloadingRegistro(true)
+
         const response = await clienteAxios.post(
           "users/register/",
           {
@@ -161,9 +164,11 @@ const LoginProvider = ({ children }) => {
             address: usuario.direccion,
             phone: usuario.telefono,
             city: usuario.ciudad,
+            department: usuario.department,
             email: usuario.correo,
             number_document: usuario.numeroIdentificacion,
             type_document: usuario.tipoIdentificacion,
+            terms_accepted:usuario.terms_accepted
           },
           {
             headers: {
@@ -185,8 +190,10 @@ const LoginProvider = ({ children }) => {
           // Si también deseas iniciar sesión automáticamente después del registro, puedes hacer una solicitud de inicio de sesión aquí.
           // Por ejemplo:
           login(usuario.correo, usuario.contrasena);
+          setloadingRegistro(false)
         }
       } catch (error) {
+        setloadingRegistro(false)
         console.log(error);
         // Manejo de errores
         if (error.message === "Network Error") {
@@ -302,10 +309,57 @@ const LoginProvider = ({ children }) => {
     [refresh_token, token]
   );
 
+  const cities = useCallback(
+    async (id) => {
+      try {
+      
+
+        const respuesta = await clienteAxios.get(
+          `users/info/cities/?department_id=${id}`
+      
+        );
+        if (respuesta.status !== 200) {
+          // Cambiado a 205 porque es el código que esperas en la respuesta
+          return Swal.fire({
+            icon: "error",
+            title: "Error obteniendo las ciudades",
+          });
+        } else {
+          setCiudades(respuesta.data);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    [token]
+  );
+  const departments = useCallback(
+    async () => {
+      try {
+        
+
+        const respuesta = await clienteAxios.get(
+          `users/info/departments/`,
+        );
+        console.log(respuesta)
+        if (respuesta.status !== 200) {
+          // Cambiado a 205 porque es el código que esperas en la respuesta
+          return Swal.fire({
+            icon: "error",
+            title: "Error obteniendo los departamentos",
+          });
+        } else {
+          setDepartamentos(respuesta.data)
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    [token]
+  );
   const contextValue = useMemo(() => {
     return {
       // ... tus valores de contexto
-      admin,
       setAdmin,
       login,
       logout,
@@ -316,6 +370,13 @@ const LoginProvider = ({ children }) => {
       setToken,
       setUsuario,
       setJsonlogin,
+      cities,
+      setCiudades,
+      setDepartamentos,
+      departments,
+      admin,
+      departamentos,
+      ciudades,
       isLoggedIn,
       visibleProfile,
       vistaLog,
@@ -327,7 +388,6 @@ const LoginProvider = ({ children }) => {
       dataadicional,
     };
   }, [
-    admin,
     setAdmin,
     login,
     logout,
@@ -338,6 +398,13 @@ const LoginProvider = ({ children }) => {
     setToken,
     setUsuario,
     setJsonlogin,
+    cities,
+    setCiudades,
+    setDepartamentos,
+    departments,
+    admin,
+    departamentos,
+    ciudades,
     visibleProfile,
     isLoggedIn,
     usuario,
