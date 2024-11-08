@@ -21,6 +21,7 @@ export const Carritocompras = () => {
     handleUnitChange,
     eliminarDelCarrito,
     setVisibleCarrito,
+    handleSubmit
   } = useControlPedidos();
   useEffect(() => {
     if (productos.length > 0) {
@@ -217,7 +218,7 @@ export const Carritocompras = () => {
         // Contenido para datos de envio
         <>
           {isLoggedIn ? (
-            <div className="flex-grow w-full">
+            <div className="flex-grow w-full  overflow-auto">
              <FormularioUsuario/>
             </div>
           ) : (
@@ -253,16 +254,17 @@ export const Carritocompras = () => {
                 }}
                 severity="danger"
               />
+               <form onSubmit={handleSubmit}>
               {/* Botón de continuar */}
               <Button
+              type="submit"
                 label="Continuar"
                 icon={"pi pi-chevron-right"}
                 iconPos="right"
                 disabled={carrito.length > 0 ? false : true}
-                onClick={() => {
-                  setActiveIndex(2);
-                }}
+               
               />
+              </form>
             </div>
           </div>
           {/* Agrega aquí el contenido que quieres mostrar cuando activeIndex sea 2 */}

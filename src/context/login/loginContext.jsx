@@ -19,6 +19,7 @@ const LoginProvider = ({ children }) => {
   const [departamentos, setDepartamentos] = useState([]);
   const [ciudades, setCiudades] = useState([]);
   const [loadingRegistro, setloadingRegistro] = useState(false);
+  const [loadingLogin, setloadingLogin] = useState(false);
 
   const showSuccess = (mensaje) => {
     const Toast = Swal.mixin({
@@ -62,6 +63,7 @@ const LoginProvider = ({ children }) => {
   };
   const login = useCallback(async (correo, contraseña) => {
     try {
+      setloadingLogin(true);
       const response = await clienteAxios.post("users/token/", {
         username: correo,
         password: contraseña,
@@ -102,6 +104,7 @@ const LoginProvider = ({ children }) => {
             ? `${dataLogin.first_name} ${dataLogin.last_name}`
             : "usuario"
         );
+        setloadingLogin(false);
         /* tokens */
         setToken(dataLogin.access);
         setrefresh_Token(dataLogin.refresh);
@@ -113,6 +116,7 @@ const LoginProvider = ({ children }) => {
         `¡Bienvenido, ${dataLogin.first_name} ${dataLogin.last_name}!`
       );
     } catch (error) {
+      setloadingLogin(false);
       console.log(error);
       console.log(error.request.response);
 
@@ -151,7 +155,7 @@ const LoginProvider = ({ children }) => {
   const registro = useCallback(
     async (usuario) => {
       try {
-        setloadingRegistro(true)
+        setloadingRegistro(true);
 
         const response = await clienteAxios.post(
           "users/register/",
@@ -168,7 +172,7 @@ const LoginProvider = ({ children }) => {
             email: usuario.correo,
             number_document: usuario.numeroIdentificacion,
             type_document: usuario.tipoIdentificacion,
-            terms_accepted:usuario.terms_accepted
+            terms_accepted: usuario.terms_accepted,
           },
           {
             headers: {
@@ -190,10 +194,10 @@ const LoginProvider = ({ children }) => {
           // Si también deseas iniciar sesión automáticamente después del registro, puedes hacer una solicitud de inicio de sesión aquí.
           // Por ejemplo:
           login(usuario.correo, usuario.contrasena);
-          setloadingRegistro(false)
+          setloadingRegistro(false);
         }
       } catch (error) {
-        setloadingRegistro(false)
+        setloadingRegistro(false);
         console.log(error);
         // Manejo de errores
         if (error.message === "Network Error") {
@@ -312,11 +316,8 @@ const LoginProvider = ({ children }) => {
   const cities = useCallback(
     async (id) => {
       try {
-      
-
         const respuesta = await clienteAxios.get(
           `users/info/cities/?department_id=${id}`
-      
         );
         if (respuesta.status !== 200) {
           // Cambiado a 205 porque es el código que esperas en la respuesta
@@ -333,30 +334,23 @@ const LoginProvider = ({ children }) => {
     },
     [token]
   );
-  const departments = useCallback(
-    async () => {
-      try {
-        
-
-        const respuesta = await clienteAxios.get(
-          `users/info/departments/`,
-        );
-        console.log(respuesta)
-        if (respuesta.status !== 200) {
-          // Cambiado a 205 porque es el código que esperas en la respuesta
-          return Swal.fire({
-            icon: "error",
-            title: "Error obteniendo los departamentos",
-          });
-        } else {
-          setDepartamentos(respuesta.data)
-        }
-      } catch (error) {
-        console.error(error);
+  const departments = useCallback(async () => {
+    try {
+      const respuesta = await clienteAxios.get(`users/info/departments/`);
+      console.log(respuesta);
+      if (respuesta.status !== 200) {
+        // Cambiado a 205 porque es el código que esperas en la respuesta
+        return Swal.fire({
+          icon: "error",
+          title: "Error obteniendo los departamentos",
+        });
+      } else {
+        setDepartamentos(respuesta.data);
       }
-    },
-    [token]
-  );
+    } catch (error) {
+      console.error(error);
+    }
+  }, [token]);
   const contextValue = useMemo(() => {
     return {
       // ... tus valores de contexto
@@ -374,6 +368,8 @@ const LoginProvider = ({ children }) => {
       setCiudades,
       setDepartamentos,
       departments,
+      setloadingLogin,
+      loadingLogin,
       admin,
       departamentos,
       ciudades,
@@ -402,6 +398,8 @@ const LoginProvider = ({ children }) => {
     setCiudades,
     setDepartamentos,
     departments,
+    setloadingLogin,
+    loadingLogin,
     admin,
     departamentos,
     ciudades,

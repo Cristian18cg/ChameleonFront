@@ -12,7 +12,48 @@ import useControl from "../../hooks/useControl";
 const PedidosContextControl = createContext();
 
 const PedidosProvider = ({ children }) => {
-  const { token } = useControl();
+  const { token, jsonlogin } = useControl();
+
+  const [usuario, setUsuario] = useState({
+    nombres: jsonlogin?.first_name || "",
+    apellidos: jsonlogin?.last_name || "",
+    direccion: jsonlogin?.address || "",
+    telefono: jsonlogin?.phone || "",
+    correo: jsonlogin?.email || "",
+    ciudad: jsonlogin?.city || "",
+    department: jsonlogin?.department || "",
+    tipoIdentificacion: jsonlogin?.type_document || "",
+    numeroIdentificacion: jsonlogin?.number_document || "",
+
+    envioDiferente: false,
+    direccionEnvio: "", // Dirección de envío adicional
+    ciudadEnvio: "", // Ciudad de envío adicional
+    telefonoEnvio: "", // Teléfono auxiliar para la dirección de envío
+    infoAdicionalEnvio: "", // Información adicional para la dirección de envío
+    description: "", //Descripcion adicional del envio
+  });
+  const [errores, setErrores] = useState({
+    nombres: "",
+    apellidos: "",
+    direccion: "",
+    telefono: "",
+    correo: "",
+    ciudad: "",
+    department: "",
+    contrasena: "",
+    terms_accepted: "",
+    confirmarContrasena: "",
+    tipoIdentificacion: "", // Error para tipo de identificación
+    numeroIdentificacion: "", // Error para número de identificación
+
+    departamentoEnvio:"",
+    envioDiferente: "",
+    direccionEnvio: "", // Dirección de envío adicional
+    ciudadEnvio: "", // Ciudad de envío adicional
+    telefonoEnvio: "", // Teléfono auxiliar para la dirección de envío
+    infoAdicionalEnvio: "", // Información adicional para la dirección de envío
+    description: "", //Descripcion adicional del envio
+  });
 
   const [unidades, setUnidades] = useState(() => {
     const unidadesGuardadas = localStorage.getItem("unidades");
@@ -26,6 +67,26 @@ const PedidosProvider = ({ children }) => {
   });
   const [cantidadCarrito, setCantidadCarrito] = useState(0);
 
+  const showError = (error) => {
+    const Toast = Swal.mixin({
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 5000,
+      background: "#f3f2e8f1",
+      color: "black",
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.onmouseenter = Swal.stopTimer;
+        toast.onmouseleave = Swal.resumeTimer;
+      },
+    });
+    Toast.fire({
+      icon: "error",
+      title: error ? error : "¡Ha ocurrido un error!",
+      buttonsStyling: false,
+    });
+  };
   // Guardar el carrito y las unidades en localStorage cuando cambien
   useEffect(() => {
     localStorage.setItem("carrito", JSON.stringify(carrito));
@@ -96,6 +157,74 @@ const PedidosProvider = ({ children }) => {
     [carrito]
   );
 
+  const validarFormularioEnvio = useCallback(() => {
+    let valid = true;
+    let nuevosErrores = {};
+
+    // Validar teléfono (solo números, máximo 10 dígitos)
+    const regexTelefono = /^\(\+\d{2}\)\s\d{3}-\d{3}-\d{4}$/;
+   
+    // Validar campos vacíos principales
+    if (usuario.envioDiferente) {
+      Object.keys(usuario).forEach((campo) => {
+        if (
+          !usuario[campo] &&
+          campo !== "direccionEnvio" &&
+          campo !== "ciudadEnvio" &&
+          campo !== "telefonoEnvio" &&
+          campo !== "infoAdicionalEnvio"
+        ) {
+          nuevosErrores[campo] = "Este campo es obligatorio.";
+          valid = false;
+        }
+      });
+    }
+    // Validar caracteres especiales peligrosos
+    const regexCaracteresPeligrosos = /[$<>{}()'"`;%]/;
+    if (
+      regexCaracteresPeligrosos.test(usuario.infoAdicionalEnvio) ||
+      regexCaracteresPeligrosos.test(usuario.description) ||
+      regexCaracteresPeligrosos.test(usuario.direccionEnvio)
+    ) {
+      showError(
+        `No se permiten caracteres especiales como: <>{}()'";% en ningun campo.`
+      );
+      return false;
+    }
+    // Validación de campos adicionales si `envioDiferente` está activado
+    if (usuario.envioDiferente) {
+      if (!regexTelefono.test(usuario.telefonoEnvio)) {
+        nuevosErrores.telefonoEnvio =
+          "El teléfono auxiliar debe estar en el formato (+XX) XXX-XXX-XXXX.";
+        valid = false;
+      }
+      if (!usuario.direccionEnvio) {
+        nuevosErrores.direccionEnvio = "La dirección de envío es obligatoria.";
+        valid = false;
+      }
+      if (!usuario.ciudadEnvio) {
+        nuevosErrores.ciudadEnvio = "La ciudad de envío es obligatoria.";
+        valid = false;
+      }
+      if (!usuario.departamentoEnvio) {
+        nuevosErrores.departamentoEnvio = "El departamento de envío es obligatoria.";
+        valid = false;
+      }
+    }
+
+    setErrores(nuevosErrores);
+    return valid;
+  }, [usuario]);
+
+  const handleSubmit = useCallback(
+    (e) => {
+      e.preventDefault();
+      if (!validarFormularioEnvio()) return;
+
+      // Aquí puedes agregar la lógica para enviar el formulario si todo es válido.
+    },
+    [validarFormularioEnvio]
+  );
   // Función para eliminar un producto del carrito
   const eliminarDelCarrito = useCallback(
     (productId) => {
@@ -114,6 +243,11 @@ const PedidosProvider = ({ children }) => {
       carrito,
       cantidadCarrito,
       visibleCarrito,
+      usuario,
+      errores,
+      handleSubmit,
+      setErrores,
+      setUsuario,
       setVisibleCarrito,
       eliminarDelCarrito,
       setCantidadCarrito,
@@ -128,6 +262,11 @@ const PedidosProvider = ({ children }) => {
     carrito,
     cantidadCarrito,
     visibleCarrito,
+    usuario,
+    errores,
+    handleSubmit,
+    setErrores,
+    setUsuario,
     setVisibleCarrito,
     eliminarDelCarrito,
     setCantidadCarrito,

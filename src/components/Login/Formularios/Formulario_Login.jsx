@@ -5,7 +5,7 @@ import { Button } from "primereact/button";
 import { Password } from "primereact/password";
 import useControl from "../../../hooks/useControl";
 export const Formulario_Login = () => {
-  const { login } = useControl();
+  const { login,loadingLogin } = useControl();
   const [usuario, setUsuario] = useState("");
   const [contraseña, setContraseña] = useState("");
   const [errores, setErrores] = useState({ correo: "", contraseña: "" });
@@ -94,7 +94,7 @@ export const Formulario_Login = () => {
   
         {/* Botón de Enviar */}
         <div className="flex justify-center">
-          <Button label="Entrar" severity="success" className="mt-3" type="submit" />
+          <Button loading={loadingLogin} label="Entrar"  className="mt-3 bg-purple-600 border-purple-500 hover:bg-purple-800" type="submit" />
         </div>
       </form>
     </div>

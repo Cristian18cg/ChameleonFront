@@ -14,7 +14,7 @@ export const FooterLogin = () => {
           <p className="text-gray-600">¿Ya tienes una cuenta?</p>
           <button
             onClick={() => setVistaLog(1)}
-            className="text-blue-500 hover:underline"
+            className="text-purple-600 hover:underline"
           >
             Inicia sesión aquí
           </button>
@@ -24,13 +24,13 @@ export const FooterLogin = () => {
           {/* Si el usuario está en la vista de login, muestra estos botones */}
           <button
             onClick={() => navigate('/forgot-password')}
-            className="text-blue-500 hover:underline"
+            className="text-purple-600 hover:underline"
           >
             Olvidé mi contraseña
           </button>
           <button
             onClick={() => setVistaLog(2)}
-            className="text-blue-500 hover:underline"
+            className="text-purple-600 hover:underline"
           >
             Registrarse
           </button>
