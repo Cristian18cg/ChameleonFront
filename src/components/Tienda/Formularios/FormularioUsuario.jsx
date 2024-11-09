@@ -62,10 +62,10 @@ export const FormularioUsuario = () => {
       <Toast ref={toast} />
 
       <div>
-        <h1 className="font-bold tex"> Datos de facturación y envio</h1>
+        <h1 className="font-bold text-xl"> Datos de facturación y envio</h1>
       </div>
 
-      <div >
+      <div className="flex">
         <form onSubmit={handleSubmit} className="mt-6 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-6 w-full ">
           {/* Campos principales */}
           <div>

@@ -252,6 +252,7 @@ export const Carritocompras = () => {
                 onClick={() => {
                   setActiveIndex(0);
                 }}
+                className="h-11"
                 severity="danger"
               />
                <form onSubmit={handleSubmit}>
