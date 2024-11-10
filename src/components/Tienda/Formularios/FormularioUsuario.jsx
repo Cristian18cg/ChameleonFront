@@ -13,7 +13,7 @@ import { Toast } from "primereact/toast";
 export const FormularioUsuario = () => {
   const toast = useRef(null);
   const [selectedDepartment, setSelectedDepartment] = useState(null);
-  const { departments, cities, departamentos, ciudades } =
+  const { departments, cities, departamentos, ciudades,jsonlogin} =
     useControl();
   const { usuario, setUsuario, handleSubmit, errores } = useControlPedidos();
   useEffect(() => {
