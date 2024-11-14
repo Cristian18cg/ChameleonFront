@@ -6,17 +6,11 @@ import Table_products from "../Productos/Table_products";
 import useControl from "../../hooks/useControl";
 import { Tienda } from "../Tienda/Tienda";
 import { ProductoDetallado } from "../Tienda/ProductoDetallado";
+import { ConfigDomicilio } from "../Configuracion/Domicilio/ConfigDomicilio";
 
 export const Router_Home = () => {
   const {
-    token,
-    setToken,
-    isLoggedIn,
-    usuario,
-    setUsuario,
-    setLoggedIn,
     admin,
-    setAdmin,
   } = useControl();
   const [Manager, setManager] = useState(false);
   useEffect(() => {
@@ -30,9 +24,9 @@ export const Router_Home = () => {
           <Routes>
             <Route path="/" element={<Landing_home />} />
             <Route path="/productos" element={<Table_products />} />
-            {/* Ruta dinámica */}
-            <Route path="/tienda/:id" element={<ProductoDetallado />} />{" "}
+            <Route path="/tienda/:id" element={<ProductoDetallado />} />
             <Route path="/tienda" element={<Tienda />} />
+            <Route path="/configuracion/domicilio" element={<ConfigDomicilio />} />
           </Routes>
         </Router>
       ) : (
@@ -42,7 +36,7 @@ export const Router_Home = () => {
             <Route path="/" element={<Landing_home />} />
             <Route path="/tienda" element={<Tienda />} />
             <Route path="/tienda/:id" element={<ProductoDetallado />} />{" "}
-            {/* Ruta dinámica */}
+
           </Routes>
         </Router>
       )}

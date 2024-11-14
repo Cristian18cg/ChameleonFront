@@ -7,34 +7,37 @@ import { classNames } from "primereact/utils";
 import useControlProductos from "../../hooks/useControlProductos";
 import useControl from "../../hooks/useControl";
 import useControlPedidos from "../../hooks/useControlPedidos";
-import {FormularioUsuario} from './Formularios/FormularioUsuario'
+import { FormularioUsuario } from "./Formularios/FormularioUsuario";
+import { FormularioResumenEnvio } from "./Formularios/FormularioResumenEnvio";
 export const Carritocompras = () => {
   const [products, setProducts] = useState([]);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const { unidades, setUnidades } = useControlPedidos();
   const { productos } = useControlProductos();
-  const { isLoggedIn,setVisibleProfile } = useControl();
+  const { isLoggedIn, setVisibleProfile } = useControl();
 
   const {
     carrito,
-    setCarrito,
+    unidades,
     handleUnitChange,
     eliminarDelCarrito,
     setVisibleCarrito,
-    handleSubmit
+    handleSubmit,
+    activeIndex,
+    setActiveIndex,
+    crearPedido,
   } = useControlPedidos();
   useEffect(() => {
     if (productos.length > 0) {
       setProducts(carrito);
     }
   }, [carrito]);
-
+  /* Total venta  */
   const calcularTotal = () => {
     return carrito.reduce((total, item) => {
       const precio = item.discount_price ? item.discount_price : item.price;
       return total + precio * item.cantidad;
     }, 0);
   };
+  /* Lista de productos */
   const itemTemplate = (product, index) => {
     return (
       <div className="col-12 w-full" key={product.id}>
@@ -109,6 +112,7 @@ export const Carritocompras = () => {
       </div>
     );
   };
+  /* Forma del template de productos */
   const listTemplate = (items) => {
     if (!items || items.length === 0) return null;
 
@@ -118,6 +122,7 @@ export const Carritocompras = () => {
 
     return <div className="grid grid-nogutter">{list}</div>;
   };
+
   const itemRenderer = (item, itemIndex) => {
     const isActiveItem = activeIndex === itemIndex;
     const backgroundColor = isActiveItem
@@ -176,6 +181,7 @@ export const Carritocompras = () => {
               className="flex-grow overflow-auto"
             />
           ) : (
+            /* No hay productos */
             <div className="flex-grow  flex flex-col justify-center items-center">
               <i className="pi pi-info-circle text-7xl mb-3"></i>
               <h3 className="font-semibold text-xl">
@@ -183,6 +189,7 @@ export const Carritocompras = () => {
               </h3>
             </div>
           )}
+          {/* footer productos */}
           <div className="w-full p-2 border-t-2">
             <div className="mb-2">
               {/* Resumen de la compra */}
@@ -219,7 +226,7 @@ export const Carritocompras = () => {
         <>
           {isLoggedIn ? (
             <div className="flex-grow w-full  overflow-auto">
-             <FormularioUsuario/>
+              <FormularioUsuario />
             </div>
           ) : (
             /* no registrado */
@@ -231,7 +238,7 @@ export const Carritocompras = () => {
               <i
                 onClick={() => {
                   setVisibleCarrito(false);
-                  setVisibleProfile(true)
+                  setVisibleProfile(true);
                 }}
                 className="text-purple-700 hover:cursor-pointer"
               >
@@ -239,7 +246,6 @@ export const Carritocompras = () => {
               </i>
             </div>
           )}
-
           {/* footer */}
           <div className="w-full p-2 border-t-2">
             <div className="flex justify-between">
@@ -255,20 +261,50 @@ export const Carritocompras = () => {
                 className="h-11"
                 severity="danger"
               />
-               <form onSubmit={handleSubmit}>
-              {/* Botón de continuar */}
-              <Button
-              type="submit"
-                label="Continuar"
-                icon={"pi pi-chevron-right"}
-                iconPos="right"
-                disabled={carrito.length > 0 ? false : true}
-               
-              />
+              <form onSubmit={handleSubmit}>
+                {/* Botón de continuar */}
+                <Button
+                  type="submit"
+                  label="Continuar"
+                  icon={"pi pi-chevron-right"}
+                  iconPos="right"
+                  disabled={carrito.length > 0 ? false : true}
+                />
               </form>
             </div>
           </div>
           {/* Agrega aquí el contenido que quieres mostrar cuando activeIndex sea 2 */}
+        </>
+      ) : activeIndex === 2 ? (
+        <>
+          <div className="flex-grow w-full  overflow-auto">
+            <FormularioResumenEnvio />
+          </div>
+          <div className="w-full p-2 border-t-2">
+            <div className="flex justify-between">
+              {/* Botón de Volver */}
+              <Button
+                label="Volver"
+                icon={"pi pi-chevron-left"}
+                iconPos="left"
+                disabled={carrito.length > 0 ? false : true}
+                onClick={() => {
+                  setActiveIndex(1);
+                }}
+                className="h-10"
+                severity="danger"
+              />
+              {/* Botón de continuar */}
+              <Button
+                type="submit"
+                label="Enviar Pedido"
+                icon={"pi pi-chevron-right"}
+                iconPos="right"
+                onClick={crearPedido}
+                disabled={carrito.length > 0 ? false : true}
+              />
+            </div>
+          </div>
         </>
       ) : null}
     </div>

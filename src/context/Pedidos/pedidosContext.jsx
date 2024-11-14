@@ -13,6 +13,8 @@ const PedidosContextControl = createContext();
 
 const PedidosProvider = ({ children }) => {
   const { token, jsonlogin } = useControl();
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [valoresdomicilio, setvaloresdomicilio] = useState([]);
 
   const [usuario, setUsuario] = useState({
     nombres: jsonlogin?.first_name || "",
@@ -46,7 +48,7 @@ const PedidosProvider = ({ children }) => {
     tipoIdentificacion: "", // Error para tipo de identificación
     numeroIdentificacion: "", // Error para número de identificación
 
-    departamentoEnvio:"",
+    departamentoEnvio: "",
     envioDiferente: "",
     direccionEnvio: "", // Dirección de envío adicional
     ciudadEnvio: "", // Ciudad de envío adicional
@@ -66,7 +68,7 @@ const PedidosProvider = ({ children }) => {
     return carritoGuardado ? JSON.parse(carritoGuardado) : [];
   });
   const [cantidadCarrito, setCantidadCarrito] = useState(0);
-
+  /* Mensaje de peticion Erronea */
   const showError = (error) => {
     const Toast = Swal.mixin({
       toast: true,
@@ -87,6 +89,50 @@ const PedidosProvider = ({ children }) => {
       buttonsStyling: false,
     });
   };
+  /* Mensaje de peticion exitosa */
+  const showSuccess = (mensaje) => {
+    const Toast = Swal.mixin({
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 3000,
+      background: "#f3f2e8",
+      color: "black",
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.onmouseenter = Swal.stopTimer;
+        toast.onmouseleave = Swal.resumeTimer;
+      },
+    });
+    Toast.fire({
+      icon: "success",
+      title: mensaje ? mensaje : "",
+      buttonsStyling: false,
+    });
+  };
+  // Guardar el carrito y las unidades en localStorage cuando cambien
+  useEffect(() => {
+    if (jsonlogin) {
+      setUsuario({
+        nombres: jsonlogin?.first_name || "",
+        apellidos: jsonlogin?.last_name || "",
+        direccion: jsonlogin?.address || "",
+        telefono: jsonlogin?.phone || "",
+        correo: jsonlogin?.email || "",
+        ciudad: jsonlogin?.city || "",
+        department: jsonlogin?.department || "",
+        tipoIdentificacion: jsonlogin?.type_document || "",
+        numeroIdentificacion: jsonlogin?.number_document || "",
+
+        envioDiferente: false,
+        direccionEnvio: "", // Dirección de envío adicional
+        ciudadEnvio: "", // Ciudad de envío adicional
+        telefonoEnvio: "", // Teléfono auxiliar para la dirección de envío
+        infoAdicionalEnvio: "", // Información adicional para la dirección de envío
+        description: "", //Descripcion adicional del envio
+      });
+    }
+  }, [jsonlogin]);
   // Guardar el carrito y las unidades en localStorage cuando cambien
   useEffect(() => {
     localStorage.setItem("carrito", JSON.stringify(carrito));
@@ -156,14 +202,14 @@ const PedidosProvider = ({ children }) => {
     },
     [carrito]
   );
-
+  /* Validar datos de envio adicional  */
   const validarFormularioEnvio = useCallback(() => {
     let valid = true;
     let nuevosErrores = {};
 
     // Validar teléfono (solo números, máximo 10 dígitos)
     const regexTelefono = /^\(\+\d{2}\)\s\d{3}-\d{3}-\d{4}$/;
-   
+
     // Validar campos vacíos principales
     if (usuario.envioDiferente) {
       Object.keys(usuario).forEach((campo) => {
@@ -207,7 +253,8 @@ const PedidosProvider = ({ children }) => {
         valid = false;
       }
       if (!usuario.departamentoEnvio) {
-        nuevosErrores.departamentoEnvio = "El departamento de envío es obligatoria.";
+        nuevosErrores.departamentoEnvio =
+          "El departamento de envío es obligatoria.";
         valid = false;
       }
     }
@@ -220,7 +267,7 @@ const PedidosProvider = ({ children }) => {
     (e) => {
       e.preventDefault();
       if (!validarFormularioEnvio()) return;
-
+      setActiveIndex(2);
       // Aquí puedes agregar la lógica para enviar el formulario si todo es válido.
     },
     [validarFormularioEnvio]
@@ -237,6 +284,132 @@ const PedidosProvider = ({ children }) => {
     },
     [carrito]
   );
+
+  const crearvalorDomicilio = useCallback(
+    async (valorDomicilio) => {
+      try {
+        await clienteAxios.post(
+          `administration/config/address`,
+          {
+            address_cost: valorDomicilio,
+            is_active: true,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        showSuccess(
+          `Valor del domicilio creado exitosamente -> ${valorDomicilio}`
+        );
+        ValorDomicilio();
+      } catch (error) {
+        console.error(error);
+        showError("Ha ocurrido un error creando el valor del domicilio");
+      }
+    },
+    [token]
+  );
+
+  const editarvalorDomicilio = useCallback(
+    async (domicilioInfo) => {
+      try {
+        await clienteAxios.put(
+          `administration/config/address/${domicilioInfo.id}`,
+          {
+            address_cost: domicilioInfo.address_cost,
+            is_active: domicilioInfo.isac,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        showSuccess(
+          `Valor del domicilio editado exitosamente -> ${domicilioInfo.id}`
+        );
+      } catch (error) {
+        console.error(error);
+        if (error.response.data.detail) {
+          showError(`ha ocurrido un error: ${error.response.data.detail}`);
+        } else {
+          showError("Ha ocurrido un error creando el valor del domicilio");
+        }
+      }
+    },
+    [token]
+  );
+
+  const eliminarvalorDomicilio = useCallback(
+    async (domicilioInfo) => {
+      console.log("eli", domicilioInfo);
+      try {
+        await clienteAxios.delete(
+          `administration/config/address/${domicilioInfo.id}`,
+
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        showSuccess(
+          `Valor del domicilio eliminado exitosamente -> ${domicilioInfo.address_cost}`
+        );
+        ValorDomicilio();
+      } catch (error) {
+        console.error(error);
+        if (error.response.data.detail) {
+          showError(`ha ocurrido un error: ${error.response.data.detail}`);
+        } else {
+          showError("Ha ocurrido un error eliminando el valor del domicilio");
+        }
+      }
+    },
+    [token]
+  );
+
+  const ValorDomicilio = useCallback(async () => {
+    try {
+      const response = await clienteAxios.get(`administration/config/address/`);
+
+      setvaloresdomicilio(response.data);
+    } catch (error) {
+      console.error(error);
+      showError("Ha ocurrido un error obteniendo el valor del domicilio");
+    }
+  }, []);
+  const crearPedido = useCallback(async () => {
+    try {
+      await clienteAxios.post(
+        `orders/`,
+        {
+          
+          envioDiferente: usuario.envioDiferente,
+          direccionEnvio: usuario.direccionEnvio, // Dirección de envío adicional
+          ciudadEnvio: usuario.ciudadEnvio, // Ciudad de envío adicional
+          telefonoEnvio: usuario.telefonoEnvio, // Teléfono auxiliar para la dirección de envío
+          infoAdicionalEnvio: usuario.infoAdicionalEnvio, // Información adicional para la dirección de envío
+          description: usuario.description, //Descripcion adicional del envio
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      showSuccess(`El pedido ha sido creado exitosamente`);
+      ValorDomicilio();
+    } catch (error) {
+      console.error(error);
+      showError("Ha ocurrido un error creando el valor del domicilio");
+    }
+  }, [token]);
   const contextValue = useMemo(() => {
     return {
       unidades,
@@ -245,6 +418,14 @@ const PedidosProvider = ({ children }) => {
       visibleCarrito,
       usuario,
       errores,
+      activeIndex,
+      valoresdomicilio,
+      eliminarvalorDomicilio,
+      editarvalorDomicilio,
+      setvaloresdomicilio,
+      ValorDomicilio,
+      crearvalorDomicilio,
+      setActiveIndex,
       handleSubmit,
       setErrores,
       setUsuario,
@@ -264,6 +445,14 @@ const PedidosProvider = ({ children }) => {
     visibleCarrito,
     usuario,
     errores,
+    activeIndex,
+    valoresdomicilio,
+    eliminarvalorDomicilio,
+    editarvalorDomicilio,
+    setvaloresdomicilio,
+    ValorDomicilio,
+    crearvalorDomicilio,
+    setActiveIndex,
     handleSubmit,
     setErrores,
     setUsuario,

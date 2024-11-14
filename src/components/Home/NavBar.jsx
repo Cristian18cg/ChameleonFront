@@ -227,12 +227,27 @@ export const NavBar = () => {
           icon: "pi pi-users",
           shortcut: "⌘+S",
           template: itemRenderer,
+          command: () => {
+            navigate("/configuracion/usuarios");
+          },
         },
 
         {
           label: "Imagenes",
           icon: "pi pi-image",
           shortcut: "⌘+U",
+          template: itemRenderer,
+          command: () => {
+            navigate("/configuracion/imagenes");
+          },
+        },
+        {
+          label: "Domicilio",
+          icon: "pi pi-car",
+          shortcut: "⌘+U",
+          command: () => {
+            navigate("/configuracion/domicilio");
+          },
           template: itemRenderer,
         },
       ],
