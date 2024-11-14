@@ -3,7 +3,7 @@ import useControlPedidos from "../../../hooks/useControlPedidos";
 import useControl from "../../../hooks/useControl";
 
 export const FormularioResumenEnvio = () => {
-  const { usuario, carrito, valoresdomicilio, ValorDomicilio } =
+  const { usuario, carrito, valoresdomicilio, ValorDomicilio, setvalordomicilio } =
     useControlPedidos();
   const [valorDomicilio, setValorDomicilio] = useState(0);
   // Calcular y establecer el valor de domicilio cuando `valoresdomicilio` esté cargado
@@ -13,7 +13,9 @@ export const FormularioResumenEnvio = () => {
         (valor) => valor.is_active
       );
       if (valoresActivos.length === 0) return 0;
+      setvalordomicilio(Math.max(...valoresActivos.map((valor) => valor.address_cost)))
       return Math.max(...valoresActivos.map((valor) => valor.address_cost));
+
     };
 
     if (valoresdomicilio.length > 0) {

@@ -15,6 +15,9 @@ const PedidosProvider = ({ children }) => {
   const { token, jsonlogin } = useControl();
   const [activeIndex, setActiveIndex] = useState(0);
   const [valoresdomicilio, setvaloresdomicilio] = useState([]);
+  const [valordomicilio, setvalordomicilio] = useState(0);
+  const [valorPedido, setvalorPedido] = useState(0);
+  const [cupon, setcupon] = useState(0);
 
   const [usuario, setUsuario] = useState({
     nombres: jsonlogin?.first_name || "",
@@ -388,13 +391,17 @@ const PedidosProvider = ({ children }) => {
       await clienteAxios.post(
         `orders/`,
         {
-          
+          user_id: usuario.id,
           envioDiferente: usuario.envioDiferente,
           direccionEnvio: usuario.direccionEnvio, // Dirección de envío adicional
           ciudadEnvio: usuario.ciudadEnvio, // Ciudad de envío adicional
           telefonoEnvio: usuario.telefonoEnvio, // Teléfono auxiliar para la dirección de envío
           infoAdicionalEnvio: usuario.infoAdicionalEnvio, // Información adicional para la dirección de envío
           description: usuario.description, //Descripcion adicional del envio
+          products: carrito,
+          cupon:cupon,
+          valorDomicilio: valordomicilio,
+          valorPedido: valorPedido,
         },
         {
           headers: {
@@ -420,6 +427,11 @@ const PedidosProvider = ({ children }) => {
       errores,
       activeIndex,
       valoresdomicilio,
+      valordomicilio,
+      valorPedido,
+      setvalorPedido,
+      setvalordomicilio,
+      crearPedido,
       eliminarvalorDomicilio,
       editarvalorDomicilio,
       setvaloresdomicilio,
@@ -447,6 +459,11 @@ const PedidosProvider = ({ children }) => {
     errores,
     activeIndex,
     valoresdomicilio,
+    valordomicilio,
+    valorPedido,
+    setvalorPedido,
+    setvalordomicilio,
+    crearPedido,
     eliminarvalorDomicilio,
     editarvalorDomicilio,
     setvaloresdomicilio,
