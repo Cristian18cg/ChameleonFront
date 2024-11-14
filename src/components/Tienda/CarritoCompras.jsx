@@ -11,19 +11,19 @@ import { FormularioUsuario } from "./Formularios/FormularioUsuario";
 import { FormularioResumenEnvio } from "./Formularios/FormularioResumenEnvio";
 export const Carritocompras = () => {
   const [products, setProducts] = useState([]);
-  const { unidades, setUnidades } = useControlPedidos();
   const { productos } = useControlProductos();
   const { isLoggedIn, setVisibleProfile } = useControl();
 
   const {
     carrito,
-    setCarrito,
+    unidades,
     handleUnitChange,
     eliminarDelCarrito,
     setVisibleCarrito,
     handleSubmit,
     activeIndex,
     setActiveIndex,
+    crearPedido,
   } = useControlPedidos();
   useEffect(() => {
     if (productos.length > 0) {
@@ -277,10 +277,9 @@ export const Carritocompras = () => {
       ) : activeIndex === 2 ? (
         <>
           <div className="flex-grow w-full  overflow-auto">
-              <FormularioResumenEnvio />
-            </div>
+            <FormularioResumenEnvio />
+          </div>
           <div className="w-full p-2 border-t-2">
-          
             <div className="flex justify-between">
               {/* Botón de Volver */}
               <Button
@@ -294,16 +293,15 @@ export const Carritocompras = () => {
                 className="h-10"
                 severity="danger"
               />
-              <form onSubmit={handleSubmit}>
-                {/* Botón de continuar */}
-                <Button
-                  type="submit"
-                  label="Enviar Pedido"
-                  icon={"pi pi-chevron-right"}
-                  iconPos="right"
-                  disabled={carrito.length > 0 ? false : true}
-                />
-              </form>
+              {/* Botón de continuar */}
+              <Button
+                type="submit"
+                label="Enviar Pedido"
+                icon={"pi pi-chevron-right"}
+                iconPos="right"
+                onClick={crearPedido}
+                disabled={carrito.length > 0 ? false : true}
+              />
             </div>
           </div>
         </>

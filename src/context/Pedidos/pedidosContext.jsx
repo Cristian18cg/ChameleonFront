@@ -112,27 +112,26 @@ const PedidosProvider = ({ children }) => {
   };
   // Guardar el carrito y las unidades en localStorage cuando cambien
   useEffect(() => {
-if (jsonlogin){
-  setUsuario ({
-    nombres: jsonlogin?.first_name || "",
-    apellidos: jsonlogin?.last_name || "",
-    direccion: jsonlogin?.address || "",
-    telefono: jsonlogin?.phone || "",
-    correo: jsonlogin?.email || "",
-    ciudad: jsonlogin?.city || "",
-    department: jsonlogin?.department || "",
-    tipoIdentificacion: jsonlogin?.type_document || "",
-    numeroIdentificacion: jsonlogin?.number_document || "",
-  
-    envioDiferente: false,
-    direccionEnvio: "", // Dirección de envío adicional
-    ciudadEnvio: "", // Ciudad de envío adicional
-    telefonoEnvio: "", // Teléfono auxiliar para la dirección de envío
-    infoAdicionalEnvio: "", // Información adicional para la dirección de envío
-    description: "", //Descripcion adicional del envio
-  })
-}
- 
+    if (jsonlogin) {
+      setUsuario({
+        nombres: jsonlogin?.first_name || "",
+        apellidos: jsonlogin?.last_name || "",
+        direccion: jsonlogin?.address || "",
+        telefono: jsonlogin?.phone || "",
+        correo: jsonlogin?.email || "",
+        ciudad: jsonlogin?.city || "",
+        department: jsonlogin?.department || "",
+        tipoIdentificacion: jsonlogin?.type_document || "",
+        numeroIdentificacion: jsonlogin?.number_document || "",
+
+        envioDiferente: false,
+        direccionEnvio: "", // Dirección de envío adicional
+        ciudadEnvio: "", // Ciudad de envío adicional
+        telefonoEnvio: "", // Teléfono auxiliar para la dirección de envío
+        infoAdicionalEnvio: "", // Información adicional para la dirección de envío
+        description: "", //Descripcion adicional del envio
+      });
+    }
   }, [jsonlogin]);
   // Guardar el carrito y las unidades en localStorage cuando cambien
   useEffect(() => {
@@ -347,11 +346,11 @@ if (jsonlogin){
 
   const eliminarvalorDomicilio = useCallback(
     async (domicilioInfo) => {
-      console.log('eli',domicilioInfo)
+      console.log("eli", domicilioInfo);
       try {
         await clienteAxios.delete(
           `administration/config/address/${domicilioInfo.id}`,
-        
+
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -361,7 +360,7 @@ if (jsonlogin){
         showSuccess(
           `Valor del domicilio eliminado exitosamente -> ${domicilioInfo.address_cost}`
         );
-        ValorDomicilio()
+        ValorDomicilio();
       } catch (error) {
         console.error(error);
         if (error.response.data.detail) {
@@ -384,7 +383,33 @@ if (jsonlogin){
       showError("Ha ocurrido un error obteniendo el valor del domicilio");
     }
   }, []);
-
+  const crearPedido = useCallback(async () => {
+    try {
+      await clienteAxios.post(
+        `orders/`,
+        {
+          
+          envioDiferente: usuario.envioDiferente,
+          direccionEnvio: usuario.direccionEnvio, // Dirección de envío adicional
+          ciudadEnvio: usuario.ciudadEnvio, // Ciudad de envío adicional
+          telefonoEnvio: usuario.telefonoEnvio, // Teléfono auxiliar para la dirección de envío
+          infoAdicionalEnvio: usuario.infoAdicionalEnvio, // Información adicional para la dirección de envío
+          description: usuario.description, //Descripcion adicional del envio
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      showSuccess(`El pedido ha sido creado exitosamente`);
+      ValorDomicilio();
+    } catch (error) {
+      console.error(error);
+      showError("Ha ocurrido un error creando el valor del domicilio");
+    }
+  }, [token]);
   const contextValue = useMemo(() => {
     return {
       unidades,
