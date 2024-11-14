@@ -215,7 +215,7 @@ export const NavBar = () => {
       label: "Pedidos",
       icon: "pi pi-server",
       command: () => {
-        navigate("/pedidos");
+        navigate("/pedidos/lista_pedidos");
       },
     },
     {

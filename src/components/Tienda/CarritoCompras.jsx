@@ -11,7 +11,8 @@ import { FormularioUsuario } from "./Formularios/FormularioUsuario";
 import { FormularioResumenEnvio } from "./Formularios/FormularioResumenEnvio";
 export const Carritocompras = () => {
   const [products, setProducts] = useState([]);
-  const { productos } = useControlProductos();
+  
+    const { productos,obtenerProductos } = useControlProductos();
   const { isLoggedIn, setVisibleProfile } = useControl();
 
   const {
@@ -25,6 +26,15 @@ export const Carritocompras = () => {
     setActiveIndex,
     crearPedido,
   } = useControlPedidos();
+  
+  useEffect(() => {
+    if (productos.length === 0) {
+      obtenerProductos();
+    } else {
+      setProducts(productos);
+    }
+  }, [productos]);
+
   useEffect(() => {
     if (productos.length > 0) {
       setProducts(carrito);
@@ -296,11 +306,12 @@ export const Carritocompras = () => {
               />
               {/* Botón de continuar */}
               <Button
-                type="submit"
                 label="Enviar Pedido"
                 icon={"pi pi-chevron-right"}
                 iconPos="right"
-                onClick={crearPedido}
+                onClick={()=>{
+                  crearPedido()
+                }}
                 disabled={carrito.length > 0 ? false : true}
               />
             </div>

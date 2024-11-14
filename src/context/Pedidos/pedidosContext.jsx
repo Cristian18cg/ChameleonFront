@@ -15,11 +15,13 @@ const PedidosProvider = ({ children }) => {
   const { token, jsonlogin } = useControl();
   const [activeIndex, setActiveIndex] = useState(0);
   const [valoresdomicilio, setvaloresdomicilio] = useState([]);
+  const [listaPedidos, setlistaPedidos] = useState([]);
   const [valordomicilio, setvalordomicilio] = useState(0);
   const [valorPedido, setvalorPedido] = useState(0);
   const [cupon, setcupon] = useState(0);
 
   const [usuario, setUsuario] = useState({
+    id: jsonlogin?.id || "",
     nombres: jsonlogin?.first_name || "",
     apellidos: jsonlogin?.last_name || "",
     direccion: jsonlogin?.address || "",
@@ -115,8 +117,11 @@ const PedidosProvider = ({ children }) => {
   };
   // Guardar el carrito y las unidades en localStorage cuando cambien
   useEffect(() => {
+    const infoguardada = localStorage.getItem("info_add");
     if (jsonlogin) {
       setUsuario({
+        id: jsonlogin?.id || "",
+
         nombres: jsonlogin?.first_name || "",
         apellidos: jsonlogin?.last_name || "",
         direccion: jsonlogin?.address || "",
@@ -127,12 +132,12 @@ const PedidosProvider = ({ children }) => {
         tipoIdentificacion: jsonlogin?.type_document || "",
         numeroIdentificacion: jsonlogin?.number_document || "",
 
-        envioDiferente: false,
-        direccionEnvio: "", // Dirección de envío adicional
-        ciudadEnvio: "", // Ciudad de envío adicional
-        telefonoEnvio: "", // Teléfono auxiliar para la dirección de envío
-        infoAdicionalEnvio: "", // Información adicional para la dirección de envío
-        description: "", //Descripcion adicional del envio
+        envioDiferente:  infoguardada.envioDiferente || false,
+        direccionEnvio: infoguardada.direccionEnvio || "", // Dirección de envío adicional
+        ciudadEnvio: infoguardada.ciudadEnvio || "", // Ciudad de envío adicional
+        telefonoEnvio: infoguardada.telefonoEnvio || "", // Teléfono auxiliar para la dirección de envío
+        infoAdicionalEnvio: infoguardada.infoAdicionalEnvio || "", // Información adicional para la dirección de envío
+        description: infoguardada.description || "", //Descripcion adicional del envio
       });
     }
   }, [jsonlogin]);
@@ -145,6 +150,10 @@ const PedidosProvider = ({ children }) => {
     const totalUnidades = carrito.reduce((acc, item) => acc + item.cantidad, 0);
     setCantidadCarrito(totalUnidades);
   }, [carrito, unidades]);
+  // Guardar el carrito y las unidades en localStorage cuando cambien
+  useEffect(() => {
+    localStorage.setItem("info_add", JSON.stringify(usuario));
+  }, [usuario]);
 
   // Sincronizar entre pestañas
   useEffect(() => {
@@ -388,35 +397,94 @@ const PedidosProvider = ({ children }) => {
   }, []);
   const crearPedido = useCallback(async () => {
     try {
-      await clienteAxios.post(
-        `orders/`,
-        {
-          user_id: usuario.id,
-          envioDiferente: usuario.envioDiferente,
-          direccionEnvio: usuario.direccionEnvio, // Dirección de envío adicional
-          ciudadEnvio: usuario.ciudadEnvio, // Ciudad de envío adicional
-          telefonoEnvio: usuario.telefonoEnvio, // Teléfono auxiliar para la dirección de envío
-          infoAdicionalEnvio: usuario.infoAdicionalEnvio, // Información adicional para la dirección de envío
-          description: usuario.description, //Descripcion adicional del envio
-          products: carrito,
-          cupon:cupon,
-          valorDomicilio: valordomicilio,
-          valorPedido: valorPedido,
+      const data = {
+        different_shipping: usuario.envioDiferente,
+        coupon: cupon,
+        delivery_cost: valordomicilio,
+        order_value: valorPedido,
+        products: carrito.map((product) => ({
+          product_name: product.name,
+          description: product.description || "", // Ajustar descripción si está disponible
+          unit_price: product.price, // Cambia "price" según el campo correspondiente
+          quantity: product.quantity || 1, // Define una cantidad predeterminada si no está disponible
+          subtotal: product.price * (product.quantity || 1), // Asegura el subtotal
+        })),
+      };
+
+      // Agregar campos de envío solo si el usuario selecciona envío diferente
+      if (usuario.envioDiferente) {
+        data.shipping_address = usuario.direccionEnvio || "";
+        data.shipping_city = usuario.ciudadEnvio || "";
+        data.shipping_phone = usuario.telefonoEnvio || "";
+        data.additional_info = usuario.infoAdicionalEnvio || "";
+        data.description = usuario.description || "";
+      }
+
+      await clienteAxios.post(`orders/create_order/`, data, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
+      });
+
+      // Vaciar el carrito en el estado
+      setCarrito([]);
+      setUnidades([]);
+      setActiveIndex(valorPedido(0));
+      // Eliminar los datos del carrito y las unidades del localStorage
+      localStorage.removeItem("carrito");
+      localStorage.removeItem("unidades");
+
+      // Reiniciar la cantidad total del carrito
+      setCantidadCarrito(0);
+
+      showSuccess(`El pedido ha sido creado exitosamente`);
+    } catch (error) {
+      console.error("Error al crear el pedido:", error);
+      if (error.response) {
+        console.error("Detalle del error:", error.response.data);
+        showError(
+          `Ha ocurrido un error creando el pedido: ${
+            error.response.data.error || "Error de validación"
+          }`
+        );
+      } else {
+        showError(
+          "Ha ocurrido un error creando el pedido. Intente nuevamente."
+        );
+      }
+    }
+  }, [token, usuario, carrito, cupon, valordomicilio, valorPedido]);
+
+  const listarPedidos = useCallback(async () => {
+    try {
+      const response = await clienteAxios.get(
+        `orders/orders/`,
+
         {
           headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
         }
       );
-      showSuccess(`El pedido ha sido creado exitosamente`);
-      ValorDomicilio();
+      setlistaPedidos(response.data);
     } catch (error) {
-      console.error(error);
-      showError("Ha ocurrido un error creando el valor del domicilio");
+      console.error("Error obteniendo pedidos:", error);
+      if (error.response) {
+        console.error("Detalle del error:", error.response.data);
+        showError(
+          `Ha ocurrido un error obteniendo los pedidos: ${
+            error.response.data.error || "Error de validación"
+          }`
+        );
+      } else {
+        showError(
+          "Ha ocurrido un error obteniendo los pedido. Intente nuevamente."
+        );
+      }
     }
   }, [token]);
+
   const contextValue = useMemo(() => {
     return {
       unidades,
@@ -429,6 +497,9 @@ const PedidosProvider = ({ children }) => {
       valoresdomicilio,
       valordomicilio,
       valorPedido,
+      listaPedidos,
+      setlistaPedidos,
+      listarPedidos,
       setvalorPedido,
       setvalordomicilio,
       crearPedido,
@@ -461,6 +532,9 @@ const PedidosProvider = ({ children }) => {
     valoresdomicilio,
     valordomicilio,
     valorPedido,
+    listaPedidos,
+    setlistaPedidos,
+    listarPedidos,
     setvalorPedido,
     setvalordomicilio,
     crearPedido,

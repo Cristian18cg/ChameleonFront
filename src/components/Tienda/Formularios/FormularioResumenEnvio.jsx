@@ -3,7 +3,7 @@ import useControlPedidos from "../../../hooks/useControlPedidos";
 import useControl from "../../../hooks/useControl";
 
 export const FormularioResumenEnvio = () => {
-  const { usuario, carrito, valoresdomicilio, ValorDomicilio, setvalordomicilio } =
+  const { usuario, carrito, valoresdomicilio, ValorDomicilio, setvalordomicilio,setvalorPedido } =
     useControlPedidos();
   const [valorDomicilio, setValorDomicilio] = useState(0);
   // Calcular y establecer el valor de domicilio cuando `valoresdomicilio` esté cargado
@@ -45,6 +45,7 @@ export const FormularioResumenEnvio = () => {
       return acc + precio * item.cantidad;
     }, 0);
     const total = valorDomicilio + totalcarrito;
+    setvalorPedido(total)
     return new Intl.NumberFormat("es-CO", {
       style: "currency",
       currency: "COP",
