@@ -132,12 +132,12 @@ const PedidosProvider = ({ children }) => {
         tipoIdentificacion: jsonlogin?.type_document || "",
         numeroIdentificacion: jsonlogin?.number_document || "",
 
-        envioDiferente:  infoguardada.envioDiferente || false,
-        direccionEnvio: infoguardada.direccionEnvio || "", // Dirección de envío adicional
-        ciudadEnvio: infoguardada.ciudadEnvio || "", // Ciudad de envío adicional
-        telefonoEnvio: infoguardada.telefonoEnvio || "", // Teléfono auxiliar para la dirección de envío
-        infoAdicionalEnvio: infoguardada.infoAdicionalEnvio || "", // Información adicional para la dirección de envío
-        description: infoguardada.description || "", //Descripcion adicional del envio
+        envioDiferente:  infoguardada?.envioDiferente || false,
+        direccionEnvio: infoguardada?.direccionEnvio || "", // Dirección de envío adicional
+        ciudadEnvio: infoguardada?.ciudadEnvio || "", // Ciudad de envío adicional
+        telefonoEnvio: infoguardada?.telefonoEnvio || "", // Teléfono auxiliar para la dirección de envío
+        infoAdicionalEnvio: infoguardada?.infoAdicionalEnvio || "", // Información adicional para la dirección de envío
+        description: infoguardada?.description || "", //Descripcion adicional del envio
       });
     }
   }, [jsonlogin]);
