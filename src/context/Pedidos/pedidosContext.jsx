@@ -405,9 +405,9 @@ const PedidosProvider = ({ children }) => {
         products: carrito.map((product) => ({
           product_name: product.name,
           description: product.description || "", // Ajustar descripción si está disponible
-          unit_price: product.price, // Cambia "price" según el campo correspondiente
-          quantity: product.quantity || 1, // Define una cantidad predeterminada si no está disponible
-          subtotal: product.price * (product.quantity || 1), // Asegura el subtotal
+          unit_price: product.discount_price, // Cambia "price" según el campo correspondiente
+          quantity: product.cantidad || 1, // Define una cantidad predeterminada si no está disponible
+          subtotal: product.discount_price * (product.cantidad || 1), // Asegura el subtotal
         })),
       };
 
@@ -429,15 +429,16 @@ const PedidosProvider = ({ children }) => {
 
       // Vaciar el carrito en el estado
       setCarrito([]);
+      setVisibleCarrito(false)
       setUnidades([]);
-      setActiveIndex(valorPedido(0));
+      setActiveIndex(1);
       // Eliminar los datos del carrito y las unidades del localStorage
       localStorage.removeItem("carrito");
       localStorage.removeItem("unidades");
 
       // Reiniciar la cantidad total del carrito
       setCantidadCarrito(0);
-
+      setvalorPedido(0)
       showSuccess(`El pedido ha sido creado exitosamente`);
     } catch (error) {
       console.error("Error al crear el pedido:", error);

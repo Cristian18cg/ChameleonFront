@@ -60,18 +60,8 @@ export const ListaPedidos = () => {
     return rowData.products.length > 0;
   };
 
-  const formatCurrency = (value) => {
-    return value?.toLocaleString("es-CO", {
-      style: "currency",
-      currency: "COP",
-    });
-  };
-  const priceBodyTemplate = (rowData) => {
-    return formatCurrency(rowData.order_value);
-  };
-  const priceDomiBodyTemplate = (rowData) => {
-    return formatCurrency(rowData.delivery_cost);
-  };
+ 
+
   const getOrderSeverity = (order) => {
     console.log("order", order);
     switch (order.status) {
