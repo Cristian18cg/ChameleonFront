@@ -18,6 +18,7 @@ const PedidosProvider = ({ children }) => {
   const [listaPedidos, setlistaPedidos] = useState([]);
   const [valordomicilio, setvalordomicilio] = useState(0);
   const [valorPedido, setvalorPedido] = useState(0);
+  const [loadingPedidosLista, setloadingPedidosLista] = useState(false);
   const [cupon, setcupon] = useState(0);
 
   const [usuario, setUsuario] = useState({
@@ -459,6 +460,7 @@ const PedidosProvider = ({ children }) => {
 
   const listarPedidos = useCallback(async () => {
     try {
+      setloadingPedidosLista(true)
       const response = await clienteAxios.get(
         `orders/orders/`,
 
@@ -469,7 +471,10 @@ const PedidosProvider = ({ children }) => {
         }
       );
       setlistaPedidos(response.data);
+      setloadingPedidosLista(false)
     } catch (error) {
+      setloadingPedidosLista(false)
+
       console.error("Error obteniendo pedidos:", error);
       if (error.response) {
         console.error("Detalle del error:", error.response.data);
@@ -499,6 +504,9 @@ const PedidosProvider = ({ children }) => {
       valordomicilio,
       valorPedido,
       listaPedidos,
+     
+      loadingPedidosLista, 
+      setloadingPedidosLista,
       setlistaPedidos,
       listarPedidos,
       setvalorPedido,

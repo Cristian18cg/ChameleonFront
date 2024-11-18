@@ -10,7 +10,7 @@ import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { PedidoDesplegado } from "./PedidoDesplegado";
 export const ListaPedidos = () => {
-  const { listarPedidos, listaPedidos, setlistaPedidos } = useControlPedidos();
+  const { listarPedidos, listaPedidos, setlistaPedidos,loadingPedidosLista } = useControlPedidos();
   const [expandedRows, setExpandedRows] = useState(null);
   const [pedidoRow, setPedidoRow] = useState(null);
   const [globalFilterValue, setGlobalFilterValue] = useState("");
@@ -44,7 +44,8 @@ export const ListaPedidos = () => {
   };
   const header = () => {
     return (
-      <div className="flex justify-content-end bg-gray-100">
+      <div className="flex justify-between bg-gray-100">
+        <div>
         <IconField iconPosition="left">
           <InputIcon className="pi pi-search" />
           <InputText
@@ -53,6 +54,16 @@ export const ListaPedidos = () => {
             placeholder="Buscar"
           />
         </IconField>
+        </div>
+        <div>
+        <Button 
+        loading={loadingPedidosLista}
+        icon="pi pi-replay"
+        onClick={()=>{
+          listarPedidos()
+        }}
+        className="bg-purple-600 border-purple-400 hover:bg-purple-800 "></Button>
+        </div>
       </div>
     );
   };
