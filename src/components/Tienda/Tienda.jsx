@@ -169,7 +169,10 @@ export const Tienda = () => {
           <div className="flex flex-col sm:flex-row justify-between items-center xl:items-start flex-1 gap-4">
             {/* Información del producto */}
             <div className="flex flex-col items-center sm:items-start gap-3">
-              <div className="text-2xl font-bold text-gray-900">
+              <div className="text-2xl font-bold text-gray-900 hover:cursor-pointer"
+                onClick={() => {
+                  navigate(`/tienda/${product.id}`);
+                }}>
                 {product.name}
               </div>
               <Rating
@@ -183,9 +186,11 @@ export const Tienda = () => {
                   <i className="pi pi-tag"></i>
                   <span className="font-semibold">{product.categories}</span>
                 </span>
-               
               </div>
-              <Tag value={getMessage(product)} severity={getSeverity(product)} />
+              <Tag
+                value={getMessage(product)}
+                severity={getSeverity(product)}
+              />
             </div>
 
             {/* Precio */}
@@ -242,7 +247,9 @@ export const Tienda = () => {
                 value={unidades[product.id] || 0}
                 onValueChange={(e) => handleUnitChange(product.id, e.value)}
                 showButtons
-                min={1}
+                min={product.stock === 0 ? 0 : 1}
+                max={product.stock}
+                disabled={product.stock === 0}
                 buttonLayout="horizontal"
                 decrementButtonClassName="p-button-danger"
                 incrementButtonClassName="p-button-success"
@@ -267,7 +274,9 @@ export const Tienda = () => {
                     ? "p-button-success"
                     : "p-button-primary"
                 }`}
-                disabled={isProductoEnCarrito(product.id) ? true : false}
+                disabled={
+                  isProductoEnCarrito(product.id) || product.stock === 0
+                }
                 onClick={() =>
                   agregarAlCarrito(product, unidades[product.id] || 1)
                 }
@@ -334,7 +343,12 @@ export const Tienda = () => {
                 )}
               </div>
 
-              <div className="text-xl xl:text-2xl font-bold text-gray-900">
+              <div
+                className="text-xl xl:text-2xl font-bold text-gray-900 hover:cursor-pointer"
+                onClick={() => {
+                  navigate(`/tienda/${product.id}`);
+                }}
+              >
                 {product.name}
               </div>
             </div>
@@ -406,7 +420,9 @@ export const Tienda = () => {
               value={unidades[product.id] || 0}
               onValueChange={(e) => handleUnitChange(product.id, e.value)}
               showButtons
-              min={1}
+              min={product.stock === 0 ? 0 : 1}
+              disabled={product.stock === 0}
+              max={product.stock}
               buttonLayout="horizontal"
               decrementButtonClassName="p-button-danger"
               incrementButtonClassName="p-button-success"
@@ -431,7 +447,7 @@ export const Tienda = () => {
                   ? "p-button-success"
                   : "p-button-primary"
               }`}
-              disabled={isProductoEnCarrito(product.id) ? true : false}
+              disabled={isProductoEnCarrito(product.id) || product.stock === 0}
               onClick={() =>
                 agregarAlCarrito(product, unidades[product.id] || 1)
               }

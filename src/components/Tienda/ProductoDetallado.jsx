@@ -49,7 +49,7 @@ export const ProductoDetallado = () => {
   const thumbnailTemplate = (item) => {
     return (
       <img
-        alt={producto.images ? producto.name : item?.name}
+        alt={producto.images ? item.name : item?.name}
         src={producto.images ? item.image_url : item?.objectURL}
         className="w-12  md:w-12 lg:w-14 xl:w-24"
       />
@@ -88,16 +88,10 @@ export const ProductoDetallado = () => {
               <Galleria
                 value={producto?.images}
                 responsiveOptions={responsiveOptions}
-                activeIndex={activeIndex}
-                onItemChange={(e) => setActiveIndex(e.index)}
-  
                 numVisible={6}
                 item={itemTemplateImg}
-                className={isMobile ? "" : "gallery-thumbnail-custom  "} // Ajustar el ancho de la galería
                 thumbnail={ thumbnailTemplate}
                 thumbnailsPosition={isMobile ? "bottom" : "left"}
-                circular
-
               />
             </div>
           )}
@@ -144,7 +138,11 @@ export const ProductoDetallado = () => {
               value={unidades[producto.id] || 0}
               onValueChange={(e) => handleUnitChange(producto.id, e.value)}
               showButtons
-              min={1}
+              min={producto.stock=== 0 ? 0 : 1
+              }
+              max={producto.stock}
+              disabled={producto.stock === 0}
+
               buttonLayout="horizontal"
               decrementButtonClassName="p-button-danger"
               incrementButtonClassName="p-button-success"
@@ -171,7 +169,10 @@ export const ProductoDetallado = () => {
                   ? "p-button-success"
                   : "p-button-primary"
               }`}
-              disabled={isProductoEnCarrito(producto.id) ? true : false}
+  
+
+              disabled={isProductoEnCarrito(producto.id) || producto.stock === 0}
+
               onClick={() =>
                 agregarAlCarrito(producto, unidades[producto.id] || 1)
               }
@@ -214,7 +215,7 @@ export const ProductoDetallado = () => {
                   currency: "COP",
                   minimumFractionDigits: 0,
                   maximumFractionDigits: 2,
-                }).format(producto.discount_price * unidades)}
+                }).format(producto.discount_price * unidades[producto.id])}
               </p>
               <Button
                 label="Ver métodos de pago"

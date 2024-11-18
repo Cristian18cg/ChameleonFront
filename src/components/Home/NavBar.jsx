@@ -131,7 +131,7 @@ export const NavBar = () => {
     },
     {
       label: "Tienda",
-      icon: "pi pi-user",
+      icon: "pi pi-shop",
       command: () => {
         navigate("/tienda");
       },

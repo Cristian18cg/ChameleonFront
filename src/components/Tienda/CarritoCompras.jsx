@@ -11,8 +11,8 @@ import { FormularioUsuario } from "./Formularios/FormularioUsuario";
 import { FormularioResumenEnvio } from "./Formularios/FormularioResumenEnvio";
 export const Carritocompras = () => {
   const [products, setProducts] = useState([]);
-  
-    const { productos,obtenerProductos } = useControlProductos();
+
+  const { productos, obtenerProductos } = useControlProductos();
   const { isLoggedIn, setVisibleProfile } = useControl();
 
   const {
@@ -25,8 +25,9 @@ export const Carritocompras = () => {
     activeIndex,
     setActiveIndex,
     crearPedido,
+    creandoPedido,
   } = useControlPedidos();
-  
+
   useEffect(() => {
     if (productos.length === 0) {
       obtenerProductos();
@@ -103,7 +104,9 @@ export const Carritocompras = () => {
                   value={unidades[product.id] || 0}
                   onValueChange={(e) => handleUnitChange(product.id, e.value)}
                   showButtons
-                  min={1}
+                  disabled={product.stock === 0}
+                  min={product.stock === 0 ? 0 : 1}
+                  max={product.stock}
                   buttonLayout="horizontal"
                   decrementButtonClassName="p-button-danger"
                   incrementButtonClassName="p-button-success"
@@ -278,7 +281,7 @@ export const Carritocompras = () => {
                   label="Continuar"
                   icon={"pi pi-chevron-right"}
                   iconPos="right"
-                  disabled={carrito.length > 0 ? false : true}
+                  disabled={!(carrito.length > 0 && isLoggedIn)}
                 />
               </form>
             </div>
@@ -307,12 +310,16 @@ export const Carritocompras = () => {
               {/* Botón de continuar */}
               <Button
                 label="Enviar Pedido"
-                icon={"pi pi-chevron-right"}
+                icon={"pi pi-truck"}
+                loading={creandoPedido}
+                loadingIcon="pi pi-spin pi-truck"
                 iconPos="right"
-                onClick={()=>{
-                  crearPedido()
+                onClick={() => {
+                  crearPedido();
                 }}
-                disabled={carrito.length > 0 ? false : true}
+                className="bg-purple-600 border-purple-400 hover:bg-purple-800"
+                disabled={!(carrito.length > 0 && isLoggedIn)}
+
               />
             </div>
           </div>

@@ -9,8 +9,10 @@ import { InputText } from "primereact/inputtext";
 import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { PedidoDesplegado } from "./PedidoDesplegado";
+import { Skeleton } from 'primereact/skeleton';
 export const ListaPedidos = () => {
-  const { listarPedidos, listaPedidos, setlistaPedidos,loadingPedidosLista } = useControlPedidos();
+  const { listarPedidos, listaPedidos, setlistaPedidos, loadingPedidosLista } =
+    useControlPedidos();
   const [expandedRows, setExpandedRows] = useState(null);
   const [pedidoRow, setPedidoRow] = useState(null);
   const [globalFilterValue, setGlobalFilterValue] = useState("");
@@ -46,23 +48,24 @@ export const ListaPedidos = () => {
     return (
       <div className="flex justify-between bg-gray-100">
         <div>
-        <IconField iconPosition="left">
-          <InputIcon className="pi pi-search" />
-          <InputText
-            value={globalFilterValue}
-            onChange={onGlobalFilterChange}
-            placeholder="Buscar"
-          />
-        </IconField>
+          <IconField iconPosition="left">
+            <InputIcon className="pi pi-search" />
+            <InputText
+              value={globalFilterValue}
+              onChange={onGlobalFilterChange}
+              placeholder="Buscar"
+            />
+          </IconField>
         </div>
         <div>
-        <Button 
-        loading={loadingPedidosLista}
-        icon="pi pi-replay"
-        onClick={()=>{
-          listarPedidos()
-        }}
-        className="bg-purple-600 border-purple-400 hover:bg-purple-800 "></Button>
+          <Button
+            loading={loadingPedidosLista}
+            icon="pi pi-replay"
+            onClick={() => {
+              listarPedidos();
+            }}
+            className="bg-purple-600 border-purple-400 hover:bg-purple-800 "
+          ></Button>
         </div>
       </div>
     );
@@ -70,8 +73,6 @@ export const ListaPedidos = () => {
   const allowExpansion = (rowData) => {
     return rowData.products.length > 0;
   };
-
- 
 
   const getOrderSeverity = (order) => {
     console.log("order", order);
@@ -119,88 +120,135 @@ export const ListaPedidos = () => {
       ></Tag>
     );
   };
+  const items = Array.from({ length: 10 }, (v, i) => i);
   return (
     <div className="md:mt-24">
-      <div className="card">
-        <DataTable
-          value={listaPedidos}
-          expandedRows={expandedRows}
-          onRowToggle={(e) => setExpandedRows(e.data)}
-          onRowExpand={onRowExpand}
-          onRowCollapse={onRowCollapse}
-          rowExpansionTemplate={PedidoDesplegado}
-          dataKey="id"
-          header={header()}
-          tableStyle={{ minWidth: "60rem" }}
-          emptyMessage={"No se encontraron pedidos"}
-        >
-          <Column expander={allowExpansion} style={{ width: "5rem" }} />
-          <Column field="id" header="Id" sortable />
-          <Column
-            field="user.first_name"
-            header="Responsable"
-            body={(rowData) => {
-              return `${rowData.user.first_name} ${rowData.user.last_name}`;
-            }}
-            sortable
-          />
-          <Column
-            field="shipping_address"
-            header="Direccion"
-            body={(rowData) => {
-              if (rowData.different_shipping) {
-                return `${rowData.shipping_address} `;
-              } else {
-                return `${rowData.user.profile.address} `;
+      {loadingPedidosLista ? (
+        <div className="card">
+          <DataTable
+            value={items}
+            header={header()}
+            className="p-datatable-striped"
+          >
+            <Column
+              header="Id"
+              body={<Skeleton />}
+            ></Column>
+            <Column
+              header="Responsable"
+              body={<Skeleton />}
+            ></Column>
+            <Column
+              header="Direccion"
+              body={<Skeleton />}
+            ></Column>
+            <Column
+              field="quantity"
+              header="Ciudad"
+              body={<Skeleton />}
+            ></Column>
+             <Column
+              header="Valor Domicilio"
+              body={<Skeleton />}
+            ></Column>
+              <Column
+              header="Valor Pedido"
+              body={<Skeleton />}
+            ></Column>
+              <Column
+              header="Fecha "
+              body={<Skeleton />}
+            ></Column>
+             <Column
+              field="status"
+              header="Estado"
+              sortable
+              body={<Skeleton />}
+
+            />
+          </DataTable>
+        </div>
+      ) : (
+        <div className="card">
+          <DataTable
+            value={listaPedidos}
+            expandedRows={expandedRows}
+            onRowToggle={(e) => setExpandedRows(e.data)}
+            onRowExpand={onRowExpand}
+            onRowCollapse={onRowCollapse}
+            rowExpansionTemplate={PedidoDesplegado}
+            dataKey="id"
+            header={header()}
+            tableStyle={{ minWidth: "60rem" }}
+            emptyMessage={"No se encontraron pedidos"}
+          >
+            <Column expander={allowExpansion} style={{ width: "5rem" }} />
+            <Column field="id" header="Id" sortable />
+            <Column
+              field="user.first_name"
+              header="Responsable"
+              body={(rowData) => {
+                return `${rowData.user.first_name} ${rowData.user.last_name}`;
+              }}
+              sortable
+            />
+            <Column
+              field="shipping_address"
+              header="Direccion"
+              body={(rowData) => {
+                if (rowData.different_shipping) {
+                  return `${rowData.shipping_address} `;
+                } else {
+                  return `${rowData.user.profile.address} `;
+                }
+              }}
+              sortable
+            />
+            <Column
+              field="shipping_city"
+              header="Ciudad "
+              body={(rowData) => {
+                if (rowData.different_shipping) {
+                  return `${rowData.shipping_city} `;
+                } else {
+                  return `${rowData.user.profile.city} `;
+                }
+              }}
+              sortable
+            />
+            <Column
+              field="delivery_cost"
+              header="Valor Domicilio"
+              sortable
+              body={(rowData) =>
+                new Intl.NumberFormat("es-CO", {
+                  style: "currency",
+                  currency: "COP",
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 2,
+                }).format(rowData.delivery_cost)
               }
-            }}
-            sortable
-          />
-          <Column
-            field="shipping_city"
-            header="Ciudad "
-            body={(rowData) => {
-              if (rowData.different_shipping) {
-                return `${rowData.shipping_city} `;
-              } else {
-                return `${rowData.user.profile.city} `;
+            />
+            <Column
+              field="order_value"
+              header="Valor Pedido"
+              sortable
+              body={(rowData) =>
+                new Intl.NumberFormat("es-CO", {
+                  style: "currency",
+                  currency: "COP",
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 2,
+                }).format(rowData.order_value)
               }
-            }}
-            sortable
-          />
-          <Column
-            field="delivery_cost"
-            header="Valor Domicilio"
-            sortable
-            body={(rowData) =>
-              new Intl.NumberFormat("es-CO", {
-                style: "currency",
-                currency: "COP",
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 2,
-              }).format(rowData.delivery_cost)
-            }
-          />
-          <Column
-            field="order_value"
-            header="Valor Pedido"
-            sortable
-            body={(rowData) =>
-              new Intl.NumberFormat("es-CO", {
-                style: "currency",
-                currency: "COP",
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 2,
-              }).format(rowData.order_value)
-            }
-          />
-          <Column
-            field="created_at"
-            header="Fecha"
-            body={(rowData) => {
-              const formattedDate = new Date(rowData.created_at).toLocaleString(
-                "es-ES",
-                {
+            />
+            <Column
+              field="created_at"
+              header="Fecha"
+              body={(rowData) => {
+                const formattedDate = new Date(
+                  rowData.created_at
+                ).toLocaleString("es-ES", {
                   year: "numeric",
                   month: "2-digit",
                   day: "2-digit",
@@ -208,20 +256,20 @@ export const ListaPedidos = () => {
                   minute: "2-digit",
                   second: "2-digit",
                   hour12: false, // Usa formato de 24 horas
-                }
-              );
-              return formattedDate;
-            }}
-            sortable
-          />
-          <Column
-            field="status"
-            header="Estado"
-            sortable
-            body={statusOrderBodyTemplate}
-          />
-        </DataTable>
-      </div>
+                });
+                return formattedDate;
+              }}
+              sortable
+            />
+            <Column
+              field="status"
+              header="Estado"
+              sortable
+              body={statusOrderBodyTemplate}
+            />
+          </DataTable>
+        </div>
+      )}
     </div>
   );
 };

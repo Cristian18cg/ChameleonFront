@@ -19,6 +19,7 @@ const PedidosProvider = ({ children }) => {
   const [valordomicilio, setvalordomicilio] = useState(0);
   const [valorPedido, setvalorPedido] = useState(0);
   const [loadingPedidosLista, setloadingPedidosLista] = useState(false);
+  const [creandoPedido, setcreandoPedido] = useState(false);
   const [cupon, setcupon] = useState(0);
 
   const [usuario, setUsuario] = useState({
@@ -133,7 +134,7 @@ const PedidosProvider = ({ children }) => {
         tipoIdentificacion: jsonlogin?.type_document || "",
         numeroIdentificacion: jsonlogin?.number_document || "",
 
-        envioDiferente:  infoguardada?.envioDiferente || false,
+        envioDiferente: infoguardada?.envioDiferente || false,
         direccionEnvio: infoguardada?.direccionEnvio || "", // Dirección de envío adicional
         ciudadEnvio: infoguardada?.ciudadEnvio || "", // Ciudad de envío adicional
         telefonoEnvio: infoguardada?.telefonoEnvio || "", // Teléfono auxiliar para la dirección de envío
@@ -398,6 +399,7 @@ const PedidosProvider = ({ children }) => {
   }, []);
   const crearPedido = useCallback(async () => {
     try {
+      setcreandoPedido(true); //loading del boton
       const data = {
         different_shipping: usuario.envioDiferente,
         coupon: cupon,
@@ -430,27 +432,41 @@ const PedidosProvider = ({ children }) => {
 
       // Vaciar el carrito en el estado
       setCarrito([]);
-      setVisibleCarrito(false)
+      setVisibleCarrito(false);
       setUnidades([]);
-      setActiveIndex(1);
+      setActiveIndex(0);
       // Eliminar los datos del carrito y las unidades del localStorage
       localStorage.removeItem("carrito");
       localStorage.removeItem("unidades");
 
       // Reiniciar la cantidad total del carrito
       setCantidadCarrito(0);
-      setvalorPedido(0)
+      setvalorPedido(0);
       showSuccess(`El pedido ha sido creado exitosamente`);
+      setcreandoPedido(false); //loading del boton
     } catch (error) {
+      setcreandoPedido(false); // Desactiva el loading del botón
+
       console.error("Error al crear el pedido:", error);
+
+      // Si el error tiene una respuesta desde el backend
       if (error.response) {
         console.error("Detalle del error:", error.response.data);
-        showError(
-          `Ha ocurrido un error creando el pedido: ${
-            error.response.data.error || "Error de validación"
-          }`
-        );
+
+        // Verificar si existen errores específicos en `error.products`
+        if (error.response.data.error?.products) {
+          // Combinar los errores de productos en un mensaje legible
+          const productErrors = error.response.data.error.products.join(", ");
+          showError(`Ha ocurrido un error con los productos: ${productErrors}`);
+        } else {
+          // Mostrar un mensaje genérico si no hay detalles específicos
+          const errorMessage =
+            error.response.data.error ||
+            "Ha ocurrido un error creando el pedido. Intente nuevamente.";
+          showError(errorMessage);
+        }
       } else {
+        // Si no hay respuesta del backend, mostrar un mensaje genérico
         showError(
           "Ha ocurrido un error creando el pedido. Intente nuevamente."
         );
@@ -460,7 +476,7 @@ const PedidosProvider = ({ children }) => {
 
   const listarPedidos = useCallback(async () => {
     try {
-      setloadingPedidosLista(true)
+      setloadingPedidosLista(true);
       const response = await clienteAxios.get(
         `orders/orders/`,
 
@@ -471,9 +487,42 @@ const PedidosProvider = ({ children }) => {
         }
       );
       setlistaPedidos(response.data);
-      setloadingPedidosLista(false)
+      setloadingPedidosLista(false);
     } catch (error) {
-      setloadingPedidosLista(false)
+      setloadingPedidosLista(false);
+
+      console.error("Error obteniendo pedidos:", error);
+      if (error.response) {
+        console.error("Detalle del error:", error.response.data);
+        showError(
+          `Ha ocurrido un error obteniendo los pedidos: ${
+            error.response.data.error || "Error de validación"
+          }`
+        );
+      } else {
+        showError(
+          "Ha ocurrido un error obteniendo los pedido. Intente nuevamente."
+        );
+      }
+    }
+  }, [token]);
+
+  const EditaPedido = useCallback(async () => {
+    try {
+      setloadingPedidosLista(true);
+      const response = await clienteAxios.get(
+        `orders/orders/`,
+
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setlistaPedidos(response.data);
+      setloadingPedidosLista(false);
+    } catch (error) {
+      setloadingPedidosLista(false);
 
       console.error("Error obteniendo pedidos:", error);
       if (error.response) {
@@ -504,8 +553,9 @@ const PedidosProvider = ({ children }) => {
       valordomicilio,
       valorPedido,
       listaPedidos,
-     
-      loadingPedidosLista, 
+      loadingPedidosLista,
+      creandoPedido,
+      setcreandoPedido,
       setloadingPedidosLista,
       setlistaPedidos,
       listarPedidos,
@@ -542,6 +592,10 @@ const PedidosProvider = ({ children }) => {
     valordomicilio,
     valorPedido,
     listaPedidos,
+    loadingPedidosLista,
+    creandoPedido,
+    setcreandoPedido,
+
     setlistaPedidos,
     listarPedidos,
     setvalorPedido,
