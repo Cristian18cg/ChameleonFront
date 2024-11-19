@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import useControlPedidos from "../../hooks/useControlPedidos";
 import { DataTable } from "primereact/datatable";
 import { FilterMatchMode, FilterOperator } from "primereact/api";
@@ -9,12 +9,23 @@ import { InputText } from "primereact/inputtext";
 import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { PedidoDesplegado } from "./PedidoDesplegado";
-import { Skeleton } from 'primereact/skeleton';
+import { Skeleton } from "primereact/skeleton";
+import { ConfirmPopup } from "primereact/confirmpopup"; // To use <ConfirmPopup> tag
+import { confirmPopup } from "primereact/confirmpopup"; // To use confirmPopup method
+import { Toast } from "primereact/toast";
+
 export const ListaPedidos = () => {
-  const { listarPedidos, listaPedidos, setlistaPedidos, loadingPedidosLista } =
-    useControlPedidos();
+  const {
+    listarPedidos,
+    listaPedidos,
+    setlistaPedidos,
+    loadingPedidosLista,
+    EliminarPedido,
+  } = useControlPedidos();
   const [expandedRows, setExpandedRows] = useState(null);
-  const [pedidoRow, setPedidoRow] = useState(null);
+  const [pedidoEliminar, setpedidoEliminar] = useState(null);
+  const buttonRefs = useRef({}); // Guarda referencias de todos los botones
+  const [visible, setVisible] = useState(false);
   const [globalFilterValue, setGlobalFilterValue] = useState("");
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -24,15 +35,14 @@ export const ListaPedidos = () => {
     status: { value: null, matchMode: FilterMatchMode.EQUALS },
     verified: { value: null, matchMode: FilterMatchMode.EQUALS },
   });
+  const toast = useRef(null);
   useEffect(() => {
     if (listaPedidos.length === 0) {
       listarPedidos();
     }
     console.log(listaPedidos);
   }, [listaPedidos]);
-  const onRowExpand = (event) => {
-    setPedidoRow();
-  };
+  const onRowExpand = (event) => {};
 
   const onRowCollapse = (event) => {};
   const onGlobalFilterChange = (e) => {
@@ -120,9 +130,58 @@ export const ListaPedidos = () => {
       ></Tag>
     );
   };
+  //CANTIDAD PARA SKELETON
   const items = Array.from({ length: 10 }, (v, i) => i);
+
+  const accept = () => {
+    EliminarPedido(pedidoEliminar);
+  };
+
+  const reject = () => {
+    toast.current.show({
+      severity: "warn",
+      summary: "Rejected",
+      detail: "Has cancelado el proceso",
+      life: 3000,
+    });
+  };
+  const [visibleRows, setVisibleRows] = useState({}); // Objeto para manejar visibilidad de cada fila
+  /* BOTONES DE ACCION */
+
+  const toggleVisibility = (id) => {
+    setVisibleRows((prev) => ({ ...prev, [id]: !prev[id] })); // Cambiar visibilidad solo para esta fila
+  };
+  const actionBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <ConfirmPopup
+          target={buttonRefs.current[rowData.id]} // Vincular al botón específico
+          visible={visibleRows[rowData.id] || false} // Solo visible para la fila correspondiente
+          onHide={() =>
+            setVisibleRows((prev) => ({ ...prev, [rowData.id]: false }))
+          } // Ocultar cuando se cierre
+          message="¿Está seguro de eliminar?"
+          icon="pi pi-exclamation-triangle"
+          accept={accept}
+          reject={reject}
+        />
+        <Button
+          ref={(el) => (buttonRefs.current[rowData.id] = el)} // Vincular referencia al botón de esta fila
+          icon="pi pi-trash"
+          rounded
+          outlined
+          severity="danger"
+          onClick={() => {
+            setpedidoEliminar(rowData.id);
+            toggleVisibility(rowData.id);
+          }} // Cambiar visibilidad de esta fila
+        />
+      </React.Fragment>
+    );
+  };
   return (
     <div className="md:mt-24">
+      <Toast ref={toast} />
       {loadingPedidosLista ? (
         <div className="card">
           <DataTable
@@ -130,41 +189,22 @@ export const ListaPedidos = () => {
             header={header()}
             className="p-datatable-striped"
           >
-            <Column
-              header="Id"
-              body={<Skeleton />}
-            ></Column>
-            <Column
-              header="Responsable"
-              body={<Skeleton />}
-            ></Column>
-            <Column
-              header="Direccion"
-              body={<Skeleton />}
-            ></Column>
+            <Column header="Id" body={<Skeleton />}></Column>
+            <Column header="Responsable" body={<Skeleton />}></Column>
+            <Column header="Direccion" body={<Skeleton />}></Column>
             <Column
               field="quantity"
               header="Ciudad"
               body={<Skeleton />}
             ></Column>
-             <Column
-              header="Valor Domicilio"
-              body={<Skeleton />}
-            ></Column>
-              <Column
-              header="Valor Pedido"
-              body={<Skeleton />}
-            ></Column>
-              <Column
-              header="Fecha "
-              body={<Skeleton />}
-            ></Column>
-             <Column
+            <Column header="Valor Domicilio" body={<Skeleton />}></Column>
+            <Column header="Valor Pedido" body={<Skeleton />}></Column>
+            <Column header="Fecha " body={<Skeleton />}></Column>
+            <Column
               field="status"
               header="Estado"
               sortable
               body={<Skeleton />}
-
             />
           </DataTable>
         </div>
@@ -178,6 +218,9 @@ export const ListaPedidos = () => {
             onRowCollapse={onRowCollapse}
             rowExpansionTemplate={PedidoDesplegado}
             dataKey="id"
+            filters={filters}
+            sortField="id"
+            sortOrder={-1}
             header={header()}
             tableStyle={{ minWidth: "60rem" }}
             emptyMessage={"No se encontraron pedidos"}
@@ -267,6 +310,7 @@ export const ListaPedidos = () => {
               sortable
               body={statusOrderBodyTemplate}
             />
+            <Column body={actionBodyTemplate} exportable={false}></Column>
           </DataTable>
         </div>
       )}

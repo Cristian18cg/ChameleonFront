@@ -157,6 +157,16 @@ const PedidosProvider = ({ children }) => {
     localStorage.setItem("info_add", JSON.stringify(usuario));
   }, [usuario]);
 
+  // Remover productos con stock = 0 al cargar el carrito
+  useEffect(() => {
+    const carritoFiltrado = carrito.filter((producto) => producto.stock > 0);
+
+    if (carritoFiltrado.length !== carrito.length) {
+      setCarrito(carritoFiltrado);
+      showError("Se eliminaron productos sin stock del carrito.");
+    }
+  }, []); 
+
   // Sincronizar entre pestañas
   useEffect(() => {
     const handleStorageChange = (event) => {
@@ -303,7 +313,7 @@ const PedidosProvider = ({ children }) => {
     async (valorDomicilio) => {
       try {
         await clienteAxios.post(
-          `administration/config/address`,
+          `administration/config/address/`,
           {
             address_cost: valorDomicilio,
             is_active: true,

@@ -1,21 +1,21 @@
 {
-    "name": "Pañales Ecologicos Chameleon",
-    "short_name": "Chameleon",
-    "start_url": ".",
-    "display": "standalone",
-    "theme_color": "#000000",
-    "background_color": "#ffffff",
-    "icons": [
-      {
-        "src": "icono-color.webp",
-        "sizes": "192x192",
-        "type": "image/webp"
-      },{
-        "src": "icono-color.webp",
-        "sizes": "512x512",
-        "type": "image/webp"
-      }
-
-    ]
-  }
-  
+  "name": "Chameleon Pañales Ecológicos",
+  "short_name": "Chameleon",
+  "description": "Pañales ecológicos y reutilizables.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#7fddca",
+  "icons": [
+    {
+      "src": "/icono-color (1).png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icono-color (2).png",
+      "sizes": "400X400",
+      "type": "image/png"
+    }
+  ]
+}
