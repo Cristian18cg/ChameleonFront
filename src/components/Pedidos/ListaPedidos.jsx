@@ -12,6 +12,8 @@ import { PedidoDesplegado } from "./PedidoDesplegado";
 import { Skeleton } from "primereact/skeleton";
 import { ConfirmPopup } from "primereact/confirmpopup"; // To use <ConfirmPopup> tag
 import { confirmPopup } from "primereact/confirmpopup"; // To use confirmPopup method
+import { InputNumber } from 'primereact/inputnumber';
+import { Dropdown } from 'primereact/dropdown';
 import { Toast } from "primereact/toast";
 
 export const ListaPedidos = () => {
@@ -21,6 +23,7 @@ export const ListaPedidos = () => {
     setlistaPedidos,
     loadingPedidosLista,
     EliminarPedido,
+    EditarPedido
   } = useControlPedidos();
   const [expandedRows, setExpandedRows] = useState(null);
   const [pedidoEliminar, setpedidoEliminar] = useState(null);
@@ -35,6 +38,8 @@ export const ListaPedidos = () => {
     status: { value: null, matchMode: FilterMatchMode.EQUALS },
     verified: { value: null, matchMode: FilterMatchMode.EQUALS },
   });
+  const [statuses] = useState(['PENDING', 'PROCESSING', 'COMPLETED', "CANCELLED"]);
+
   const toast = useRef(null);
   useEffect(() => {
     if (listaPedidos.length === 0) {
@@ -84,10 +89,15 @@ export const ListaPedidos = () => {
     return rowData.products.length > 0;
   };
 
-  const getOrderSeverity = (order) => {
-    console.log("order", order);
-    switch (order.status) {
-      case "DELIVERED":
+  const getOrderSeverity = (order,editor) => {
+    let pedido 
+    if(editor){
+       pedido = order
+    }else{
+       pedido = order.status
+    }
+    switch (pedido) {
+      case "COMPLETED":
         return "success";
 
       case "CANCELLED":
@@ -96,17 +106,22 @@ export const ListaPedidos = () => {
       case "PENDING":
         return "warning";
 
-      case "RETURNED":
+      case "PROCESSING":
         return "info";
 
       default:
         return null;
     }
   };
-  const getOrderMessage = (order) => {
-    console.log("order", order);
-    switch (order.status) {
-      case "DELIVERED":
+  const getOrderMessage = (order,editor) => {
+    let pedido 
+    if(editor){
+       pedido = order
+    }else{
+       pedido = order.status
+    }
+    switch (pedido) {
+      case "COMPLETED":
         return "ENTREGADO";
 
       case "CANCELLED":
@@ -115,8 +130,8 @@ export const ListaPedidos = () => {
       case "PENDING":
         return "PENDIENTE";
 
-      case "RETURNED":
-        return "DEVUELTO";
+      case "PROCESSING":
+        return "PROCESANDO";
 
       default:
         return null;
@@ -179,6 +194,41 @@ export const ListaPedidos = () => {
       </React.Fragment>
     );
   };
+  /* Edicion del pedido */
+  const onRowEditComplete = (e) => {
+    let _pedido = [...listaPedidos];
+    let { newData, index } = e;
+
+    console.log('nueva',newData)
+    _pedido[index] = newData;
+EditarPedido(newData)
+    setlistaPedidos(_pedido);
+};
+const textEditor = (options) => {
+  return <InputText type="text" value={options.value} onChange={(e) => options.editorCallback(e.target.value)} />;
+};
+const allowEdit = (rowData) => {
+  return rowData.name !== 'Blue Band';
+};
+const statusEditor = (options) => {
+  return (
+      <Dropdown
+          value={options.value}
+          options={statuses}
+          onChange={(e) => options.editorCallback(e.value)}
+          placeholder="Select a Status"
+          itemTemplate={(option) => {
+              return <Tag value={getOrderMessage(option,true)} severity={getOrderSeverity(option,true)}></Tag>;
+          }}
+      />
+  );
+};
+
+const priceEditor = (options) => {
+  return <InputNumber value={options.value}  onValueChange={(e) => options.editorCallback(e.value)} mode="currency" currency="COP" locale="es-CO" />;
+};
+
+
   return (
     <div className="md:mt-24">
       <Toast ref={toast} />
@@ -224,6 +274,8 @@ export const ListaPedidos = () => {
             header={header()}
             tableStyle={{ minWidth: "60rem" }}
             emptyMessage={"No se encontraron pedidos"}
+            editMode="row"
+            onRowEditComplete={onRowEditComplete}
           >
             <Column expander={allowExpansion} style={{ width: "5rem" }} />
             <Column field="id" header="Id" sortable />
@@ -263,6 +315,7 @@ export const ListaPedidos = () => {
               field="delivery_cost"
               header="Valor Domicilio"
               sortable
+              editor={(options) => priceEditor(options)} 
               body={(rowData) =>
                 new Intl.NumberFormat("es-CO", {
                   style: "currency",
@@ -274,6 +327,7 @@ export const ListaPedidos = () => {
             />
             <Column
               field="order_value"
+              editor={(options) => priceEditor(options)} 
               header="Valor Pedido"
               sortable
               body={(rowData) =>
@@ -308,8 +362,10 @@ export const ListaPedidos = () => {
               field="status"
               header="Estado"
               sortable
+              editor={(options) => statusEditor(options)}
               body={statusOrderBodyTemplate}
             />
+             <Column rowEditor={allowEdit} headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column>
             <Column body={actionBodyTemplate} exportable={false}></Column>
           </DataTable>
         </div>

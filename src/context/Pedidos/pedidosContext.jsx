@@ -165,7 +165,7 @@ const PedidosProvider = ({ children }) => {
       setCarrito(carritoFiltrado);
       showError("Se eliminaron productos sin stock del carrito.");
     }
-  }, []); 
+  }, []);
 
   // Sincronizar entre pestañas
   useEffect(() => {
@@ -517,38 +517,37 @@ const PedidosProvider = ({ children }) => {
     }
   }, [token]);
 
-  const EditaPedido = useCallback(async () => {
-    try {
-      setloadingPedidosLista(true);
-      const response = await clienteAxios.get(
-        `orders/orders/`,
-
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+  const EditarPedido = useCallback(
+    async (pedido) => {
+      try {
+        const response = await clienteAxios.patch(
+          `orders/orders/${pedido.id}/update/`,
+          { pedido },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        showSuccess("Pedido actualizado exitosamente.");
+      } catch (error) {
+        console.error("Error actualizando pedido:", error);
+        if (error.response) {
+          console.error("Detalle del error:", error.response.data);
+          showError(
+            `Ha ocurrido un error obteniendo los pedidos: ${
+              error.response.data.error || "Error de validación"
+            }`
+          );
+        } else {
+          showError(
+            "Ha ocurrido un error obteniendo los pedido. Intente nuevamente."
+          );
         }
-      );
-      setlistaPedidos(response.data);
-      setloadingPedidosLista(false);
-    } catch (error) {
-      setloadingPedidosLista(false);
-
-      console.error("Error obteniendo pedidos:", error);
-      if (error.response) {
-        console.error("Detalle del error:", error.response.data);
-        showError(
-          `Ha ocurrido un error obteniendo los pedidos: ${
-            error.response.data.error || "Error de validación"
-          }`
-        );
-      } else {
-        showError(
-          "Ha ocurrido un error obteniendo los pedido. Intente nuevamente."
-        );
       }
-    }
-  }, [token]);
+    },
+    [token]
+  );
 
   const contextValue = useMemo(() => {
     return {
@@ -565,6 +564,7 @@ const PedidosProvider = ({ children }) => {
       listaPedidos,
       loadingPedidosLista,
       creandoPedido,
+      EditarPedido,
       setcreandoPedido,
       setloadingPedidosLista,
       setlistaPedidos,
@@ -605,7 +605,7 @@ const PedidosProvider = ({ children }) => {
     loadingPedidosLista,
     creandoPedido,
     setcreandoPedido,
-
+    EditarPedido,
     setlistaPedidos,
     listarPedidos,
     setvalorPedido,
