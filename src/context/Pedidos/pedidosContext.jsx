@@ -522,13 +522,14 @@ const PedidosProvider = ({ children }) => {
       try {
         const response = await clienteAxios.patch(
           `orders/orders/${pedido.id}/update/`,
-          { pedido },
+           pedido ,
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         );
+        console.log(response)
         showSuccess("Pedido actualizado exitosamente.");
       } catch (error) {
         console.error("Error actualizando pedido:", error);

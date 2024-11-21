@@ -28,6 +28,7 @@ export const ListaPedidos = () => {
   const [expandedRows, setExpandedRows] = useState(null);
   const [pedidoEliminar, setpedidoEliminar] = useState(null);
   const buttonRefs = useRef({}); // Guarda referencias de todos los botones
+  const toast = useRef(null);
   const [visible, setVisible] = useState(false);
   const [globalFilterValue, setGlobalFilterValue] = useState("");
   const [filters, setFilters] = useState({
@@ -40,7 +41,6 @@ export const ListaPedidos = () => {
   });
   const [statuses] = useState(['PENDING', 'PROCESSING', 'COMPLETED', "CANCELLED"]);
 
-  const toast = useRef(null);
   useEffect(() => {
     if (listaPedidos.length === 0) {
       listarPedidos();
@@ -365,7 +365,7 @@ const priceEditor = (options) => {
               editor={(options) => statusEditor(options)}
               body={statusOrderBodyTemplate}
             />
-             <Column rowEditor={allowEdit} headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column>
+             <Column rowEditor={allowEdit}  bodyStyle={{ textAlign: 'center' }}></Column>
             <Column body={actionBodyTemplate} exportable={false}></Column>
           </DataTable>
         </div>
