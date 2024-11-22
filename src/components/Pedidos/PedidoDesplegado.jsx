@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState,useMemo } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
@@ -22,7 +22,7 @@ export const PedidoDesplegado = (data) => {
   const buttonRefs = useRef({}); // Guarda referencias de todos los botones
   const [visible, setVisible] = useState(false);
   const [Eliminar, setEliminar] = useState(null);
-
+  const products = useMemo(() => data.products || [], [data.products]);
   const toast = useRef(null);
 
   const searchBodyTemplate = () => {
@@ -48,40 +48,25 @@ export const PedidoDesplegado = (data) => {
       life: 3000,
     });
   };
-  const [visibleRows, setVisibleRows] = useState({}); // Objeto para manejar visibilidad de cada fila
-  /* BOTONES DE ACCION */
 
-  const toggleVisibility = (id) => {
-    setVisibleRows((prev) => ({ ...prev, [id]: !prev[id] })); // Cambiar visibilidad solo para esta fila
-  };
+
   const actionBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
-        <ConfirmPopup
-          target={buttonRefs.current[rowData.id]} // Vincular al botón específico
-          visible={visibleRows[rowData.id] || false} // Solo visible para la fila correspondiente
-          onHide={() =>
-            setVisibleRows((prev) => ({ ...prev, [rowData.id]: false }))
-          } // Ocultar cuando se cierre
-          message="¿Está seguro de eliminar?"
-          icon="pi pi-exclamation-triangle"
-          accept={accept}
-          reject={reject}
-        />
         <Button
-          ref={(el) => (buttonRefs.current[rowData.id] = el)} // Vincular referencia al botón de esta fila
           icon="pi pi-trash"
           rounded
           outlined
-          severity="danger" 
+          severity="danger"
           onClick={() => {
             setEliminar(rowData.id);
-            toggleVisibility(rowData.id);
-          }} // Cambiar visibilidad de esta fila
+          }}
         />
       </React.Fragment>
-    );
+    );e
   };
+
+  
   /* Edicion del pedido */
   const onRowEditComplete = (e) => {
     let _pedido = [...listaPedidos];
@@ -92,21 +77,12 @@ export const PedidoDesplegado = (data) => {
     EditarPedido(newData);
     setlistaPedidos(_pedido);
   };
-  const textEditor = (options) => {
-    return (
-      <InputText
-        type="text"
-        value={options.value}
-        onChange={(e) => options.editorCallback(e.target.value)}
-      />
-    );
-  };
+
   const allowEdit = (rowData) => {
     return rowData.name !== "Blue Band";
   };
 
-  const priceEditor = (options) => {
-    return (
+  const priceEditor = (e
       <InputNumber
         value={options.value}
         onValueChange={(e) => options.editorCallback(e.value)}
@@ -122,7 +98,7 @@ export const PedidoDesplegado = (data) => {
 
       <h5>Productos del pedido #{data.id}</h5>
       <DataTable
-        value={data.products}
+        value={products}
         editMode="row"
         onRowEditComplete={onRowEditComplete}
       >
