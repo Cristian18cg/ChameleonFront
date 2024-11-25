@@ -162,3 +162,13 @@ html {
   background-color: rgba(10, 182, 84, 0.438);
 
 }
+.p-dialog-header{
+  background-color: rgb(12, 202, 94) !important;
+ 
+}
+.p-dialog-title{
+  margin-left: 3px;
+}
+.p-confirm-dialog-reject{
+  color: red;
+}

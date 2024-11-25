@@ -10,10 +10,9 @@ import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { PedidoDesplegado } from "./PedidoDesplegado";
 import { Skeleton } from "primereact/skeleton";
-import { ConfirmPopup } from "primereact/confirmpopup"; // To use <ConfirmPopup> tag
-import { confirmPopup } from "primereact/confirmpopup"; // To use confirmPopup method
-import { InputNumber } from 'primereact/inputnumber';
-import { Dropdown } from 'primereact/dropdown';
+import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
+import { InputNumber } from "primereact/inputnumber";
+import { Dropdown } from "primereact/dropdown";
 import { Toast } from "primereact/toast";
 
 export const ListaPedidos = () => {
@@ -23,11 +22,10 @@ export const ListaPedidos = () => {
     setlistaPedidos,
     loadingPedidosLista,
     EliminarPedido,
-    EditarPedido
+    EditarPedido,
   } = useControlPedidos();
   const [expandedRows, setExpandedRows] = useState(null);
   const [pedidoEliminar, setpedidoEliminar] = useState(null);
-  const buttonRefs = useRef({}); // Guarda referencias de todos los botones
   const toast = useRef(null);
   const [visible, setVisible] = useState(false);
   const [globalFilterValue, setGlobalFilterValue] = useState("");
@@ -39,7 +37,12 @@ export const ListaPedidos = () => {
     status: { value: null, matchMode: FilterMatchMode.EQUALS },
     verified: { value: null, matchMode: FilterMatchMode.EQUALS },
   });
-  const [statuses] = useState(['PENDING', 'PROCESSING', 'COMPLETED', "CANCELLED"]);
+  const [statuses] = useState([
+    "PENDING",
+    "PROCESSING",
+    "COMPLETED",
+    "CANCELLED",
+  ]);
 
   useEffect(() => {
     if (listaPedidos.length === 0) {
@@ -88,13 +91,12 @@ export const ListaPedidos = () => {
   const allowExpansion = (rowData) => {
     return rowData.products.length > 0;
   };
-
-  const getOrderSeverity = (order,editor) => {
-    let pedido 
-    if(editor){
-       pedido = order
-    }else{
-       pedido = order.status
+  const getOrderSeverity = (order, editor) => {
+    let pedido;
+    if (editor) {
+      pedido = order;
+    } else {
+      pedido = order.status;
     }
     switch (pedido) {
       case "COMPLETED":
@@ -113,12 +115,12 @@ export const ListaPedidos = () => {
         return null;
     }
   };
-  const getOrderMessage = (order,editor) => {
-    let pedido 
-    if(editor){
-       pedido = order
-    }else{
-       pedido = order.status
+  const getOrderMessage = (order, editor) => {
+    let pedido;
+    if (editor) {
+      pedido = order;
+    } else {
+      pedido = order.status;
     }
     switch (pedido) {
       case "COMPLETED":
@@ -145,8 +147,6 @@ export const ListaPedidos = () => {
       ></Tag>
     );
   };
-  //CANTIDAD PARA SKELETON
-  const items = Array.from({ length: 10 }, (v, i) => i);
 
   const accept = () => {
     EliminarPedido(pedidoEliminar);
@@ -160,78 +160,94 @@ export const ListaPedidos = () => {
       life: 3000,
     });
   };
-  const [visibleRows, setVisibleRows] = useState({}); // Objeto para manejar visibilidad de cada fila
-  /* BOTONES DE ACCION */
 
-  const toggleVisibility = (id) => {
-    setVisibleRows((prev) => ({ ...prev, [id]: !prev[id] })); // Cambiar visibilidad solo para esta fila
+  const confirm1 = () => {
+    confirmDialog({
+      message:`Estas seguro de eliminar el pedido #${pedidoEliminar}`,
+      header: " Confirmación",
+      icon: "pi pi-exclamation-triangle",
+      defaultFocus: "accept",
+      accept,
+      reject,
+    });
   };
-  const actionBodyTemplate = (rowData) => {
-    return (
-      <React.Fragment>
-        <ConfirmPopup
-          target={buttonRefs.current[rowData.id]} // Vincular al botón específico
-          visible={visibleRows[rowData.id] || false} // Solo visible para la fila correspondiente
-          onHide={() =>
-            setVisibleRows((prev) => ({ ...prev, [rowData.id]: false }))
-          } // Ocultar cuando se cierre
-          message="¿Está seguro de eliminar?"
-          icon="pi pi-exclamation-triangle"
-          accept={accept}
-          reject={reject}
-        />
-        <Button
-          ref={(el) => (buttonRefs.current[rowData.id] = el)} // Vincular referencia al botón de esta fila
-          icon="pi pi-trash"
-          rounded
-          outlined
-          severity="danger"
-          onClick={() => {
-            setpedidoEliminar(rowData.id);
-            toggleVisibility(rowData.id);
-          }} // Cambiar visibilidad de esta fila
-        />
-      </React.Fragment>
-    );
-  };
+
   /* Edicion del pedido */
   const onRowEditComplete = (e) => {
     let _pedido = [...listaPedidos];
     let { newData, index } = e;
 
-    console.log('nueva',newData)
+    console.log("nueva", newData);
     _pedido[index] = newData;
-EditarPedido(newData)
+    EditarPedido(newData);
     setlistaPedidos(_pedido);
-};
-const textEditor = (options) => {
-  return <InputText type="text" value={options.value} onChange={(e) => options.editorCallback(e.target.value)} />;
-};
-const allowEdit = (rowData) => {
-  return rowData.name !== 'Blue Band';
-};
-const statusEditor = (options) => {
-  return (
-      <Dropdown
-          value={options.value}
-          options={statuses}
-          onChange={(e) => options.editorCallback(e.value)}
-          placeholder="Select a Status"
-          itemTemplate={(option) => {
-              return <Tag value={getOrderMessage(option,true)} severity={getOrderSeverity(option,true)}></Tag>;
-          }}
+  };
+  const textEditor = (options) => {
+    return (
+      <InputText
+        type="text"
+        value={options.value}
+        onChange={(e) => options.editorCallback(e.target.value)}
       />
-  );
-};
+    );
+  };
+  const allowEdit = (rowData) => {
+    return rowData.name !== "Blue Band";
+  };
+  const statusEditor = (options) => {
+    return (
+      <Dropdown
+        value={options.value}
+        options={statuses}
+        onChange={(e) => options.editorCallback(e.value)}
+        placeholder="Select a Status"
+        itemTemplate={(option) => {
+          return (
+            <Tag
+              value={getOrderMessage(option, true)}
+              severity={getOrderSeverity(option, true)}
+            ></Tag>
+          );
+        }}
+      />
+    );
+  };
 
-const priceEditor = (options) => {
-  return <InputNumber value={options.value}  onValueChange={(e) => options.editorCallback(e.value)} mode="currency" currency="COP" locale="es-CO" />;
-};
-
+  const priceEditor = (options) => {
+    return (
+      <InputNumber
+        value={options.value}
+        onValueChange={(e) => options.editorCallback(e.value)}
+        mode="currency"
+        currency="COP"
+        locale="es-CO"
+      />
+    );
+  };
+  const botonEliminar = (rowData) => {
+    return (
+      <Button
+        icon="pi pi-trash"
+        rounded
+        outlined
+        severity="danger"
+        onClick={() => {
+          setpedidoEliminar(rowData.id)
+          confirm1()
+          
+        }}
+        
+      />
+    );
+  };
+  //CANTIDAD PARA SKELETON
+  const items = Array.from({ length: 15 }, (v, i) => i);
 
   return (
     <div className="md:mt-24">
+       <ConfirmDialog />
       <Toast ref={toast} />
+
       {loadingPedidosLista ? (
         <div className="card">
           <DataTable
@@ -315,7 +331,7 @@ const priceEditor = (options) => {
               field="delivery_cost"
               header="Valor Domicilio"
               sortable
-              editor={(options) => priceEditor(options)} 
+              editor={(options) => priceEditor(options)}
               body={(rowData) =>
                 new Intl.NumberFormat("es-CO", {
                   style: "currency",
@@ -327,7 +343,7 @@ const priceEditor = (options) => {
             />
             <Column
               field="order_value"
-              editor={(options) => priceEditor(options)} 
+              editor={(options) => priceEditor(options)}
               header="Valor Pedido"
               sortable
               body={(rowData) =>
@@ -365,8 +381,11 @@ const priceEditor = (options) => {
               editor={(options) => statusEditor(options)}
               body={statusOrderBodyTemplate}
             />
-             <Column rowEditor={allowEdit}  bodyStyle={{ textAlign: 'center' }}></Column>
-            <Column body={actionBodyTemplate} exportable={false}></Column>
+            <Column
+              rowEditor={allowEdit}
+              bodyStyle={{ textAlign: "center" }}
+            ></Column>
+            <Column body={botonEliminar}></Column>
           </DataTable>
         </div>
       )}
