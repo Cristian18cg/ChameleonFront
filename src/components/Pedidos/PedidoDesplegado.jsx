@@ -10,14 +10,11 @@ import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 
 export const PedidoDesplegado = (data) => {
   const {
-    listarPedidos,
     listaPedidos,
     setlistaPedidos,
-    loadingPedidosLista,
-    EliminarPedido,
     EditarPedido,
   } = useControlPedidos();
-  const [productoEliminar, setproductoEliminar] = useState(null);
+
   const toast = useRef(null);
 
   const imageBodyTemplate = (rowData) => {
@@ -63,7 +60,9 @@ export const PedidoDesplegado = (data) => {
     });
   };
 
-  const confirm1 = () => {
+  const confirm1 = (ID
+    
+  ) => {
     confirmDialog({
       message: `Estas seguro de eliminar el producto #${productoEliminar}`,
       header: " Confirmación",
@@ -103,24 +102,8 @@ export const PedidoDesplegado = (data) => {
   const allowEdit = (rowData) => {
     return rowData.name !== "Blue Band";
   };
-  const BotonEliminar = ({ rowData, productsLength, onEliminar }) => {
-    // Mostrar el botón solo si hay más de un producto
-    if (productsLength <= 1) return null;
 
-    return (
-      <Button
-        icon="pi pi-trash"
-        rounded
-        outlined
-        severity="danger"
-        onClick={() => onEliminar(rowData.id)}
-      />
-    );
-  };
-  const onEliminar = (id) => {
-    setproductoEliminar(id);
-    confirm1();
-  };
+  const onEliminar = (id) => {};
 
   return (
     <div className="p-3">
@@ -179,15 +162,20 @@ export const PedidoDesplegado = (data) => {
           bodyStyle={{ textAlign: "center" }}
         ></Column>
         <Column
-          body={(rowData) => (
-            <Button
-              icon="pi pi-trash"
-              rounded
-              outlined
-              severity="danger"
-              onClick={() => onEliminar(rowData.id)}
-            />
-          )}
+          header="eliminar"
+          body={(rowData) => {
+            return (
+              <Button
+                icon="pi pi-trash"
+                rounded
+                outlined
+                severity="danger"
+                onClick={() => {
+                  confirm1(rowData.id);
+                }}
+              />
+            );
+          }}
         ></Column>
       </DataTable>
     </div>

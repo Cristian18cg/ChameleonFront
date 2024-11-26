@@ -64,7 +64,7 @@ export const ListaPedidos = () => {
   };
   const header = () => {
     return (
-      <div className="flex justify-between bg-gray-100">
+      <div className="flex justify-between">
         <div>
           <IconField iconPosition="left">
             <InputIcon className="pi pi-search" />
