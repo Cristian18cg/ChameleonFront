@@ -8,22 +8,19 @@ import useControlPedidos from "../../hooks/useControlPedidos";
 import { Toast } from "primereact/toast";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 
-export const PedidoDesplegado = (data) => {
-  const {
-    listaPedidos,
-    setlistaPedidos,
-    EditarPedido,
-  } = useControlPedidos();
-
+export const PedidoDesplegado = () => {
+  const { listaPedidos, setlistaPedidos, EditarPedido, DialogPedido } =
+    useControlPedidos();
   const toast = useRef(null);
+  const [idEliminar, setIdEliminar] = useState(null);
 
   const imageBodyTemplate = (rowData) => {
     return (
       <img
         src={rowData.images[0]?.image_url}
         alt={rowData.image}
-        width="64px"
         className="shadow-4 rounded-md"
+        style={{ width: "64px" }}
       />
     );
   };
@@ -49,22 +46,39 @@ export const PedidoDesplegado = (data) => {
       />
     );
   };
-  const accept = () => {};
+  const accept = () => {
+    const productId = idEliminar;
+    if (productId) {
+      const pedidoId = DialogPedido; // ID del pedido actual
+      const _listaPedidos = [...listaPedidos]; // Copia de la lista de pedidos
 
-  const reject = () => {
-    toast.current.show({
-      severity: "warn",
-      summary: "Rejected",
-      detail: "Has cancelado el proceso",
-      life: 3000,
-    });
+      // Encontrar el índice del pedido correspondiente por ID
+      const pedidoIndex = _listaPedidos.findIndex(
+        (pedido) => pedido.id === pedidoId
+      );
+
+      if (pedidoIndex !== -1) {
+        // Filtrar la lista de productos del pedido para eliminar el producto con el ID
+        const updatedProducts = _listaPedidos[pedidoIndex].products.filter(
+          (product) => product.id !== productId
+        );
+
+        // Actualizar la lista de productos del pedido
+        _listaPedidos[pedidoIndex].products = updatedProducts;
+
+        console.log("prod", _listaPedidos[pedidoIndex].products);
+        // Llamar a `EditarPedido` con el pedido actualizado
+        EditarPedido(_listaPedidos[pedidoIndex]);
+      }
+    }
   };
 
-  const confirm1 = (ID
-    
-  ) => {
+  const reject = () => {};
+
+  const confirm2 = (id) => {
+    setIdEliminar(id);
     confirmDialog({
-      message: `Estas seguro de eliminar el producto #${productoEliminar}`,
+      message: `Estas seguro de eliminar el producto #${id}`,
       header: " Confirmación",
       icon: "pi pi-exclamation-triangle",
       defaultFocus: "accept",
@@ -75,7 +89,7 @@ export const PedidoDesplegado = (data) => {
   /* Edicion del pedido */
   const onRowEditComplete = (e) => {
     const { newData, index } = e; // Datos editados y su índice en la tabla
-    const pedidoId = data.id; // ID del pedido actual
+    const pedidoId = DialogPedido; // ID del pedido actual
     const _listaPedidos = [...listaPedidos]; // Copia de la lista de pedidos
 
     // Encontrar el pedido correspondiente por ID
@@ -91,9 +105,6 @@ export const PedidoDesplegado = (data) => {
       // Actualizar la lista de productos del pedido
       _listaPedidos[pedidoIndex].products = _products;
 
-      // Actualizar el estado local de `listaPedidos`
-      setlistaPedidos(_listaPedidos);
-
       // Llamar a `EditarPedido` con el pedido actualizado
       EditarPedido(_listaPedidos[pedidoIndex]);
     }
@@ -102,24 +113,45 @@ export const PedidoDesplegado = (data) => {
   const allowEdit = (rowData) => {
     return rowData.name !== "Blue Band";
   };
+  const footer = () => {
+    const pedidoTotal = products.reduce((total, product) => {
+      const subtotal = parseFloat(product.subtotal) || 0; // Convertir a número o usar 0 si es NaN
+      return total + subtotal;
+    }, 0);
 
-  const onEliminar = (id) => {};
+    return (
+      <h3>
+        Subtotal del pedido:{" "}
+        {new Intl.NumberFormat("es-CO", {
+          style: "currency",
+          currency: "COP",
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 2,
+        }).format(pedidoTotal)}
+      </h3>
+    );
+  };
+  const pedidoActual = listaPedidos.find(
+    (pedido) => pedido.id === DialogPedido
+  );
+  const products = pedidoActual?.products || []; // Si no encuentra, devuelve un array vacío
 
   return (
-    <div className="p-3">
-      <h5>Productos del pedido #{data?.id}</h5>
+    <div className=" w-full">
       <ConfirmDialog />
       <Toast ref={toast} />
 
       <DataTable
-        value={data.products}
+        className="w-full"
+        value={products}
         editMode="row"
         onRowEditComplete={onRowEditComplete}
         emptyMessage="No se encontraron productos del pedido"
+        footer={footer}
       >
         <Column field="id" header="Id" sortable></Column>
 
-        <Column field="images" body={imageBodyTemplate} />
+        <Column header="imagen" field="images" body={imageBodyTemplate} />
 
         <Column field="product_name" header="Nombre" sortable></Column>
 
@@ -162,16 +194,16 @@ export const PedidoDesplegado = (data) => {
           bodyStyle={{ textAlign: "center" }}
         ></Column>
         <Column
-          header="eliminar"
           body={(rowData) => {
             return (
               <Button
                 icon="pi pi-trash"
                 rounded
                 outlined
+                disabled={products.length === 1}
                 severity="danger"
                 onClick={() => {
-                  confirm1(rowData.id);
+                  confirm2(rowData.id);
                 }}
               />
             );

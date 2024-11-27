@@ -12,6 +12,7 @@ const ProductosProvider = ({ children }) => {
   const [productos, setProductos] = useState("");
   const [producto, setProducto] = useState("");
   const [btndelCate, setbtndelCate] = useState(true);
+  const [loadingProducts, setloadingProducts] = useState(true);
   const categoriapadre = [{ name: "Sin categoria", id: null }];
   const [productDialog, setProductDialog] = useState(false);
   const [deleteProductDialog, setDeleteProductDialog] = useState(false);
@@ -125,11 +126,16 @@ const ProductosProvider = ({ children }) => {
 
   const obtenerProductos = useCallback(async () => {
     try {
+      setloadingProducts(true)
       const response = await clienteAxios.get("products/products/", {});
       const productos = response.data;
       setbtndelCate(true)
       setProductos(productos); // Guardar productos en el estado
+      setloadingProducts(false)
+
     } catch (error) {
+      setloadingProducts(false)
+
       if (error.response) {
         // Inicializa una variable para el mensaje de error consolidado
         let mensajeError = "";

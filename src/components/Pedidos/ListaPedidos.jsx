@@ -14,6 +14,7 @@ import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { InputNumber } from "primereact/inputnumber";
 import { Dropdown } from "primereact/dropdown";
 import { Toast } from "primereact/toast";
+import { Dialog } from "primereact/dialog";
 
 export const ListaPedidos = () => {
   const {
@@ -23,11 +24,14 @@ export const ListaPedidos = () => {
     loadingPedidosLista,
     EliminarPedido,
     EditarPedido,
+    setDialogPedido,
+    DialogPedido
   } = useControlPedidos();
   const [expandedRows, setExpandedRows] = useState(null);
   const [pedidoEliminar, setpedidoEliminar] = useState(null);
   const toast = useRef(null);
   const [visible, setVisible] = useState(false);
+  const [visibleDialog, setVisibleDialog] = useState(false);
   const [globalFilterValue, setGlobalFilterValue] = useState("");
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -88,9 +92,7 @@ export const ListaPedidos = () => {
       </div>
     );
   };
-  const allowExpansion = (rowData) => {
-    return rowData.products.length > 0;
-  };
+
   const getOrderSeverity = (order, editor) => {
     let pedido;
     if (editor) {
@@ -163,7 +165,7 @@ export const ListaPedidos = () => {
 
   const confirm1 = () => {
     confirmDialog({
-      message:`Estas seguro de eliminar el pedido #${pedidoEliminar}`,
+      message: `Estas seguro de eliminar el pedido #${pedidoEliminar}`,
       header: " Confirmación",
       icon: "pi pi-exclamation-triangle",
       defaultFocus: "accept",
@@ -177,10 +179,8 @@ export const ListaPedidos = () => {
     let _pedido = [...listaPedidos];
     let { newData, index } = e;
 
-    console.log("nueva", newData);
     _pedido[index] = newData;
     EditarPedido(newData);
-    setlistaPedidos(_pedido);
   };
   const textEditor = (options) => {
     return (
@@ -232,11 +232,9 @@ export const ListaPedidos = () => {
         outlined
         severity="danger"
         onClick={() => {
-          setpedidoEliminar(rowData.id)
-          confirm1()
-          
+          setpedidoEliminar(rowData.id);
+          confirm1();
         }}
-        
       />
     );
   };
@@ -245,9 +243,23 @@ export const ListaPedidos = () => {
 
   return (
     <div className="md:mt-24">
-       <ConfirmDialog />
+      <ConfirmDialog />
       <Toast ref={toast} />
+      <Dialog
+        header={`Productos pedido ${DialogPedido}`}
+        visible={visibleDialog}
+        style={{ width: "80vw", height:"50hv" }}
+        className="h-auto p-0 dialog-products"
+        maximizable
+        breakpoints={{ "960px": "90vw", "641px": "90vw" , "430px": "99vw" }}
+        onHide={() => {
+          if (!visibleDialog) return;
+          setVisibleDialog(false);
+        }} 
 
+      >
+        <PedidoDesplegado />
+      </Dialog>
       {loadingPedidosLista ? (
         <div className="card">
           <DataTable
@@ -282,7 +294,6 @@ export const ListaPedidos = () => {
             onRowToggle={(e) => setExpandedRows(e.data)}
             onRowExpand={onRowExpand}
             onRowCollapse={onRowCollapse}
-            rowExpansionTemplate={PedidoDesplegado}
             dataKey="id"
             filters={filters}
             sortField="id"
@@ -293,7 +304,21 @@ export const ListaPedidos = () => {
             editMode="row"
             onRowEditComplete={onRowEditComplete}
           >
-            <Column expander={allowExpansion} style={{ width: "5rem" }} />
+            <Column
+              body={(rowData) => {
+                return (
+                  <Button
+                    unstyled={true}
+                    icon="pi pi-external-link"
+                    className="bg-transparent flex justify-center items-center text-gray-500  border-none hover:text-gray-800 "
+                    onClick={()=>{
+                        setDialogPedido(rowData.id)
+                        setVisibleDialog(true)
+                    }}
+                  />
+                );
+              }}
+            />
             <Column field="id" header="Id" sortable />
             <Column
               field="user.first_name"

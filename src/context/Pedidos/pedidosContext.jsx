@@ -16,6 +16,7 @@ const PedidosProvider = ({ children }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [valoresdomicilio, setvaloresdomicilio] = useState([]);
   const [listaPedidos, setlistaPedidos] = useState([]);
+  const [DialogPedido, setDialogPedido] = useState(null);
   const [valordomicilio, setvalordomicilio] = useState(0);
   const [valorPedido, setvalorPedido] = useState(0);
   const [loadingPedidosLista, setloadingPedidosLista] = useState(false);
@@ -529,20 +530,35 @@ const PedidosProvider = ({ children }) => {
             },
           }
         );
-        console.log(response)
+        console.log('responseee',response)
         showSuccess("Pedido actualizado exitosamente.");
+        setlistaPedidos((prevListaPedidos) =>
+          prevListaPedidos.map((p) =>
+            p.id === response.data.id ? response.data : p
+          )
+        );
       } catch (error) {
         console.error("Error actualizando pedido:", error);
+      
         if (error.response) {
           console.error("Detalle del error:", error.response.data);
-          showError(
-            `Ha ocurrido un error obteniendo los pedidos: ${
-              error.response.data.error || "Error de validación"
-            }`
-          );
+      
+          // Manejo de errores específicos de `products`
+          if (Array.isArray(error.response.data.products) && error.response.data.products.length > 0) {
+            showError(
+              `Ha ocurrido un error: ${error.response.data.products[0]}`
+            );
+          } else {
+            // Manejo de otros errores generales
+            showError(
+              `Ha ocurrido un error editando el pedido: ${
+                error.response.data.error || "Error de validación"
+              }`
+            );
+          }
         } else {
           showError(
-            "Ha ocurrido un error obteniendo los pedido. Intente nuevamente."
+            "Ha ocurrido un error editando el pedido. Intente nuevamente."
           );
         }
       }
@@ -565,6 +581,8 @@ const PedidosProvider = ({ children }) => {
       listaPedidos,
       loadingPedidosLista,
       creandoPedido,
+      DialogPedido,
+      setDialogPedido,
       EditarPedido,
       setcreandoPedido,
       setloadingPedidosLista,
@@ -605,6 +623,8 @@ const PedidosProvider = ({ children }) => {
     listaPedidos,
     loadingPedidosLista,
     creandoPedido,
+    DialogPedido,
+    setDialogPedido,
     setcreandoPedido,
     EditarPedido,
     setlistaPedidos,

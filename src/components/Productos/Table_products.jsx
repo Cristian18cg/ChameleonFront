@@ -34,6 +34,7 @@ export default function ProductsDemo() {
     setDeleteProductDialog,
     product,
     setProduct,
+    loadingProducts,
   } = useControlProductos();
   const [products, setProducts] = useState(null);
   const [deleteProductsDialog, setDeleteProductsDialog] = useState(false);
@@ -187,12 +188,23 @@ export default function ProductsDemo() {
 
   const rightToolbarTemplate = () => {
     return (
-      <Button
-        label="Exportar"
-        icon="pi pi-upload"
-        className="p-button-help"
-        onClick={exportCSV}
-      />
+      <div>
+        <Button
+          loading={loadingProducts}
+          icon="pi pi-replay"
+          label="Recargar"
+          onClick={() => {
+            obtenerProductos();
+          }}
+          className="p-button-help mx-2"
+        ></Button>
+        <Button
+          label="Exportar"
+          icon="pi pi-upload"
+          className="p-button-help"
+          onClick={exportCSV}
+        />
+      </div>
     );
   };
 
@@ -312,7 +324,7 @@ export default function ProductsDemo() {
   );
 
   return (
-    <div>
+    <div className="">
       <Toast ref={toast} />
       <div className="card">
         <Toolbar
@@ -427,11 +439,9 @@ export default function ProductsDemo() {
       <Dialog
         visible={productDialog}
         style={{ width: "80vw", height: "100vh" }}
-        breakpoints={{ "960px": "90vw", "641px": "90vw" , "430px": "98vw" }}
+        breakpoints={{ "960px": "90vw", "641px": "90vw", "430px": "98vw" }}
         header="Crear producto"
         headerClassName="custom-header2"
-        modal
-        maximizable
         className="p-fluid custom-dialog"
         onHide={hideDialog}
       >
