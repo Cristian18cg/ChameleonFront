@@ -3,16 +3,18 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
 import { InputNumber } from "primereact/inputnumber";
+import { Skeleton } from "primereact/skeleton";
 import { InputText } from "primereact/inputtext";
 import useControlPedidos from "../../hooks/useControlPedidos";
 import { Toast } from "primereact/toast";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 
 export const PedidoDesplegado = () => {
-  const { listaPedidos, setlistaPedidos, EditarPedido, DialogPedido } =
+  const { listaPedidos, setlistaPedidos, EditarPedido, DialogPedido, loadingEditar } =
     useControlPedidos();
   const toast = useRef(null);
   const [idEliminar, setIdEliminar] = useState(null);
+  const [isModalOpen, setisModalOpen] = useState(false);
 
   const imageBodyTemplate = (rowData) => {
     return (
@@ -46,8 +48,8 @@ export const PedidoDesplegado = () => {
       />
     );
   };
-  const accept = () => {
-    const productId = idEliminar;
+  const accept = (id) => {
+    const productId = id;
     if (productId) {
       const pedidoId = DialogPedido; // ID del pedido actual
       const _listaPedidos = [...listaPedidos]; // Copia de la lista de pedidos
@@ -71,9 +73,12 @@ export const PedidoDesplegado = () => {
         EditarPedido(_listaPedidos[pedidoIndex]);
       }
     }
+    setisModalOpen(false);
   };
 
-  const reject = () => {};
+  const reject = () => {
+    setisModalOpen(false);
+  };
 
   const confirm2 = (id) => {
     setIdEliminar(id);
@@ -82,7 +87,7 @@ export const PedidoDesplegado = () => {
       header: " Confirmación",
       icon: "pi pi-exclamation-triangle",
       defaultFocus: "accept",
-      accept,
+      accept: () => accept(id), // Pasar el ID directamente
       reject,
     });
   };
@@ -135,81 +140,103 @@ export const PedidoDesplegado = () => {
     (pedido) => pedido.id === DialogPedido
   );
   const products = pedidoActual?.products || []; // Si no encuentra, devuelve un array vacío
+  //CANTIDAD PARA SKELETON
+  const items = Array.from({ length: 8 }, (v, i) => i);
 
   return (
     <div className=" w-full">
-      <ConfirmDialog />
+      {isModalOpen && <ConfirmDialog />}
       <Toast ref={toast} />
+      {loadingEditar ? (
+        <div className="card">
+          <DataTable
+            value={items}
+            className="p-datatable-striped"
+          >
+            <Column header="Id" body={<Skeleton />}></Column>
+            <Column header="Imagen" body={<Skeleton />}></Column>
+            <Column header="Nombre" body={<Skeleton />}></Column>
+            <Column
+              header="Cantidad"
+              body={<Skeleton />}
+            ></Column>
+            <Column header="Precio unitario" body={<Skeleton />}></Column>
+            <Column header="Sub-Total" body={<Skeleton />}></Column>
+          
+          </DataTable>
+        </div>
+      ) : (
+        <DataTable
+          className="w-full"
+          value={products}
+          editMode="row"
+          onRowEditComplete={onRowEditComplete}
+          emptyMessage="No se encontraron productos del pedido"
+          footer={footer}
+        >
+          <Column field="id" header="Id" sortable></Column>
 
-      <DataTable
-        className="w-full"
-        value={products}
-        editMode="row"
-        onRowEditComplete={onRowEditComplete}
-        emptyMessage="No se encontraron productos del pedido"
-        footer={footer}
-      >
-        <Column field="id" header="Id" sortable></Column>
+          <Column header="Imagen" field="images" body={imageBodyTemplate} />
 
-        <Column header="imagen" field="images" body={imageBodyTemplate} />
+          <Column field="product_name" header="Nombre" sortable></Column>
 
-        <Column field="product_name" header="Nombre" sortable></Column>
+          <Column
+            field="quantity"
+            editor={(options) => numEditor(options)}
+            header="Cantidad"
+            sortable
+          ></Column>
+          <Column
+            field="unit_price"
+            editor={(options) => priceEditor(options)}
+            header="Precio unitario"
+            body={(rowData) =>
+              new Intl.NumberFormat("es-CO", {
+                style: "currency",
+                currency: "COP",
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 2,
+              }).format(rowData.unit_price)
+            }
+            sortable
+          ></Column>
+          <Column
+            field="subtotal"
+            header="Sub-Total"
+            body={(rowData) =>
+              new Intl.NumberFormat("es-CO", {
+                style: "currency",
+                currency: "COP",
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 2,
+              }).format(rowData.subtotal)
+            }
+            sortable
+          ></Column>
 
-        <Column
-          field="quantity"
-          editor={(options) => numEditor(options)}
-          header="Cantidad"
-          sortable
-        ></Column>
-        <Column
-          field="unit_price"
-          editor={(options) => priceEditor(options)}
-          header="Precio unitario"
-          body={(rowData) =>
-            new Intl.NumberFormat("es-CO", {
-              style: "currency",
-              currency: "COP",
-              minimumFractionDigits: 0,
-              maximumFractionDigits: 2,
-            }).format(rowData.unit_price)
-          }
-          sortable
-        ></Column>
-        <Column
-          field="subtotal"
-          header="Sub-Total"
-          body={(rowData) =>
-            new Intl.NumberFormat("es-CO", {
-              style: "currency",
-              currency: "COP",
-              minimumFractionDigits: 0,
-              maximumFractionDigits: 2,
-            }).format(rowData.subtotal)
-          }
-          sortable
-        ></Column>
-
-        <Column
-          rowEditor={allowEdit}
-          bodyStyle={{ textAlign: "center" }}
-        ></Column>
-        <Column
-          body={(rowData) => {
-            return (
-              <Button
-                icon="pi pi-trash"
-                rounded
-                outlined
-                disabled={products.length === 1}
-                severity="danger"
-                onClick={() => {
-                  confirm2(rowData.id);
-                }}
-              />
-            );
-          }}
-        ></Column>
-      </DataTable>
+          <Column
+            rowEditor={allowEdit}
+            bodyStyle={{ textAlign: "center" }}
+          ></Column>
+          <Column
+            body={(rowData) => {
+              return (
+                <Button
+                  icon="pi pi-trash"
+                  rounded
+                  outlined
+                  disabled={products.length === 1}
+                  severity="danger"
+                  onClick={() => {
+                    confirm2(rowData.id);
+                    setisModalOpen(true);
+                  }}
+                />
+              );
+            }}
+          ></Column>
+        </DataTable>
+      )}
     </div>
   );
 };

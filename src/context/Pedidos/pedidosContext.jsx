@@ -20,6 +20,7 @@ const PedidosProvider = ({ children }) => {
   const [valordomicilio, setvalordomicilio] = useState(0);
   const [valorPedido, setvalorPedido] = useState(0);
   const [loadingPedidosLista, setloadingPedidosLista] = useState(false);
+  const [loadingEditar, setloadingEditar] = useState(false);
   const [creandoPedido, setcreandoPedido] = useState(false);
   const [cupon, setcupon] = useState(0);
 
@@ -521,30 +522,38 @@ const PedidosProvider = ({ children }) => {
   const EditarPedido = useCallback(
     async (pedido) => {
       try {
+        setloadingEditar(true);
         const response = await clienteAxios.patch(
           `orders/orders/${pedido.id}/update/`,
-           pedido ,
+          pedido,
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         );
-        console.log('responseee',response)
+
         showSuccess("Pedido actualizado exitosamente.");
         setlistaPedidos((prevListaPedidos) =>
           prevListaPedidos.map((p) =>
             p.id === response.data.id ? response.data : p
           )
         );
+        setloadingEditar(false);
+
       } catch (error) {
+        setloadingEditar(false);
+
         console.error("Error actualizando pedido:", error);
-      
+
         if (error.response) {
           console.error("Detalle del error:", error.response.data);
-      
+
           // Manejo de errores específicos de `products`
-          if (Array.isArray(error.response.data.products) && error.response.data.products.length > 0) {
+          if (
+            Array.isArray(error.response.data.products) &&
+            error.response.data.products.length > 0
+          ) {
             showError(
               `Ha ocurrido un error: ${error.response.data.products[0]}`
             );
@@ -582,6 +591,8 @@ const PedidosProvider = ({ children }) => {
       loadingPedidosLista,
       creandoPedido,
       DialogPedido,
+      loadingEditar,
+      setloadingEditar,
       setDialogPedido,
       EditarPedido,
       setcreandoPedido,
@@ -624,6 +635,8 @@ const PedidosProvider = ({ children }) => {
     loadingPedidosLista,
     creandoPedido,
     DialogPedido,
+    loadingEditar,
+    setloadingEditar,
     setDialogPedido,
     setcreandoPedido,
     EditarPedido,

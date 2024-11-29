@@ -29,6 +29,7 @@ export const ListaPedidos = () => {
   } = useControlPedidos();
   const [expandedRows, setExpandedRows] = useState(null);
   const [pedidoEliminar, setpedidoEliminar] = useState(null);
+  const [isModalOpen , setisModalOpen ] = useState(false);
   const toast = useRef(null);
   const [visible, setVisible] = useState(false);
   const [visibleDialog, setVisibleDialog] = useState(false);
@@ -243,7 +244,7 @@ export const ListaPedidos = () => {
 
   return (
     <div className="md:mt-24">
-      <ConfirmDialog />
+      {isModalOpen && <ConfirmDialog />}
       <Toast ref={toast} />
       <Dialog
         header={`Productos pedido ${DialogPedido}`}
