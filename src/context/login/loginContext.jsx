@@ -20,6 +20,10 @@ const LoginProvider = ({ children }) => {
   const [ciudades, setCiudades] = useState([]);
   const [loadingRegistro, setloadingRegistro] = useState(false);
   const [loadingLogin, setloadingLogin] = useState(false);
+  const [loadingListaUsuario, setloadingListaUsuario] = useState(false);
+  const [deleteUserDialog, setDeleteUserDialog] = useState(false);
+  const [listaUsuarios, setListaUsuarios] = useState([]);
+  const [user, setUser] = useState(null);
 
   const showSuccess = (mensaje) => {
     const Toast = Swal.mixin({
@@ -180,7 +184,6 @@ const LoginProvider = ({ children }) => {
             },
           }
         );
-        const dataRegistro = response.data;
 
         if (response.status === 201) {
           // El código de estado 201 generalmente indica que algo ha sido creado exitosamente
@@ -351,6 +354,114 @@ const LoginProvider = ({ children }) => {
       console.error(error);
     }
   }, [token]);
+
+  const obtenerUsuarios = useCallback(async () => {
+    try {
+      setloadingListaUsuario(true);
+      const response = await clienteAxios.get(
+        `users/info/users/`,
+
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setListaUsuarios(response.data);
+      setloadingListaUsuario(false);
+    } catch (error) {
+      setloadingListaUsuario(false);
+      console.error("Error obteniendo los usuarios:", error);
+
+      if (error.response) {
+        const mensajeError =
+          error.response.data?.detail ||
+          "Hubo un error obteniendo los usuarios.";
+        Swal.fire({
+          icon: "error",
+          title: "Error obteniendo los usuarios",
+          text: mensajeError,
+        });
+      } else if (error.request) {
+        Swal.fire({
+          icon: "error",
+          title: "No se recibió respuesta del servidor",
+          text: "Por favor, inténtelo de nuevo más tarde.",
+        });
+        console.error("No se recibió respuesta del servidor:", error.request);
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Error inesperado",
+          text: error.message || "Ocurrió un error inesperado.",
+        });
+      }
+    }
+  }, [token]);
+  const eliminarUsuario = useCallback(
+    async (productoId) => {
+      try {
+        // Petición DELETE para eliminar el producto
+        await clienteAxios.delete(
+          `users/info/users/${productoId}/`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        // Si la petición fue exitosa, muestra un mensaje de éxito
+        showSuccess(`Usuario eliminado con éxito.`);
+        obtenerUsuarios();
+      } catch (error) {
+        // Manejo de errores
+        if (error.response) {
+          // Inicializa una variable para el mensaje de error consolidado
+          let mensajeError = "";
+
+          // Recorre todos los errores del objeto error.response.data
+          for (const campo in error.response.data) {
+            if (error.response.data.hasOwnProperty(campo)) {
+              const erroresCampo = error.response.data[campo];
+              if (Array.isArray(erroresCampo)) {
+                mensajeError += erroresCampo.join(", ") + "\n";
+              } else {
+                mensajeError += erroresCampo + "\n";
+              }
+            }
+          }
+
+          // Mostrar el mensaje de error consolidado en SweetAlert
+          Swal.fire({
+            icon: "error",
+            title: "Error al eliminar el usuario",
+            text:
+              mensajeError || "Hubo un error al intentar eliminar el usuario.",
+          });
+
+          console.error("Error de respuesta del servidor:", error.response);
+        } else if (error.request) {
+          Swal.fire({
+            icon: "error",
+            title: "No se recibió respuesta del servidor",
+            text: "Por favor, inténtelo de nuevo más tarde.",
+          });
+          console.error("No se recibió respuesta del servidor", error.request);
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Error inesperado",
+            text: error.message || "Ocurrió un error inesperado.",
+          });
+        }
+
+        console.error("Error al intentar eliminar el usuario:", error);
+      }
+    },
+    [token]
+  );
   const contextValue = useMemo(() => {
     return {
       // ... tus valores de contexto
@@ -369,6 +480,16 @@ const LoginProvider = ({ children }) => {
       setDepartamentos,
       departments,
       setloadingLogin,
+      obtenerUsuarios,
+      setListaUsuarios,
+      setloadingListaUsuario,
+      setUser,
+      setDeleteUserDialog,
+      eliminarUsuario,
+      deleteUserDialog,
+      user,
+      loadingListaUsuario,
+      listaUsuarios,
       loadingLogin,
       admin,
       departamentos,
@@ -399,6 +520,16 @@ const LoginProvider = ({ children }) => {
     setDepartamentos,
     departments,
     setloadingLogin,
+    obtenerUsuarios,
+    setListaUsuarios,
+    setloadingListaUsuario,
+    setUser,
+    setDeleteUserDialog,
+    eliminarUsuario,
+    deleteUserDialog,
+    user,
+    loadingListaUsuario,
+    listaUsuarios,
     loadingLogin,
     admin,
     departamentos,

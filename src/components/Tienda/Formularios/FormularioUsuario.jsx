@@ -62,13 +62,13 @@ export const FormularioUsuario = () => {
       <Toast ref={toast} />
 
       <div>
-        <h1 className="font-bold text-xl"> Datos de facturación y envio</h1>
+        <h1 className="font-bold text-xl mb-6 "> Datos de facturación y envio</h1>
       </div>
 
-      <div className="flex">
-        <form onSubmit={handleSubmit} className="mt-6 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-6 w-full ">
+      <div className=" flex flex-col  ">
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-6 w-full ">
           {/* Campos principales */}
-          <div>
+          <div  className=" col-span-2 md:col-span-1">
             <FloatLabel>
               <InputText
                 id="nombres"
@@ -82,7 +82,8 @@ export const FormularioUsuario = () => {
               <label htmlFor="nombres">Nombres</label>
             </FloatLabel>
           </div>
-          <div>
+          <div  className=" col-span-2 md:col-span-1">
+
             <FloatLabel>
               <InputText
                 id="apellidos"
@@ -96,7 +97,8 @@ export const FormularioUsuario = () => {
               <label htmlFor="apellidos">Apellidos</label>
             </FloatLabel>
           </div>
-          <div>
+          <div  className=" col-span-2 md:col-span-1">
+
             <InputMask
               disabled
               id="telefono"
@@ -107,7 +109,8 @@ export const FormularioUsuario = () => {
               style={{ width: "100%" }}
             />
           </div>
-          <div>
+          <div  className=" col-span-2 md:col-span-1">
+
             <FloatLabel>
               <InputText
                 disabled
@@ -122,7 +125,8 @@ export const FormularioUsuario = () => {
               </label>
             </FloatLabel>
           </div>
-          <div>
+          <div  className=" col-span-2 md:col-span-1">
+
             <FloatLabel>
               <InputText
                 disabled
@@ -134,7 +138,8 @@ export const FormularioUsuario = () => {
               <label htmlFor="ciudad">Departamento</label>
             </FloatLabel>
           </div>
-          <div>
+          <div  className=" col-span-2 md:col-span-1">
+
             <FloatLabel>
               <InputText
                 disabled
@@ -146,7 +151,8 @@ export const FormularioUsuario = () => {
               <label htmlFor="ciudad">Ciudad</label>
             </FloatLabel>
           </div>
-          <div>
+          <div  className=" col-span-2 md:col-span-1">
+
             <FloatLabel>
               <InputText
                 id="direccion"
@@ -161,7 +167,8 @@ export const FormularioUsuario = () => {
             </FloatLabel>
           </div>
           {/* Checkbox para dirección de envío diferente */}
-          <div className="col-span-2">
+          <div  className=" col-span-2 md:col-span-1">
+
             <Checkbox
               inputId="envioDiferente"
               name="envioDiferente"

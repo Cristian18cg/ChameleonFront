@@ -126,15 +126,14 @@ const ProductosProvider = ({ children }) => {
 
   const obtenerProductos = useCallback(async () => {
     try {
-      setloadingProducts(true)
+      setloadingProducts(true);
       const response = await clienteAxios.get("products/products/", {});
       const productos = response.data;
-      setbtndelCate(true)
+      setbtndelCate(true);
       setProductos(productos); // Guardar productos en el estado
-      setloadingProducts(false)
-
+      setloadingProducts(false);
     } catch (error) {
-      setloadingProducts(false)
+      setloadingProducts(false);
 
       if (error.response) {
         // Inicializa una variable para el mensaje de error consolidado
@@ -184,7 +183,7 @@ const ProductosProvider = ({ children }) => {
         `products/products/category/${idcategoria}/`
       );
       const productos = response.data;
-      setbtndelCate(false)
+      setbtndelCate(false);
       setProductos(productos); // Guardar productos en el estado
     } catch (error) {
       if (error.response) {
@@ -319,16 +318,20 @@ const ProductosProvider = ({ children }) => {
         });
         return;
       }
-  
+
       try {
-        const response = await clienteAxios.get(`products/products/${producto}/`);
-  
+        const response = await clienteAxios.get(
+          `products/products/${producto}/`
+        );
+
         setProducto(response.data);
       } catch (error) {
         console.error("Error obteniendo el producto:", error);
-  
+
         if (error.response) {
-          const mensajeError = error.response.data?.detail || "Hubo un error obteniendo el producto.";
+          const mensajeError =
+            error.response.data?.detail ||
+            "Hubo un error obteniendo el producto.";
           Swal.fire({
             icon: "error",
             title: "Error obteniendo producto",
@@ -351,7 +354,7 @@ const ProductosProvider = ({ children }) => {
       }
     },
     [token]
-  )
+  );
   const editarProducto = useCallback(
     async (producto) => {
       try {
@@ -578,7 +581,9 @@ const ProductosProvider = ({ children }) => {
       eliminarImagenProducto,
       setProducto,
       setbtndelCate,
-      btndelCate, 
+      setloadingProducts,
+      loadingProducts,
+      btndelCate,
       producto,
       product,
       deleteProductDialog,
@@ -605,7 +610,9 @@ const ProductosProvider = ({ children }) => {
     setProducto,
     editarProducto,
     setbtndelCate,
-    btndelCate, 
+    setloadingProducts,
+    loadingProducts,
+    btndelCate,
     producto,
     product,
     deleteProductDialog,

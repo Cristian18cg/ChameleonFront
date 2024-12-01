@@ -111,11 +111,11 @@ function App() {
       }}
     >
       <LoginProvider>
-        <PedidosProvider>
-          <ProductosProvider>
+        <ProductosProvider>
+          <PedidosProvider>
             <Router_Home />
-          </ProductosProvider>
-        </PedidosProvider>
+          </PedidosProvider>
+        </ProductosProvider>
       </LoginProvider>
     </PrimeReactProvider>
   );

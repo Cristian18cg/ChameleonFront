@@ -8,11 +8,14 @@ import {
 import clienteAxios from "../../config/url";
 import Swal from "sweetalert2";
 import useControl from "../../hooks/useControl";
+import useControlProductos from "../../hooks/useControlProductos";
+
 
 const PedidosContextControl = createContext();
 
 const PedidosProvider = ({ children }) => {
   const { token, jsonlogin } = useControl();
+  const { obtenerProductos } = useControlProductos();
   const [activeIndex, setActiveIndex] = useState(0);
   const [valoresdomicilio, setvaloresdomicilio] = useState([]);
   const [listaPedidos, setlistaPedidos] = useState([]);
@@ -411,7 +414,8 @@ const PedidosProvider = ({ children }) => {
   }, []);
   const crearPedido = useCallback(async () => {
     try {
-      setcreandoPedido(true); //loading del boton
+      setcreandoPedido(true); // Activar loading del botón
+
       const data = {
         different_shipping: usuario.envioDiferente,
         coupon: cupon,
@@ -419,10 +423,10 @@ const PedidosProvider = ({ children }) => {
         order_value: valorPedido,
         products: carrito.map((product) => ({
           product_name: product.name,
-          description: product.description || "", // Ajustar descripción si está disponible
-          unit_price: product.discount_price, // Cambia "price" según el campo correspondiente
-          quantity: product.cantidad || 1, // Define una cantidad predeterminada si no está disponible
-          subtotal: product.discount_price * (product.cantidad || 1), // Asegura el subtotal
+          description: product.description || "",
+          unit_price: product.discount_price,
+          quantity: product.cantidad || 1,
+          subtotal: product.discount_price * (product.cantidad || 1),
         })),
       };
 
@@ -442,47 +446,58 @@ const PedidosProvider = ({ children }) => {
         },
       });
 
-      // Vaciar el carrito en el estado
+      // Limpiar el estado y el almacenamiento local
       setCarrito([]);
       setVisibleCarrito(false);
       setUnidades([]);
       setActiveIndex(0);
-      // Eliminar los datos del carrito y las unidades del localStorage
       localStorage.removeItem("carrito");
       localStorage.removeItem("unidades");
-
-      // Reiniciar la cantidad total del carrito
       setCantidadCarrito(0);
       setvalorPedido(0);
+
+      // Mostrar éxito
       showSuccess(`El pedido ha sido creado exitosamente`);
-      setcreandoPedido(false); //loading del boton
     } catch (error) {
-      setcreandoPedido(false); // Desactiva el loading del botón
+      setcreandoPedido(false); // Desactivar loading del botón
 
       console.error("Error al crear el pedido:", error);
 
-      // Si el error tiene una respuesta desde el backend
       if (error.response) {
         console.error("Detalle del error:", error.response.data);
 
-        // Verificar si existen errores específicos en `error.products`
-        if (error.response.data.error?.products) {
-          // Combinar los errores de productos en un mensaje legible
-          const productErrors = error.response.data.error.products.join(", ");
-          showError(`Ha ocurrido un error con los productos: ${productErrors}`);
+        // Capturar errores específicos del backend
+        const backendErrors = error.response.data.errors || {};
+
+        // Manejar errores de productos
+        if (backendErrors.errors) {
+          const productErrors = backendErrors.errors.join(", ");
+          showError(`Errores al crear el pedido: ${productErrors}`);
+          setCarrito([]);
+          setUnidades([]);
+          obtenerProductos()
+          setActiveIndex(0)
+        } else if (backendErrors.products) {
+          const productErrors = backendErrors.products.join(", ");
+          showError(`Problemas con los productos: ${productErrors}`);
+          showError(`Intenta volver a llenar tu carrito.`);
+          obtenerProductos()
+
         } else {
-          // Mostrar un mensaje genérico si no hay detalles específicos
+          // Error genérico del backend
           const errorMessage =
             error.response.data.error ||
             "Ha ocurrido un error creando el pedido. Intente nuevamente.";
           showError(errorMessage);
         }
       } else {
-        // Si no hay respuesta del backend, mostrar un mensaje genérico
+        // Error de red o sin respuesta del backend
         showError(
-          "Ha ocurrido un error creando el pedido. Intente nuevamente."
+          "No se pudo conectar al servidor. Verifique su conexión a internet e intente nuevamente."
         );
       }
+    } finally {
+      setcreandoPedido(false); // Desactivar loading del botón (asegurar en cualquier caso)
     }
   }, [token, usuario, carrito, cupon, valordomicilio, valorPedido]);
 
@@ -513,12 +528,48 @@ const PedidosProvider = ({ children }) => {
         );
       } else {
         showError(
-          "Ha ocurrido un error obteniendo los pedido. Intente nuevamente."
+          "Ha ocurrido un error obteniendo los pedidos. Intente nuevamente."
         );
       }
     }
   }, [token]);
+  const EliminarPedido = useCallback(async (idpedido) => {
+    try {
+      setloadingPedidosLista(true);
+     const response =await clienteAxios.delete(
+        `orders/orders/delete/${idpedido}/`,
 
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if(response.data.message){
+        showSuccess(response.data.message)
+
+      }else{
+        showSuccess("Se eliminó correctamente el pedido.")
+      }
+      listarPedidos()
+    } catch (error) {
+      setloadingPedidosLista(false);
+
+      console.error("Error eliminando el pedido:", error);
+      if (error.response) {
+        console.error("Detalle del error:", error.response.data);
+        showError(
+          `Ha ocurrido un error eliminando el: ${
+            error.response.data.error || "Error de base de datos."
+          }`
+        );
+      } else {
+        showError(
+          "Ha ocurrido un error intentando eliminar el pedido. Intente nuevamente."
+        );
+      }
+    }
+  }, [token, listarPedidos]);
   const EditarPedido = useCallback(
     async (pedido) => {
       try {
@@ -540,20 +591,26 @@ const PedidosProvider = ({ children }) => {
           )
         );
         setloadingEditar(false);
-
       } catch (error) {
         setloadingEditar(false);
-
+  
         console.error("Error actualizando pedido:", error);
-
+  
         if (error.response) {
           console.error("Detalle del error:", error.response.data);
-
-          // Manejo de errores específicos de `products`
+  
+          // Manejo de errores específicos de productos
           if (
+            error.response.data.products &&
+            error.response.data.products.errors
+          ) {
+            const productErrors = error.response.data.products.errors.join(", ");
+            showError(`Error con los productos: ${productErrors}`);
+          } else if (
             Array.isArray(error.response.data.products) &&
             error.response.data.products.length > 0
           ) {
+            // Si el formato es un array de errores
             showError(
               `Ha ocurrido un error: ${error.response.data.products[0]}`
             );
@@ -566,6 +623,7 @@ const PedidosProvider = ({ children }) => {
             );
           }
         } else {
+          // Error sin respuesta del backend
           showError(
             "Ha ocurrido un error editando el pedido. Intente nuevamente."
           );
@@ -592,6 +650,7 @@ const PedidosProvider = ({ children }) => {
       creandoPedido,
       DialogPedido,
       loadingEditar,
+      EliminarPedido,
       setloadingEditar,
       setDialogPedido,
       EditarPedido,
@@ -636,6 +695,7 @@ const PedidosProvider = ({ children }) => {
     creandoPedido,
     DialogPedido,
     loadingEditar,
+    EliminarPedido,
     setloadingEditar,
     setDialogPedido,
     setcreandoPedido,

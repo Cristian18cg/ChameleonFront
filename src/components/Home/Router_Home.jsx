@@ -9,6 +9,7 @@ import { ProductoDetallado } from "../Tienda/ProductoDetallado";
 import { ConfigDomicilio } from "../Configuracion/Domicilio/ConfigDomicilio";
 import { ListaPedidos } from "../Pedidos/ListaPedidos";
 import { PedidosUsuario } from "../Pedidos/usuarios/PedidosUsuario";
+import { ListUsers } from "../Configuracion/Domicilio/Usuarios/ListUsers";
 
 export const Router_Home = () => {
   const {
@@ -29,6 +30,7 @@ export const Router_Home = () => {
             <Route path="/tienda/:id" element={<ProductoDetallado />} />
             <Route path="/tienda" element={<Tienda />} />
             <Route path="/configuracion/domicilio" element={<ConfigDomicilio />} />
+            <Route path="/configuracion/usuarios" element={<ListUsers />} />
             <Route path="/pedidos/lista_pedidos" element={<ListaPedidos />} />
           </Routes>
         </Router>

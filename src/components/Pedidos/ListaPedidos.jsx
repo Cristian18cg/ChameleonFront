@@ -234,6 +234,7 @@ export const ListaPedidos = () => {
         severity="danger"
         onClick={() => {
           setpedidoEliminar(rowData.id);
+          setisModalOpen(true)
           confirm1();
         }}
       />

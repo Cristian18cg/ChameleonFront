@@ -26,6 +26,7 @@ export const Carritocompras = () => {
     setActiveIndex,
     crearPedido,
     creandoPedido,
+    valorPedido,valordomicilio
   } = useControlPedidos();
 
   useEffect(() => {
@@ -238,7 +239,7 @@ export const Carritocompras = () => {
         // Contenido para datos de envio
         <>
           {isLoggedIn ? (
-            <div className="flex-grow w-full  overflow-auto">
+            <div className="flex-grow min-w-full overflow-auto">
               <FormularioUsuario />
             </div>
           ) : (
@@ -318,7 +319,7 @@ export const Carritocompras = () => {
                   crearPedido();
                 }}
                 className="bg-purple-600 border-purple-400 hover:bg-purple-800"
-                disabled={!(carrito.length > 0 && isLoggedIn)}
+                disabled={!(carrito.length > 0 && isLoggedIn && valorPedido !== 0 && valordomicilio !== 0)}
 
               />
             </div>

@@ -13,6 +13,8 @@ import { Tag } from "primereact/tag";
 import { CrearProducto } from "./CrearProducto";
 import useControlProductos from "../../hooks/useControlProductos";
 import { EliminarProducto } from "./EliminarProducto";
+import { Skeleton } from "primereact/skeleton";
+
 export default function ProductsDemo() {
   let emptyProduct = {
     id: null,
@@ -322,120 +324,157 @@ export default function ProductsDemo() {
       />
     </React.Fragment>
   );
-
+  //CANTIDAD PARA SKELETON
+  const items = Array.from({ length: 15 }, (v, i) => i);
   return (
     <div className="">
       <Toast ref={toast} />
-      <div className="card">
-        <Toolbar
-          className="mt-24"
-          left={leftToolbarTemplate}
-          right={rightToolbarTemplate}
-        ></Toolbar>
+      {!loadingProducts ? (
+        <div className="card">
+          <Toolbar
+            className="mt-24"
+            left={leftToolbarTemplate}
+            right={rightToolbarTemplate}
+          ></Toolbar>
 
-        <DataTable
-          ref={dt}
-          value={products}
-          selection={selectedProducts}
-          onSelectionChange={(e) => setSelectedProducts(e.value)}
-          dataKey="id"
-          paginator
-          rows={10}
-          rowsPerPageOptions={[5, 10, 25]}
-          paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-          currentPageReportTemplate="Viendo {first} a {last} de {totalRecords} productos"
-          globalFilter={globalFilter}
-          header={header}
-        >
-          <Column selectionMode="multiple" exportable={false}></Column>
-          <Column
-            field="code"
-            header="Codigo"
-            sortable
-            style={{ minWidth: "6rem" }}
-          ></Column>
-          <Column
-            field="name"
-            header="Nombre"
-            sortable
-            style={{ minWidth: "16rem" }}
-          ></Column>
-          <Column
-            field="image"
-            header="Imagen"
-            body={imageBodyTemplate}
-          ></Column>
-          <Column
-            field="price"
-            header="Precio"
-            body={(rowData) =>
-              new Intl.NumberFormat("es-CO", {
-                style: "currency",
-                currency: "COP",
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              }).format(rowData.price)
-            }
-            sortable
-            style={{ minWidth: "8rem" }}
-          ></Column>
-          <Column
-            field="discount_price"
-            header="Precio con Descuento "
-            body={(rowData) =>
-              new Intl.NumberFormat("es-CO", {
-                style: "currency",
-                currency: "COP",
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              }).format(rowData.discount_price)
-            }
-            sortable
-            style={{ minWidth: "8rem" }}
-          ></Column>
-          <Column
-            field="discount_percentage"
-            header="Porcentaje Descuento "
-            body={(rowData) => <span>{rowData.discount_percentage} %</span>}
-            sortable
-            style={{ minWidth: "8rem" }}
-          ></Column>
-          <Column
-            field="categories"
-            header="Categoría"
-            sortable
-            style={{ minWidth: "10rem" }}
-            body={(rowData) => {
-              // rowData.categories es un array de nombres de categorías
-              return rowData.categories && rowData.categories.length > 0
-                ? rowData.categories.join(", ") // Unir las categorías con comas
-                : "Sin categoría"; // Si no hay categorías, mostrar algún texto por defecto
-            }}
-          ></Column>
+          <DataTable
+            ref={dt}
+            value={products}
+            selection={selectedProducts}
+            onSelectionChange={(e) => setSelectedProducts(e.value)}
+            dataKey="id"
+            paginator
+            rows={10}
+            rowsPerPageOptions={[5, 10, 25]}
+            paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+            currentPageReportTemplate="Viendo {first} a {last} de {totalRecords} productos"
+            globalFilter={globalFilter}
+            header={header}
+          >
+            <Column selectionMode="multiple" exportable={false}></Column>
+            <Column
+              field="code"
+              header="Codigo"
+              sortable
+              style={{ minWidth: "6rem" }}
+            ></Column>
+            <Column
+              field="name"
+              header="Nombre"
+              sortable
+              style={{ minWidth: "16rem" }}
+            ></Column>
+            <Column
+              field="image"
+              header="Imagen"
+              body={imageBodyTemplate}
+            ></Column>
+            <Column
+              field="price"
+              header="Precio"
+              body={(rowData) =>
+                new Intl.NumberFormat("es-CO", {
+                  style: "currency",
+                  currency: "COP",
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                }).format(rowData.price)
+              }
+              sortable
+              style={{ minWidth: "8rem" }}
+            ></Column>
+            <Column
+              field="discount_price"
+              header="Precio con Descuento "
+              body={(rowData) =>
+                new Intl.NumberFormat("es-CO", {
+                  style: "currency",
+                  currency: "COP",
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                }).format(rowData.discount_price)
+              }
+              sortable
+              style={{ minWidth: "8rem" }}
+            ></Column>
+            <Column
+              field="discount_percentage"
+              header="Porcentaje Descuento "
+              body={(rowData) => <span>{rowData.discount_percentage} %</span>}
+              sortable
+              style={{ minWidth: "8rem" }}
+            ></Column>
+            <Column
+              field="categories"
+              header="Categoría"
+              sortable
+              style={{ minWidth: "10rem" }}
+              body={(rowData) => {
+                // rowData.categories es un array de nombres de categorías
+                return rowData.categories && rowData.categories.length > 0
+                  ? rowData.categories.join(", ") // Unir las categorías con comas
+                  : "Sin categoría"; // Si no hay categorías, mostrar algún texto por defecto
+              }}
+            ></Column>
 
-          <Column
-            field="rating"
-            header="Reviews"
-            body={ratingBodyTemplate}
-            sortable
-            style={{ minWidth: "12rem" }}
-          ></Column>
+            <Column
+              field="rating"
+              header="Reviews"
+              body={ratingBodyTemplate}
+              sortable
+              style={{ minWidth: "12rem" }}
+            ></Column>
 
-          <Column
-            field="stock"
-            header="Stock"
-            body={statusBodyTemplate}
-            sortable
-            style={{ minWidth: "12rem" }}
-          ></Column>
-          <Column
-            body={actionBodyTemplate}
-            exportable={false}
-            style={{ minWidth: "12rem" }}
-          ></Column>
-        </DataTable>
-      </div>
+            <Column
+              field="stock"
+              header="Stock"
+              body={statusBodyTemplate}
+              sortable
+              style={{ minWidth: "12rem" }}
+            ></Column>
+            <Column
+              body={actionBodyTemplate}
+              exportable={false}
+              style={{ minWidth: "12rem" }}
+            ></Column>
+          </DataTable>
+        </div>
+      ) : (
+        <div className="card">
+           <Toolbar
+            className="mt-24"
+            left={leftToolbarTemplate}
+            right={rightToolbarTemplate}
+            
+          ></Toolbar>
 
+          <DataTable
+            value={items}
+            header={header}
+            className="p-datatable-striped"
+          >
+            <Column header="Codigo" body={<Skeleton />}></Column>
+            <Column header="Nombre" body={<Skeleton />}></Column>
+            <Column header="Imagen" body={<Skeleton />}></Column>
+            <Column
+              field="quantity"
+              header="Precio"
+              body={<Skeleton />}
+            ></Column>
+            <Column header="Precio con Descuento" body={<Skeleton />}></Column>
+            <Column header="Porcentaje Descuento" body={<Skeleton />}></Column>
+            <Column header="Categoria" body={<Skeleton />}></Column>
+            <Column
+              field="status"
+              header="Review"
+              sortable
+              body={<Skeleton />}
+            />
+            <Column header="Stock" body={<Skeleton />}></Column>
+
+          </DataTable>
+        </div>
+      )}
       <Dialog
         visible={productDialog}
         style={{ width: "80vw", height: "100vh" }}
