@@ -22,6 +22,7 @@ const LoginProvider = ({ children }) => {
   const [loadingLogin, setloadingLogin] = useState(false);
   const [loadingListaUsuario, setloadingListaUsuario] = useState(false);
   const [deleteUserDialog, setDeleteUserDialog] = useState(false);
+  const [UsuarioDialog, setUsuarioDialog] = useState(false);
   const [listaUsuarios, setListaUsuarios] = useState([]);
   const [user, setUser] = useState(null);
 
@@ -486,6 +487,8 @@ const LoginProvider = ({ children }) => {
       setUser,
       setDeleteUserDialog,
       eliminarUsuario,
+      setUsuarioDialog,
+      UsuarioDialog,
       deleteUserDialog,
       user,
       loadingListaUsuario,
@@ -526,6 +529,8 @@ const LoginProvider = ({ children }) => {
     setUser,
     setDeleteUserDialog,
     eliminarUsuario,
+    setUsuarioDialog,
+    UsuarioDialog,
     deleteUserDialog,
     user,
     loadingListaUsuario,

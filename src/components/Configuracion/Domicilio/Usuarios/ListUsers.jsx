@@ -13,6 +13,7 @@ import { Tag } from "primereact/tag";
 import { Skeleton } from "primereact/skeleton";
 import useControl from "../../../../hooks/useControl";
 import { EliminarUsuario } from "./EliminarUsuario";
+import { EditarUsuario } from "./EditarUsuario";
 export const ListUsers = () => {
   const dt = useRef(null);
   const {
@@ -23,6 +24,7 @@ export const ListUsers = () => {
     obtenerUsuarios,
     setDeleteUserDialog,
     user,
+    UsuarioDialog,
     deleteUserDialog,
   } = useControl();
   const [globalFilter, setGlobalFilter] = useState(null);
@@ -167,6 +169,18 @@ export const ListUsers = () => {
         }}
       >
         <EliminarUsuario user={user} />
+      </Dialog>
+      <Dialog
+        headerClassName="custom-header2"
+        className=" custom-dialog  w-full md:w-10/12 lg:w-1/2 "
+        visible={UsuarioDialog}
+        header="Editar Usuario"
+        modal
+        onHide={() => {
+          setUsuarioDialog(false);
+        }}
+      >
+        <EditarUsuario/>
       </Dialog>
       {!loadingListaUsuario ? (
         <div className="card">
