@@ -12,26 +12,59 @@ import { InputSwitch } from "primereact/inputswitch";
 
 export const EditarUsuario = () => {
   const {
-    registro,
     departments,
     cities,
     departamentos,
     ciudades,
-    loadingRegistro,
+    loadingEdicion,
     user,
+    EditarUsuario: editar,
   } = useControl();
   const [selectedDepartment, setSelectedDepartment] = useState(null);
   const toast = useRef(null);
+  const [usuario, setUsuario] = useState({
+    nombres: user.first_name || "",
+    apellidos: user.last_name || "",
+    direccion: user.profile.address || "",
+    telefono: user.profile.phone || "",
+    correo: user.email || "",
+    is_active: user.is_active || true,
+    is_superuser: user.is_superuser || false,
+    ciudad: null,
+    department: null,
+    contrasena: "",
+    confirmarContrasena: "",
+    terms_accepted: user.profile?.terms_accepted || false,
+    tipoIdentificacion: user.profile.type_document || "", // Nuevo campo para tipo de identificación
+    numeroIdentificacion: user.profile.number_document || "", // Nuevo campo para número de identificación
+  });
   useEffect(() => {
-    // Obtener departamentos al cargar el componente
+    console.log(departamentos);
+    // Cargar departamentos y ciudades basados en la información del usuario
     if (departamentos.length === 0) {
       departments();
-    }
-     // Si el usuario tiene un departamento seleccionado, cargar ciudades correspondientes
-     if (usuario.department && ciudades.length === 0) {
-        cities(usuario.department.id);
+    } else {
+      const userDepartment = departamentos.find(
+        (d) => d.name === user.profile?.department
+      );
+      console.log("department", userDepartment);
+      handleInputChange({
+        target: { name: "department", value: userDepartment.id },
+      });
+      setSelectedDepartment(userDepartment.id);
+      if (userDepartment) {
+        cities(userDepartment.id);
       }
-  }, []);
+    }
+  }, [departamentos, user]);
+
+  useEffect(() => {
+    // Sincronizar ciudad basada en la información del usuario
+    const userCity = ciudades.find((c) => c.name === user.profile?.city);
+    handleInputChange({
+      target: { name: "ciudad", value: userCity?.id },
+    });
+  }, [ciudades]);
 
   const handleDepartmentChange = (e) => {
     const departmentId = e.value;
@@ -48,21 +81,6 @@ export const EditarUsuario = () => {
       target: { name: "ciudad", value: e.value },
     });
   };
-
-  const [usuario, setUsuario] = useState({
-    nombres: user.first_name || "",
-    apellidos: user.last_name || "",
-    direccion: user.profile.address || "",
-    telefono: user.profile.phone || "",
-    correo: user.email || "",
-    ciudad: ciudades.find((c) => c.name === user.profile?.city) || null,
-    department: departamentos.find((d) => d.name === user.profile?.department) || null,
-    contrasena: "",
-    confirmarContrasena: "",
-    terms_accepted: user.profile?.terms_accepted || false,
-    tipoIdentificacion: user.profile.type_document || "", // Nuevo campo para tipo de identificación
-    numeroIdentificacion: user.profile.number_document || "", // Nuevo campo para número de identificación
-  });
 
   const [errores, setErrores] = useState({
     nombres: "",
@@ -102,74 +120,41 @@ export const EditarUsuario = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!validarFormulario()) return;
-    registro(usuario);
+    editar(usuario);
+  };
+
+  const validarCampo = (campo, valor) => {
+    const errores = {};
+    const regex = {
+      nombres: /^[A-Za-zÁÉÍÓÚáéíóúñÑ\s]+$/,
+      telefono: /^\(\+\d{2}\)\s\d{3}-\d{3}-\d{4}$/,
+      correo: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
+      numeroIdentificacion: /^\d+$/,
+    };
+
+    // Omitir validación si el campo es contraseña y está vacío
+    if (campo === "contrasena" || campo === "confirmarContrasena" ||  campo === "is_superuser" ||campo === "is_active") {
+      return errores;
+    }
+    if (!valor) errores[campo] = "Este campo es obligatorio.";
+    else if (regex[campo] && !regex[campo].test(valor)) {
+      errores[campo] = `El valor de ${campo} es inválido.`;
+    }
+
+    return errores;
   };
 
   const validarFormulario = () => {
+    const nuevosErrores = {};
     let valid = true;
-    let nuevosErrores = {};
 
-    // Validar nombres y apellidos solo con letras y tildes
-    const regexNombres = /^[A-Za-zÁÉÍÓÚáéíóúñÑ\s]+$/;
-    if (!regexNombres.test(usuario.nombres)) {
-      nuevosErrores.nombres = "Los nombres solo deben contener letras.";
-      valid = false;
-    }
-    if (!regexNombres.test(usuario.apellidos)) {
-      nuevosErrores.apellidos = "Los apellidos solo deben contener letras.";
-      valid = false;
-    }
-
-    // Validar teléfono (solo números, máximo 10 dígitos)
-    const regexTelefono = /^\(\+\d{2}\)\s\d{3}-\d{3}-\d{4}$/;
-    if (!regexTelefono.test(usuario.telefono)) {
-      nuevosErrores.telefono =
-        "El teléfono debe estar en el formato (+XX) XXX-XXX-XXXX.";
-      valid = false;
-    }
-
-    // Validar formato de correo electrónico
-    const regexCorreo = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
-    if (!regexCorreo.test(usuario.correo)) {
-      nuevosErrores.correo = "Por favor, ingrese un correo electrónico válido.";
-      valid = false;
-    }
-
-    // Validar que las contraseñas coincidan
-    if (usuario.contrasena !== usuario.confirmarContrasena) {
-      nuevosErrores.contrasena = "Las contraseñas no coinciden.";
-      nuevosErrores.confirmarContrasena = "Las contraseñas no coinciden.";
-      valid = false;
-    }
-
-    // Validar campos vacíos
-    Object.keys(usuario).forEach((campo) => {
-      if (!usuario[campo]) {
-        nuevosErrores[campo] = "Este campo es obligatorio.";
+    Object.entries(usuario).forEach(([campo, valor]) => {
+      const error = validarCampo(campo, valor);
+      if (Object.keys(error).length) {
         valid = false;
+        nuevosErrores[campo] = error[campo];
       }
     });
-
-    // Validar caracteres especiales peligrosos
-    const regexCaracteresPeligrosos = /[$<>{}()'"`;%]/;
-    if (
-      regexCaracteresPeligrosos.test(usuario.nombres) ||
-      regexCaracteresPeligrosos.test(usuario.apellidos) ||
-      regexCaracteresPeligrosos.test(usuario.direccion)
-    ) {
-      showError(
-        `No se permiten caracteres especiales como: <>{}()'";% en ningun campo.`
-      );
-      return false;
-    }
-
-    // Validar número de identificación (sin caracteres especiales y solo números)
-    const regexNumeroIdentificacion = /^\d+$/;
-    if (!regexNumeroIdentificacion.test(usuario.numeroIdentificacion)) {
-      nuevosErrores.numeroIdentificacion =
-        "El número de identificación solo debe contener números.";
-      valid = false;
-    }
 
     setErrores(nuevosErrores);
     return valid;
@@ -371,7 +356,7 @@ export const EditarUsuario = () => {
             <Password
               readonly
               onfocus="this.removeAttribute('readonly');"
-              autoComplete="off"
+              autoComplete="new-password"
               inputId="contrasena"
               name="contrasena"
               value={usuario.contrasena}
@@ -392,7 +377,7 @@ export const EditarUsuario = () => {
             <Password
               readonly
               onfocus="this.removeAttribute('readonly');"
-              autoComplete="off"
+              autoComplete="new-password"
               inputId="confirmarContrasena"
               name="confirmarContrasena"
               value={usuario.confirmarContrasena}
@@ -405,6 +390,41 @@ export const EditarUsuario = () => {
           {errores.confirmarContrasena && (
             <small className="p-error min-w-full">
               {errores.confirmarContrasena}
+            </small>
+          )}
+        </div>
+        <div className="card md:col-span-2 flex justify-content-center">
+          <div className="flex items-center gap-2">
+            <InputSwitch
+              id="is_active"
+              name="is_active"
+              checked={usuario.is_active}
+              onChange={handleInputChange}
+            />
+
+            <label htmlFor="is_active">Usuario activo</label>
+          </div>
+          {errores.is_active && (
+            <small className="p-error min-w-full">
+              {errores.is_active}
+            </small>
+          )}
+        </div>
+        <div className="card md:col-span-2 flex justify-content-center">
+          <div className="flex items-center gap-2">
+            <InputSwitch
+              id="is_superuser"
+              name="is_superuser"
+              checked={usuario.is_superuser}
+              onChange={handleInputChange}
+            />
+
+            <label htmlFor="is_superuser">Es usuario administrador</label>
+         
+          </div>
+          {errores.is_superuser && (
+            <small className="p-error min-w-full">
+              {errores.is_superuser}
             </small>
           )}
         </div>
@@ -436,7 +456,7 @@ export const EditarUsuario = () => {
         {/* Botón de Registro */}
         <div className=" md:col-span-2 flex justify-center mt-4">
           <Button
-            loading={loadingRegistro}
+            loading={loadingEdicion}
             type="submit"
             label="Editar"
             className="w-56 bg-purple-500 border-purple-400 hover:bg-purple-800  "

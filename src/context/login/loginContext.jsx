@@ -19,6 +19,7 @@ const LoginProvider = ({ children }) => {
   const [departamentos, setDepartamentos] = useState([]);
   const [ciudades, setCiudades] = useState([]);
   const [loadingRegistro, setloadingRegistro] = useState(false);
+  const [loadingEdicion, setloadingEdicion] = useState(false);
   const [loadingLogin, setloadingLogin] = useState(false);
   const [loadingListaUsuario, setloadingListaUsuario] = useState(false);
   const [deleteUserDialog, setDeleteUserDialog] = useState(false);
@@ -401,17 +402,14 @@ const LoginProvider = ({ children }) => {
     }
   }, [token]);
   const eliminarUsuario = useCallback(
-    async (productoId) => {
+    async (usuarioId) => {
       try {
         // Petición DELETE para eliminar el producto
-        await clienteAxios.delete(
-          `users/info/users/${productoId}/`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        await clienteAxios.delete(`users/info/users/${usuarioId}/`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         // Si la petición fue exitosa, muestra un mensaje de éxito
         showSuccess(`Usuario eliminado con éxito.`);
@@ -463,6 +461,96 @@ const LoginProvider = ({ children }) => {
     },
     [token]
   );
+
+  const EditarUsuario = useCallback(
+    async (usuario) => {
+      try {
+        setloadingEdicion(true);
+  
+        // Construir dinámicamente el payload solo con los campos que han cambiado
+        const payload = {
+          ...(usuario.correo !== user.email && { email: usuario.correo }),
+          ...(usuario.nombres !== user.first_name && { first_name: usuario.nombres }),
+          ...(usuario.apellidos !== user.last_name && { last_name: usuario.apellidos }),
+          ...(usuario.is_active !== user.is_active && { is_active: usuario.is_active }),
+          ...(usuario.is_superuser !== user.is_superuser && { is_superuser: usuario.is_superuser }),
+          profile: {
+            ...(usuario.direccion !== user.profile.address && { address: usuario.direccion }),
+            ...(usuario.telefono !== user.profile.phone && { phone: usuario.telefono }),
+            ...(usuario.ciudad !== user.profile.city && { city: usuario.ciudad }),
+            ...(usuario.department !== user.profile.department && { department: usuario.department }),
+            ...(usuario.numeroIdentificacion !== user.profile.number_document && { number_document: usuario.numeroIdentificacion }),
+            ...(usuario.tipoIdentificacion !== user.profile.type_document && { type_document: usuario.tipoIdentificacion }),
+            ...(usuario.terms_accepted !== user.profile.terms_accepted && { terms_accepted: usuario.terms_accepted }),
+          },
+        };
+  
+        const response = await clienteAxios.patch(`users/info/users/${user.id}/`, payload, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+  
+        if (response.status === 201) {
+          showSuccess(`${usuario.nombres} ${usuario.apellidos}, se editó con éxito.`);
+          setVisibleProfile(false);
+          obtenerUsuarios();
+        }
+      } catch (error) {
+        setloadingEdicion(false);
+        console.log(error);
+        // Manejo de errores
+        if (error.message === "Network Error") {
+          return Swal.fire({
+            icon: "error",
+            title: "Error de red",
+            text: "No se puede conectar al servidor. Por favor, verifica tu conexión.",
+          });
+        }
+
+        if (error.response) {
+          // Inicializa una variable para el mensaje de error consolidado
+          let mensajeError = "";
+          // Recorre todos los errores del objeto error.response.data
+          for (const campo in error.response.data) {
+            if (error.response.data.hasOwnProperty(campo)) {
+              // Si el valor del campo es un array, únelos en una cadena
+              const erroresCampo = error.response.data[campo];
+              if (Array.isArray(erroresCampo)) {
+                mensajeError += erroresCampo.join(", ") + "\n";
+              } else {
+                mensajeError += erroresCampo + "\n";
+              }
+            }
+          }
+
+          // Mostrar el mensaje de error consolidado en SweetAlert
+          Swal.fire({
+            icon: "error",
+            title: "Error de registro",
+            text: mensajeError || "Hubo un error en la edicion del usuario.",
+          });
+
+          console.error("Error de respuesta del servidor:", error.response);
+        } else if (error.request) {
+          Swal.fire({
+            icon: "error",
+            title: "No se recibió respuesta del servidor",
+            text: "Por favor, inténtelo de nuevo más tarde.",
+          });
+          console.error("No se recibió respuesta del servidor", error.request);
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Error inesperado",
+            text: error.message || "Ocurrió un error inesperado.",
+          });
+        }
+      }
+    },
+    [user, token]
+  );
   const contextValue = useMemo(() => {
     return {
       // ... tus valores de contexto
@@ -488,6 +576,10 @@ const LoginProvider = ({ children }) => {
       setDeleteUserDialog,
       eliminarUsuario,
       setUsuarioDialog,
+      EditarUsuario,
+      setloadingEdicion,
+      loadingEdicion,
+      loadingRegistro,
       UsuarioDialog,
       deleteUserDialog,
       user,
@@ -530,6 +622,10 @@ const LoginProvider = ({ children }) => {
     setDeleteUserDialog,
     eliminarUsuario,
     setUsuarioDialog,
+    EditarUsuario,
+    setloadingEdicion,
+    loadingEdicion,
+    loadingRegistro,
     UsuarioDialog,
     deleteUserDialog,
     user,
