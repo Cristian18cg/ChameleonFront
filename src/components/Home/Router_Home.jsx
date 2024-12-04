@@ -8,7 +8,7 @@ import { Tienda } from "../Tienda/Tienda";
 import { ProductoDetallado } from "../Tienda/ProductoDetallado";
 import { ConfigDomicilio } from "../Configuracion/Domicilio/ConfigDomicilio";
 import { ListaPedidos } from "../Pedidos/ListaPedidos";
-import { PedidosUsuario } from "../Pedidos/usuarios/PedidosUsuario";
+import OrderDashboard  from "../Pedidos/usuarios/PedidosUsuario";
 import { ListUsers } from "../Configuracion/Domicilio/Usuarios/ListUsers";
 
 export const Router_Home = () => {
@@ -41,7 +41,7 @@ export const Router_Home = () => {
             <Route path="/" element={<Landing_home />} />
             <Route path="/tienda" element={<Tienda />} />
             <Route path="/tienda/:id" element={<ProductoDetallado />} />
-            <Route path="/lista_pedidos" element={<PedidosUsuario />} />
+            <Route path="/lista_pedidos" element={<OrderDashboard />} />
 
           </Routes>
         </Router>

@@ -86,6 +86,8 @@ export const Formulario_Login = () => {
               feedback={false}
               className="input-login"
               keyfilter={/[^$<>{}()'"`;%]/} // No permite caracteres especiales
+              toggleMask
+
             />
             <label htmlFor="password">Contraseña</label>
           </FloatLabel>

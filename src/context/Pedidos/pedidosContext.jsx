@@ -10,7 +10,6 @@ import Swal from "sweetalert2";
 import useControl from "../../hooks/useControl";
 import useControlProductos from "../../hooks/useControlProductos";
 
-
 const PedidosContextControl = createContext();
 
 const PedidosProvider = ({ children }) => {
@@ -19,10 +18,12 @@ const PedidosProvider = ({ children }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [valoresdomicilio, setvaloresdomicilio] = useState([]);
   const [listaPedidos, setlistaPedidos] = useState([]);
+  const [pedidosUsuario, setlistaPedidosUsuario] = useState([]);
   const [DialogPedido, setDialogPedido] = useState(null);
   const [valordomicilio, setvalordomicilio] = useState(0);
   const [valorPedido, setvalorPedido] = useState(0);
   const [loadingPedidosLista, setloadingPedidosLista] = useState(false);
+  const [loadingPedidosUsuario, setloadingPedidosUsuario] = useState(false);
   const [loadingEditar, setloadingEditar] = useState(false);
   const [creandoPedido, setcreandoPedido] = useState(false);
   const [cupon, setcupon] = useState(0);
@@ -475,14 +476,13 @@ const PedidosProvider = ({ children }) => {
           showError(`Errores al crear el pedido: ${productErrors}`);
           setCarrito([]);
           setUnidades([]);
-          obtenerProductos()
-          setActiveIndex(0)
+          obtenerProductos();
+          setActiveIndex(0);
         } else if (backendErrors.products) {
           const productErrors = backendErrors.products.join(", ");
           showError(`Problemas con los productos: ${productErrors}`);
           showError(`Intenta volver a llenar tu carrito.`);
-          obtenerProductos()
-
+          obtenerProductos();
         } else {
           // Error genérico del backend
           const errorMessage =
@@ -533,43 +533,45 @@ const PedidosProvider = ({ children }) => {
       }
     }
   }, [token]);
-  const EliminarPedido = useCallback(async (idpedido) => {
-    try {
-      setloadingPedidosLista(true);
-     const response =await clienteAxios.delete(
-        `orders/orders/delete/${idpedido}/`,
+  const EliminarPedido = useCallback(
+    async (idpedido) => {
+      try {
+        setloadingPedidosLista(true);
+        const response = await clienteAxios.delete(
+          `orders/orders/delete/${idpedido}/`,
 
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (response.data.message) {
+          showSuccess(response.data.message);
+        } else {
+          showSuccess("Se eliminó correctamente el pedido.");
         }
-      );
-      if(response.data.message){
-        showSuccess(response.data.message)
+        listarPedidos();
+      } catch (error) {
+        setloadingPedidosLista(false);
 
-      }else{
-        showSuccess("Se eliminó correctamente el pedido.")
+        console.error("Error eliminando el pedido:", error);
+        if (error.response) {
+          console.error("Detalle del error:", error.response.data);
+          showError(
+            `Ha ocurrido un error eliminando el: ${
+              error.response.data.error || "Error de base de datos."
+            }`
+          );
+        } else {
+          showError(
+            "Ha ocurrido un error intentando eliminar el pedido. Intente nuevamente."
+          );
+        }
       }
-      listarPedidos()
-    } catch (error) {
-      setloadingPedidosLista(false);
-
-      console.error("Error eliminando el pedido:", error);
-      if (error.response) {
-        console.error("Detalle del error:", error.response.data);
-        showError(
-          `Ha ocurrido un error eliminando el: ${
-            error.response.data.error || "Error de base de datos."
-          }`
-        );
-      } else {
-        showError(
-          "Ha ocurrido un error intentando eliminar el pedido. Intente nuevamente."
-        );
-      }
-    }
-  }, [token, listarPedidos]);
+    },
+    [token, listarPedidos]
+  );
   const EditarPedido = useCallback(
     async (pedido) => {
       try {
@@ -593,18 +595,19 @@ const PedidosProvider = ({ children }) => {
         setloadingEditar(false);
       } catch (error) {
         setloadingEditar(false);
-  
+
         console.error("Error actualizando pedido:", error);
-  
+
         if (error.response) {
           console.error("Detalle del error:", error.response.data);
-  
+
           // Manejo de errores específicos de productos
           if (
             error.response.data.products &&
             error.response.data.products.errors
           ) {
-            const productErrors = error.response.data.products.errors.join(", ");
+            const productErrors =
+              error.response.data.products.errors.join(", ");
             showError(`Error con los productos: ${productErrors}`);
           } else if (
             Array.isArray(error.response.data.products) &&
@@ -633,6 +636,39 @@ const PedidosProvider = ({ children }) => {
     [token]
   );
 
+  const listarPedidosUsuario = useCallback(async () => {
+    try {
+      console.log(token)
+      setloadingPedidosUsuario(true);
+      const response = await clienteAxios.get(
+        `orders/user/orders_user/`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setlistaPedidosUsuario(response.data);
+      setloadingPedidosUsuario(false);
+    } catch (error) {
+      setloadingPedidosUsuario(false);
+
+      console.error("Error obteniendo pedidos:", error);
+      if (error.response) {
+        console.error("Detalle del error:", error.response.data);
+        showError(
+          `Ha ocurrido un error obteniendo los pedidos: ${
+            error.response.data.error || "Error de validación"
+          }`
+        );
+      } else {
+        showError(
+          "Ha ocurrido un error obteniendo los pedidos. Intente nuevamente."
+        );
+      }
+    }
+  }, [token]);
+
   const contextValue = useMemo(() => {
     return {
       unidades,
@@ -650,6 +686,11 @@ const PedidosProvider = ({ children }) => {
       creandoPedido,
       DialogPedido,
       loadingEditar,
+      loadingPedidosUsuario,
+      pedidosUsuario,
+      listarPedidosUsuario,
+      setlistaPedidosUsuario,
+      setloadingPedidosUsuario,
       EliminarPedido,
       setloadingEditar,
       setDialogPedido,
@@ -695,6 +736,11 @@ const PedidosProvider = ({ children }) => {
     creandoPedido,
     DialogPedido,
     loadingEditar,
+    loadingPedidosUsuario,
+    pedidosUsuario,
+    listarPedidosUsuario,
+    setlistaPedidosUsuario,
+    setloadingPedidosUsuario,
     EliminarPedido,
     setloadingEditar,
     setDialogPedido,

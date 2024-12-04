@@ -482,7 +482,7 @@ console.log(usuario)      // Construir dinámicamente el payload solo con los ca
           ...(usuario.is_superuser !== user.is_superuser && {
             is_superuser: usuario.is_superuser,
           }),
-          ...(usuario.contrasena === usuario.confirmarContrasena  && {
+          ...(usuario.contrasena === usuario.confirmarContrasena && usuario.contrasena  && {
             password: usuario.contrasena,
           }),
           profile: {
