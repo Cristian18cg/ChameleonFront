@@ -28,7 +28,7 @@ export const EditarUsuario = () => {
     direccion: user.profile.address || "",
     telefono: user.profile.phone || "",
     correo: user.email || "",
-    is_active: user.is_active || true,
+    is_active: user.is_active ,
     is_superuser: user.is_superuser || false,
     ciudad: null,
     department: null,
@@ -39,15 +39,14 @@ export const EditarUsuario = () => {
     numeroIdentificacion: user.profile.number_document || "", // Nuevo campo para número de identificación
   });
   useEffect(() => {
-    console.log(departamentos);
+    console.log(user)
     // Cargar departamentos y ciudades basados en la información del usuario
     if (departamentos.length === 0) {
       departments();
     } else {
       const userDepartment = departamentos.find(
-        (d) => d.name === user.profile?.department
+        (d) => d.id === user.profile?.department.id
       );
-      console.log("department", userDepartment);
       handleInputChange({
         target: { name: "department", value: userDepartment.id },
       });
@@ -56,11 +55,30 @@ export const EditarUsuario = () => {
         cities(userDepartment.id);
       }
     }
-  }, [departamentos, user]);
-
+  }, [departamentos, user, ]);
+  useEffect(() => {
+    // Cargar departamentos y ciudades basados en la información del usuario
+    if (departamentos.length === 0) {
+      departments();
+    } else {
+      const userDepartment = departamentos.find(
+        (d) => d.id === user.profile?.department.id
+      );
+      handleInputChange({
+        target: { name: "department", value: userDepartment.id },
+      });
+      setSelectedDepartment(userDepartment.id);
+      if (userDepartment) {
+        cities(userDepartment.id);
+      }
+    }
+  }, [departamentos, user, ]);
+  useEffect(() => {
+   console.log(usuario)
+  }, [usuario]);
   useEffect(() => {
     // Sincronizar ciudad basada en la información del usuario
-    const userCity = ciudades.find((c) => c.name === user.profile?.city);
+    const userCity = ciudades.find((c) => c.id === user.profile?.city.id);
     handleInputChange({
       target: { name: "ciudad", value: userCity?.id },
     });

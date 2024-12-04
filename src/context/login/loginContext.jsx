@@ -209,7 +209,8 @@ const LoginProvider = ({ children }) => {
           return Swal.fire({
             icon: "error",
             title: "Error de red",
-            text: "No se puede conectar al servidor. Por favor, verifica tu conexión.",
+            text:
+              "No se puede conectar al servidor. Por favor, verifica tu conexión.",
           });
         }
 
@@ -466,35 +467,68 @@ const LoginProvider = ({ children }) => {
     async (usuario) => {
       try {
         setloadingEdicion(true);
-  
-        // Construir dinámicamente el payload solo con los campos que han cambiado
+console.log(usuario)      // Construir dinámicamente el payload solo con los campos que han cambiado
         const payload = {
           ...(usuario.correo !== user.email && { email: usuario.correo }),
-          ...(usuario.nombres !== user.first_name && { first_name: usuario.nombres }),
-          ...(usuario.apellidos !== user.last_name && { last_name: usuario.apellidos }),
-          ...(usuario.is_active !== user.is_active && { is_active: usuario.is_active }),
-          ...(usuario.is_superuser !== user.is_superuser && { is_superuser: usuario.is_superuser }),
+          ...(usuario.nombres !== user.first_name && {
+            first_name: usuario.nombres,
+          }),
+          ...(usuario.apellidos !== user.last_name && {
+            last_name: usuario.apellidos,
+          }),
+          ...(usuario.is_active !== user.is_active && {
+            is_active: usuario.is_active,
+          }),
+          ...(usuario.is_superuser !== user.is_superuser && {
+            is_superuser: usuario.is_superuser,
+          }),
+          ...(usuario.contrasena === usuario.confirmarContrasena  && {
+            password: usuario.contrasena,
+          }),
           profile: {
-            ...(usuario.direccion !== user.profile.address && { address: usuario.direccion }),
-            ...(usuario.telefono !== user.profile.phone && { phone: usuario.telefono }),
-            ...(usuario.ciudad !== user.profile.city && { city: usuario.ciudad }),
-            ...(usuario.department !== user.profile.department && { department: usuario.department }),
-            ...(usuario.numeroIdentificacion !== user.profile.number_document && { number_document: usuario.numeroIdentificacion }),
-            ...(usuario.tipoIdentificacion !== user.profile.type_document && { type_document: usuario.tipoIdentificacion }),
-            ...(usuario.terms_accepted !== user.profile.terms_accepted && { terms_accepted: usuario.terms_accepted }),
+            ...(usuario.direccion !== user.profile.address && {
+              address: usuario.direccion,
+            }),
+            ...(usuario.telefono !== user.profile.phone && {
+              phone: usuario.telefono,
+            }),
+            ...(usuario.ciudad !== user.profile.city.id && {
+              city_id: usuario.ciudad,
+            }),
+            ...(usuario.department !== user.profile.department.id && {
+              department_id: usuario.department,
+            }),
+            ...(usuario.numeroIdentificacion !==
+              user.profile.number_document && {
+              number_document: usuario.numeroIdentificacion,
+            }),
+            ...(usuario.tipoIdentificacion !== user.profile.type_document && {
+              type_document: usuario.tipoIdentificacion,
+            }),
+            ...(usuario.terms_accepted !== user.profile.terms_accepted && {
+              terms_accepted: usuario.terms_accepted,
+            }),
           },
         };
-  
-        const response = await clienteAxios.patch(`users/info/users/${user.id}/`, payload, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-  
-        if (response.status === 201) {
-          showSuccess(`${usuario.nombres} ${usuario.apellidos}, se editó con éxito.`);
+        console.log("pay", payload);
+        const response = await clienteAxios.patch(
+          `users/info/users/${user.id}/`,
+          payload,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (response.status === 200) {
+          showSuccess(
+            `${usuario.nombres} ${usuario.apellidos}, se editó con éxito.`
+          );
           setVisibleProfile(false);
+          setloadingEdicion(false);
+
           obtenerUsuarios();
         }
       } catch (error) {
@@ -505,7 +539,8 @@ const LoginProvider = ({ children }) => {
           return Swal.fire({
             icon: "error",
             title: "Error de red",
-            text: "No se puede conectar al servidor. Por favor, verifica tu conexión.",
+            text:
+              "No se puede conectar al servidor. Por favor, verifica tu conexión.",
           });
         }
 

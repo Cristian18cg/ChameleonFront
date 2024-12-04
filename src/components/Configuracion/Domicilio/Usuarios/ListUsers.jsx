@@ -89,7 +89,7 @@ export const ListUsers = () => {
     );
   };
   const getSeverity = (user) => {
-    if (user) {
+    if (user.is_active) {
       return `sucess`;
     } else {
       return `danger`;
@@ -97,14 +97,16 @@ export const ListUsers = () => {
   };
 
   const getMessage = (user) => {
-    if (user) {
+    if (user.is_active) {
       return `ACTIVO`;
     } else {
       return `INACTIVO`;
     }
   };
   const statusBodyTemplate = (rowData) => {
+    console.log(rowData)
     return (
+  
       <Tag value={getMessage(rowData)} severity={getSeverity(rowData)}></Tag>
     );
   };
@@ -238,7 +240,7 @@ export const ListUsers = () => {
               header="Ciudad"
               sortable
               body={(rowData) => {
-                return <div>{rowData.profile.city}</div>;
+                return <div>{rowData.profile.city.name}</div>;
               }}
             ></Column>
 
