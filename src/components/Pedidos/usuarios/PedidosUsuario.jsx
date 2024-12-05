@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { FiSearch, FiFilter, FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import {
+  FiSearch,
+  FiFilter,
+  FiChevronLeft,
+  FiChevronRight,
+} from "react-icons/fi";
 import { BsBoxSeam, BsTruck, BsCheckCircle } from "react-icons/bs";
 import { MdError } from "react-icons/md";
-import useControlPedidos from '../../../hooks/useControlPedidos'
+import useControlPedidos from "../../../hooks/useControlPedidos";
 const OrderDashboard = () => {
-  const{listarPedidosUsuario ,pedidosUsuario,loadingPedidosUsuario}=useControlPedidos()
+  const { listarPedidosUsuario, pedidosUsuario, loadingPedidosUsuario } =
+    useControlPedidos();
   const [orders, setOrders] = useState([]);
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [error, setError] = useState(null);
@@ -13,103 +19,48 @@ const OrderDashboard = () => {
   const [statusFilter, setStatusFilter] = useState("all");
   const ordersPerPage = 5;
 
-  const mockOrders = [
-    {
-      id: 1,
-      orderNumber: "ORD-2024-001",
-      customerName: "John Doe",
-      products: [
-        {
-          name: "Laptop",
-          quantity: 1,
-          imageUrl: "images.unsplash.com/photo-1517336714731-489689fd1ca4"
-        },
-        {
-          name: "Mouse",
-          quantity: 2,
-          imageUrl: "images.unsplash.com/photo-1527864550417-7fd91fc51a46"
-        }
-      ],
-      totalAmount: 1299.99,
-      status: "pending",
-      date: "2024-01-15",
-    },
-    {
-      id: 2,
-      orderNumber: "ORD-2024-002",
-      customerName: "Jane Smith",
-      products: [
-        {
-          name: "Smartphone",
-          quantity: 1,
-          imageUrl: "images.unsplash.com/photo-1511707171634-5f897ff02aa9"
-        },
-        {
-          name: "Case",
-          quantity: 1,
-          imageUrl: "images.unsplash.com/photo-1541877590-a18d32524d82"
-        },
-        {
-          name: "Charger",
-          quantity: 1,
-          imageUrl: "images.unsplash.com/photo-1583863788434-e58a36330cf0"
-        }
-      ],
-      totalAmount: 899.99,
-      status: "shipped",
-      date: "2024-01-14",
-    },
-    {
-      id: 3,
-      orderNumber: "ORD-2024-003",
-      customerName: "Robert Johnson",
-      products: [
-        {
-          name: "Headphones",
-          quantity: 1,
-          imageUrl: "images.unsplash.com/photo-1505740420928-5e560c06d30e"
-        }
-      ],
-      totalAmount: 199.99,
-      status: "delivered",
-      date: "2024-01-13",
-    },
-  ];
+ 
   useEffect(() => {
-    if(pedidosUsuario.length === 0){
-      listarPedidosUsuario()
-    }else{
+    if (pedidosUsuario.length === 0) {
+      listarPedidosUsuario();
+    } else {
       setOrders(pedidosUsuario);
-
     }
+    console.log(pedidosUsuario);
   }, [pedidosUsuario]);
+
   useEffect(() => {
     try {
-      setFilteredOrders(mockOrders);
+      setFilteredOrders(pedidosUsuario);
     } catch (err) {
       setError("Failed to load orders");
     }
   }, []);
 
-  useEffect(() => {
+   useEffect(() => {
     const filtered = orders.filter((order) => {
-      const matchesSearch = order.orderNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        order.customerName.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesStatus = statusFilter === "all" || order.status === statusFilter;
+      const matchesSearch =
+        order.id ||
+        order.order_value;
+      const matchesStatus =
+        statusFilter === "all" || order.status === statusFilter;
       return matchesSearch && matchesStatus;
     });
     setFilteredOrders(filtered);
     setCurrentPage(1);
-  }, [searchQuery, statusFilter, orders]);
+  }, [searchQuery, statusFilter, orders]); 
 
   const indexOfLastOrder = currentPage * ordersPerPage;
   const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
-  const currentOrders = filteredOrders.slice(indexOfFirstOrder, indexOfLastOrder);
+  const currentOrders = filteredOrders.slice(
+    indexOfFirstOrder,
+    indexOfLastOrder
+  );
   const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
 
   const getStatusIcon = (status) => {
     switch (status) {
-      case "pending":
+      case "PENDING":
         return <BsBoxSeam className="text-yellow-500" />;
       case "shipped":
         return <BsTruck className="text-blue-500" />;
@@ -123,14 +74,13 @@ const OrderDashboard = () => {
   const MobileOrderCard = ({ order }) => (
     <div className="bg-white p-4 rounded-lg shadow-md mb-4">
       <div className="flex justify-between items-center mb-3">
-        <span className="font-medium text-gray-900">{order.orderNumber}</span>
+        <span className="font-medium text-gray-900">{order.id}</span>
         <div className="flex items-center gap-2">
           {getStatusIcon(order.status)}
           <span className="capitalize text-sm">{order.status}</span>
         </div>
       </div>
       <div className="mb-3">
-        <p className="text-sm text-gray-600">Customer: {order.customerName}</p>
         <p className="text-sm text-gray-600">Date: {order.date}</p>
         <p className="text-sm font-medium text-gray-900 mt-1">
           Total: ${order.totalAmount.toFixed(2)}
@@ -138,18 +88,24 @@ const OrderDashboard = () => {
       </div>
       <div className="space-y-3">
         {order.products.map((product, index) => (
-          <div key={index} className="flex items-center gap-3 bg-gray-50 p-2 rounded">
-            <img
-              src={`https://${product.imageUrl}`}
+          <div
+            key={index}
+            className="flex items-center gap-3 bg-gray-50 p-2 rounded"
+          >
+            {/* <img
+              src={`${product.images[0]?.image_url}`}
               alt={product.name}
               className="w-12 h-12 object-cover rounded"
               onError={(e) => {
-                e.target.src = "https://images.unsplash.com/photo-1560393464-5c69a73c5770";
+                e.target.src =
+                  "https://images.unsplash.com/photo-1560393464-5c69a73c5770";
               }}
-            />
+            /> */}
             <div>
               <p className="text-sm font-medium">{product.name}</p>
-              <p className="text-xs text-gray-500">Quantity: {product.quantity}</p>
+              <p className="text-xs text-gray-500">
+                Quantity: {product.quantity}
+              </p>
             </div>
           </div>
         ))}
@@ -210,11 +166,21 @@ const OrderDashboard = () => {
           <table className="w-full" role="table">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"># Pedido</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Productos</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Valor Pedido</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha creación</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  # Pedido
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Productos
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Valor Pedido
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Estado
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Fecha creación
+                </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -224,7 +190,9 @@ const OrderDashboard = () => {
                   className="hover:bg-gray-50 transition-colors duration-200"
                   role="row"
                 >
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{order.orderNumber}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {order.id}
+                  </td>
                   <td className="px-6 py-4 text-sm text-gray-500">
                     <div className="flex flex-col gap-2">
                       {order.products.map((product, index) => (
@@ -234,7 +202,8 @@ const OrderDashboard = () => {
                             alt={product.name}
                             className="w-8 h-8 object-cover rounded"
                             onError={(e) => {
-                              e.target.src = "https://images.unsplash.com/photo-1560393464-5c69a73c5770";
+                              e.target.src =
+                                "https://images.unsplash.com/photo-1560393464-5c69a73c5770";
                             }}
                           />
                           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
@@ -253,7 +222,9 @@ const OrderDashboard = () => {
                       <span className="capitalize">{order.status}</span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{order.date}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {order.date}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -284,7 +255,9 @@ const OrderDashboard = () => {
             Previous
           </button>
           <button
-            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
             disabled={currentPage === totalPages}
             className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
           >
@@ -294,15 +267,20 @@ const OrderDashboard = () => {
         <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
           <div>
             <p className="text-sm text-gray-700">
-              Showing <span className="font-medium">{indexOfFirstOrder + 1}</span> to{" "}
+              Showing{" "}
+              <span className="font-medium">{indexOfFirstOrder + 1}</span> to{" "}
               <span className="font-medium">
                 {Math.min(indexOfLastOrder, filteredOrders.length)}
               </span>{" "}
-              of <span className="font-medium">{filteredOrders.length}</span> results
+              of <span className="font-medium">{filteredOrders.length}</span>{" "}
+              results
             </p>
           </div>
           <div>
-            <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+            <nav
+              className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
+              aria-label="Pagination"
+            >
               <button
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
@@ -312,7 +290,9 @@ const OrderDashboard = () => {
                 <FiChevronLeft className="h-5 w-5" aria-hidden="true" />
               </button>
               <button
-                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                }
                 disabled={currentPage === totalPages}
                 className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
               >

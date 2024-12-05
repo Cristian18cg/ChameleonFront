@@ -500,7 +500,42 @@ const PedidosProvider = ({ children }) => {
       setcreandoPedido(false); // Desactivar loading del botón (asegurar en cualquier caso)
     }
   }, [token, usuario, carrito, cupon, valordomicilio, valorPedido]);
+  const listarPedidosUsuario = useCallback(async () => {
+    try {
+      console.log('token',token)
+      setloadingPedidosUsuario(true);
+      const response = await clienteAxios.get(
+        `orders/user/orders_user/`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log(response.data)
+      if(response.data.length > 0){
+        setlistaPedidosUsuario(response.data);
 
+      }
+      setloadingPedidosUsuario(false);
+    } catch (error) {
+      setloadingPedidosUsuario(false);
+
+      console.error("Error obteniendo pedidos:", error);
+      if (error.response) {
+        console.error("Detalle del error:", error.response.data);
+        showError(
+          `Ha ocurrido un error obteniendo los pedidos: ${
+            error.response.data.error || "Error de validación"
+          }`
+        );
+      } else {
+        showError(
+          "Ha ocurrido un error obteniendo los pedidos. Intente nuevamente."
+        );
+      }
+    }
+  }, [token]);
   const listarPedidos = useCallback(async () => {
     try {
       setloadingPedidosLista(true);
@@ -636,38 +671,8 @@ const PedidosProvider = ({ children }) => {
     [token]
   );
 
-  const listarPedidosUsuario = useCallback(async () => {
-    try {
-      console.log(token)
-      setloadingPedidosUsuario(true);
-      const response = await clienteAxios.get(
-        `orders/user/orders_user/`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setlistaPedidosUsuario(response.data);
-      setloadingPedidosUsuario(false);
-    } catch (error) {
-      setloadingPedidosUsuario(false);
 
-      console.error("Error obteniendo pedidos:", error);
-      if (error.response) {
-        console.error("Detalle del error:", error.response.data);
-        showError(
-          `Ha ocurrido un error obteniendo los pedidos: ${
-            error.response.data.error || "Error de validación"
-          }`
-        );
-      } else {
-        showError(
-          "Ha ocurrido un error obteniendo los pedidos. Intente nuevamente."
-        );
-      }
-    }
-  }, [token]);
+
 
   const contextValue = useMemo(() => {
     return {
