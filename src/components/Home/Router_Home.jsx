@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { NavBar } from "./NavBar";
-import { Landing_home } from "./Landing_home";
+import HomePage  from "./Landing_home";
 import Table_products from "../Productos/Table_products";
 import useControl from "../../hooks/useControl";
 import { Tienda } from "../Tienda/Tienda";
@@ -25,7 +25,7 @@ export const Router_Home = () => {
         <Router>
           <NavBar />
           <Routes>
-            <Route path="/" element={<Landing_home />} />
+            <Route path="/" element={<HomePage />} />
             <Route path="/productos" element={<Table_products />} />
             <Route path="/tienda/:id" element={<ProductoDetallado />} />
             <Route path="/tienda" element={<Tienda />} />
@@ -38,7 +38,7 @@ export const Router_Home = () => {
         <Router>
           <NavBar />
           <Routes>
-            <Route path="/" element={<Landing_home />} />
+            <Route path="/" element={<HomePage />} />
             <Route path="/tienda" element={<Tienda />} />
             <Route path="/tienda/:id" element={<ProductoDetallado />} />
             <Route path="/lista_pedidos" element={<OrderDashboard />} />

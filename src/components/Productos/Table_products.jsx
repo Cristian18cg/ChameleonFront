@@ -47,11 +47,7 @@ export default function ProductsDemo() {
   const dt = useRef(null);
 
   useEffect(() => {
-    if (productos.length === 0) {
-      obtenerProductos();
-    } else {
-      setProducts(productos);
-    }
+   
   }, [productos]);
 
   const formatCurrency = (value) => {

@@ -19,7 +19,6 @@ const OrderDashboard = () => {
   const [statusFilter, setStatusFilter] = useState("all");
   const ordersPerPage = 5;
 
- 
   useEffect(() => {
     if (pedidosUsuario.length === 0) {
       listarPedidosUsuario();
@@ -37,18 +36,19 @@ const OrderDashboard = () => {
     }
   }, []);
 
-   useEffect(() => {
+  useEffect(() => {
     const filtered = orders.filter((order) => {
       const matchesSearch =
-        order.id ||
-        order.order_value;
+        searchQuery === "" ||
+        order.id.toString().includes(searchQuery) ||
+        order.user?.email?.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesStatus =
         statusFilter === "all" || order.status === statusFilter;
       return matchesSearch && matchesStatus;
     });
     setFilteredOrders(filtered);
     setCurrentPage(1);
-  }, [searchQuery, statusFilter, orders]); 
+  }, [searchQuery, statusFilter, orders]);
 
   const indexOfLastOrder = currentPage * ordersPerPage;
   const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
@@ -62,10 +62,31 @@ const OrderDashboard = () => {
     switch (status) {
       case "PENDING":
         return <BsBoxSeam className="text-yellow-500" />;
-      case "shipped":
+      case "PROCESSING":
         return <BsTruck className="text-blue-500" />;
-      case "delivered":
+      case "COMPLETED":
         return <BsCheckCircle className="text-green-500" />;
+      case "CANCELLED":
+        return <BsCheckCircle className="text-green-500" />;
+      default:
+        return null;
+    }
+  };
+
+  const getOrderMessage = (STATUS) => {
+    switch (STATUS) {
+      case "COMPLETED":
+        return "ENTREGADO";
+
+      case "CANCELLED":
+        return "CANCELADO";
+
+      case "PENDING":
+        return "PENDIENTE";
+
+      case "PROCESSING":
+        return "PROCESANDO";
+
       default:
         return null;
     }
@@ -77,13 +98,21 @@ const OrderDashboard = () => {
         <span className="font-medium text-gray-900">{order.id}</span>
         <div className="flex items-center gap-2">
           {getStatusIcon(order.status)}
-          <span className="capitalize text-sm">{order.status}</span>
+          <span className="capitalize text-sm">
+            {getOrderMessage(order.status)}
+          </span>
         </div>
       </div>
       <div className="mb-3">
-        <p className="text-sm text-gray-600">Date: {order.date}</p>
+        <p className="text-sm text-gray-600">
+          Fecha creación:{" "}
+          {new Date(order.created_at).toLocaleString("es-ES", {
+            dateStyle: "medium",
+            timeStyle: "short",
+          })}
+        </p>
         <p className="text-sm font-medium text-gray-900 mt-1">
-          Total: ${order.totalAmount.toFixed(2)}
+          Total: ${order.order_value}
         </p>
       </div>
       <div className="space-y-3">
@@ -92,19 +121,43 @@ const OrderDashboard = () => {
             key={index}
             className="flex items-center gap-3 bg-gray-50 p-2 rounded"
           >
-            {/* <img
+            <img
               src={`${product.images[0]?.image_url}`}
-              alt={product.name}
+              alt={product.product_name}
               className="w-12 h-12 object-cover rounded"
               onError={(e) => {
                 e.target.src =
                   "https://images.unsplash.com/photo-1560393464-5c69a73c5770";
               }}
-            /> */}
+            />
             <div>
               <p className="text-sm font-medium">{product.name}</p>
               <p className="text-xs text-gray-500">
-                Quantity: {product.quantity}
+                Cantidad: {product.quantity}
+              </p>
+            </div>
+            <div>
+              <p className="text-sm font-medium">{product.name}</p>
+              <p className="text-xs text-gray-500">
+                Valor unitario:{" "}
+                {new Intl.NumberFormat("es-CO", {
+                  style: "currency",
+                  currency: "COP",
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 2,
+                }).format(product.unit_price)}
+              </p>
+            </div>
+            <div>
+              <p className="text-sm font-medium">{product.name}</p>
+              <p className="text-xs text-gray-500">
+                Subtotal producto:{" "}
+                {new Intl.NumberFormat("es-CO", {
+                  style: "currency",
+                  currency: "COP",
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 2,
+                }).format(product.subtotal)}
               </p>
             </div>
           </div>
@@ -132,14 +185,14 @@ const OrderDashboard = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Order Management Dashboard</h1>
+      <h1 className="text-3xl font-bold mb-8">Mis pedidos</h1>
 
       <div className="mb-6 flex flex-col md:flex-row gap-4">
         <div className="relative flex-1">
           <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
           <input
             type="text"
-            placeholder="Search orders..."
+            placeholder="Buscar pedidos..."
             className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -152,10 +205,11 @@ const OrderDashboard = () => {
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
           >
-            <option value="all">All Status</option>
-            <option value="pending">Pending</option>
-            <option value="shipped">Shipped</option>
-            <option value="delivered">Delivered</option>
+            <option value="all">Todos los estados</option>
+            <option value="PENDING">Pendiente</option>
+            <option value="PROCESSING">Procesando</option>
+            <option value="COMPLETED">Completado</option>
+            <option value="CANCELLED">Cancelado</option>
           </select>
         </div>
       </div>
@@ -172,6 +226,7 @@ const OrderDashboard = () => {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Productos
                 </th>
+
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Valor Pedido
                 </th>
@@ -198,32 +253,61 @@ const OrderDashboard = () => {
                       {order.products.map((product, index) => (
                         <div key={index} className="flex items-center gap-2">
                           <img
-                            src={`https://${product.imageUrl}`}
-                            alt={product.name}
-                            className="w-8 h-8 object-cover rounded"
+                            src={`${product.images[0]?.image_url}`}
+                            alt={product.product_name}
+                            className="w-10 h-12 object-cover rounded"
                             onError={(e) => {
                               e.target.src =
                                 "https://images.unsplash.com/photo-1560393464-5c69a73c5770";
                             }}
                           />
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                            {product.name} (x{product.quantity})
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            {product.product_name} (x{product.quantity})
+                          </span>
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">
+                            Precio unitario:{" "}
+                            {new Intl.NumberFormat("es-CO", {
+                              style: "currency",
+                              currency: "COP",
+                              minimumFractionDigits: 0,
+                              maximumFractionDigits: 2,
+                            }).format(product.unit_price)}
+                          </span>
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">
+                            Subtotal:{" "}
+                            {new Intl.NumberFormat("es-CO", {
+                              style: "currency",
+                              currency: "COP",
+                              minimumFractionDigits: 0,
+                              maximumFractionDigits: 2,
+                            }).format(product.subtotal)}
                           </span>
                         </div>
                       ))}
                     </div>
                   </td>
+
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    ${order.totalAmount.toFixed(2)}
+                    {new Intl.NumberFormat("es-CO", {
+                      style: "currency",
+                      currency: "COP",
+                      minimumFractionDigits: 0,
+                      maximumFractionDigits: 2,
+                    }).format(order.order_value)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     <div className="flex items-center gap-2">
                       {getStatusIcon(order.status)}
-                      <span className="capitalize">{order.status}</span>
+                      <span className="capitalize">
+                        {getOrderMessage(order.status)}
+                      </span>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {order.date}
+                    {new Date(order.created_at).toLocaleString("es-ES", {
+                      dateStyle: "medium",
+                      timeStyle: "short",
+                    })}
                   </td>
                 </tr>
               ))}
@@ -241,7 +325,7 @@ const OrderDashboard = () => {
 
       {filteredOrders.length === 0 && (
         <div className="text-center py-8 text-gray-500">
-          No orders found matching your criteria
+          No se encontraron pedidos en nuestra base de datos.
         </div>
       )}
 
@@ -252,7 +336,7 @@ const OrderDashboard = () => {
             disabled={currentPage === 1}
             className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Previous
+            Anterior
           </button>
           <button
             onClick={() =>
@@ -261,19 +345,19 @@ const OrderDashboard = () => {
             disabled={currentPage === totalPages}
             className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Next
+            Siguiente
           </button>
         </div>
         <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
           <div>
             <p className="text-sm text-gray-700">
-              Showing{" "}
-              <span className="font-medium">{indexOfFirstOrder + 1}</span> to{" "}
+              Viendo{" "}
+              <span className="font-medium">{indexOfFirstOrder + 1}</span> de{" "}
               <span className="font-medium">
                 {Math.min(indexOfLastOrder, filteredOrders.length)}
               </span>{" "}
-              of <span className="font-medium">{filteredOrders.length}</span>{" "}
-              results
+              de <span className="font-medium">{filteredOrders.length}</span>{" "}
+              pedidos
             </p>
           </div>
           <div>
@@ -286,7 +370,7 @@ const OrderDashboard = () => {
                 disabled={currentPage === 1}
                 className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <span className="sr-only">Previous</span>
+                <span className="sr-only">Anterior</span>
                 <FiChevronLeft className="h-5 w-5" aria-hidden="true" />
               </button>
               <button
@@ -296,7 +380,7 @@ const OrderDashboard = () => {
                 disabled={currentPage === totalPages}
                 className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <span className="sr-only">Next</span>
+                <span className="sr-only">Siguiente</span>
                 <FiChevronRight className="h-5 w-5" aria-hidden="true" />
               </button>
             </nav>
