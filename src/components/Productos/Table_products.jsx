@@ -47,7 +47,11 @@ export default function ProductsDemo() {
   const dt = useRef(null);
 
   useEffect(() => {
-   
+    if (productos.length === 0) {
+      obtenerProductos();
+    } else {
+      setProducts(productos);
+    }
   }, [productos]);
 
   const formatCurrency = (value) => {
@@ -437,11 +441,10 @@ export default function ProductsDemo() {
         </div>
       ) : (
         <div className="card">
-           <Toolbar
+          <Toolbar
             className="mt-24"
             left={leftToolbarTemplate}
             right={rightToolbarTemplate}
-            
           ></Toolbar>
 
           <DataTable
@@ -467,7 +470,6 @@ export default function ProductsDemo() {
               body={<Skeleton />}
             />
             <Column header="Stock" body={<Skeleton />}></Column>
-
           </DataTable>
         </div>
       )}

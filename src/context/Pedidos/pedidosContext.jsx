@@ -620,11 +620,11 @@ const PedidosProvider = ({ children }) => {
             },
           }
         );
-
+        console.log(response.data)
         showSuccess("Pedido actualizado exitosamente.");
         setlistaPedidos((prevListaPedidos) =>
           prevListaPedidos.map((p) =>
-            p.id === response.data.id ? response.data : p
+            p.id === response.data.id ? { ...p, ...response.data } : p
           )
         );
         setloadingEditar(false);
@@ -668,7 +668,7 @@ const PedidosProvider = ({ children }) => {
         }
       }
     },
-    [token]
+    [token,listaPedidos]
   );
 
 

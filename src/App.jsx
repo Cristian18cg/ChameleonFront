@@ -4,6 +4,7 @@ import "primereact/resources/themes/saga-blue/theme.css";
 import "primereact/resources/primereact.min.css";
 import { Router_Home } from "./components/Home/Router_Home";
 import { LoginProvider } from "./context/login/loginContext";
+import { AdministracionProvider } from "./context/Administracion/AdministracionContext";
 import { ProductosProvider } from "./context/Productos/productosContext";
 import { PedidosProvider } from "./context/Pedidos/pedidosContext";
 import { PrimeReactProvider } from "primereact/api";
@@ -111,11 +112,13 @@ function App() {
       }}
     >
       <LoginProvider>
-        <ProductosProvider>
-          <PedidosProvider>
-            <Router_Home />
-          </PedidosProvider>
-        </ProductosProvider>
+        <AdministracionProvider>
+          <ProductosProvider>
+            <PedidosProvider>
+              <Router_Home />
+            </PedidosProvider>
+          </ProductosProvider>
+        </AdministracionProvider>
       </LoginProvider>
     </PrimeReactProvider>
   );

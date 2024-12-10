@@ -172,6 +172,10 @@ html {
 .p-confirm-dialog-reject{
   color: red;
 }
-.buttonExternal{
 
+.swiper-wrapper {
+  height: auto !important;
+}
+.swiper-pagination{
+  margin-top: 15px!important;
 }

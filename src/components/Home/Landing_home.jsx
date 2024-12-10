@@ -158,9 +158,13 @@ const HomePage = () => {
             640: { slidesPerView: 3 },
             1024: { slidesPerView: 4 },
           }}
+          style={{ height: "auto" }} // Ajustar altura al contenido
         >
           {saleProducts.map((product) => (
-            <SwiperSlide key={product.id}>
+            <SwiperSlide
+              key={product.id}
+              style={{ height: "auto" }} // Ajustar altura al contenido
+            >
               <div className="bg-white rounded-lg shadow-lg overflow-hidden">
                 <div className="relative">
                   <img
@@ -168,7 +172,7 @@ const HomePage = () => {
                     alt={product.name}
                     className="w-60 sm:w-64 xl:w-80 shadow-lg mx-auto "
                   />
-                  <div className="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full">
+                  <div className="absolute top-4 right-4 bg-purple-500 text-white px-3 py-1 rounded-full">
                     {new Intl.NumberFormat("es-CO", {
                       style: "currency",
                       currency: "COP",
@@ -229,8 +233,8 @@ const HomePage = () => {
                 key={index}
                 className="text-center p-6 bg-white rounded-lg shadow-lg"
               >
-                <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-green-500 text-2xl">
+                <div className="bg-green-100 w-16 h-16 2xl:w-48 2xl:h-48 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-green-500 text-2xl 2xl:text-6xl">
                     {benefit.icon}
                   </span>
                 </div>
@@ -271,7 +275,7 @@ const HomePage = () => {
                   <div className="flex items-center mb-2">
                     <h3 className="text-xl font-semibold">{product.name}</h3>
                     <span className="ml-2 bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
-                      New
+                      NUEVO
                     </span>
                   </div>
                   <p className="text-gray-600 mb-4">{product.price}</p>
