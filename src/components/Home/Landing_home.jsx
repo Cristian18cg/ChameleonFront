@@ -16,7 +16,7 @@ import {
   FaBaby,
 } from "react-icons/fa";
 import useControlAdministracion from "../../hooks/useControlAdministracion";
-
+import { motion } from "framer-motion";
 import useControlProductos from "../../hooks/useControlProductos";
 import useControlPedidos from "../../hooks/useControlPedidos";
 import { useNavigate } from "react-router-dom";
@@ -28,7 +28,11 @@ const HomePage = () => {
   const { agregarAlCarrito, unidades, isProductoEnCarrito } =
     useControlPedidos();
   const [bannerImage, setBannerImage] = useState(null);
-
+  const variants = {
+    initial: { opacity: 0, y: -50 },
+    animate: { opacity: 1, y: 0, transition: { duration: 0.8 } },
+    exit: { opacity: 0, y: 50, transition: { duration: 0.5 } },
+  };
   useEffect(() => {
     // Cargar las imágenes si la lista está vacía
     if (listaImagenes.length === 0) {
@@ -139,31 +143,49 @@ const HomePage = () => {
   return (
     <div className="w-full min-h-screen">
       {/* Banner Section */}
-      <div className="relative h-[600px] w-full">
+      <motion.div
+        className="relative h-[600px] w-full"
+        initial="initial"
+        animate="animate"
+        exit="exit"
+        variants={variants} // Variantes aplicadas al contenedor
+      >
         <img
           src={bannerImage?.image_url}
           alt={bannerImage?.title || "Banner"}
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
-          <div className="text-center text-white px-4">
+          <motion.div
+            className="text-center text-white px-4"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1, transition: { duration: 0.8 } }}
+          >
             <h1 className="text-4xl md:text-6xl font-bold mb-4">
               {bannerImage?.title || "Título del Banner"}
             </h1>
             <p className="text-xl md:text-2xl mb-8">
-              {bannerImage?.description || "Descripción del Banner"}
+              {bannerImage?.description || ""}
             </p>
-            <button
-              onClick={() => {
-                navigate(`/tienda/`);
-              }}
-              className="bg-green-500 hover:bg-green-600 text-white px-8 py-3 rounded-full text-lg transition duration-300"
-            >
-              Comprar Ahora
-            </button>
-          </div>
+            {bannerImage?.show_button && (
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => {
+                  if (bannerImage.button_url) {
+                    window.location.href = bannerImage.button_url;
+                  } else {
+                    navigate(`/tienda/`);
+                  }
+                }}
+                className="bg-green-500 hover:bg-green-600 text-white px-8 py-3 rounded-full text-lg transition duration-300"
+              >
+                {bannerImage?.button_text || "Comprar Ahora"}
+              </motion.button>
+            )}
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Sale Products Slider */}
       <div className="py-16 px-4 md:px-8 bg-gray-50">

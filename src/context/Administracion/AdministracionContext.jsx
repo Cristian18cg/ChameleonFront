@@ -64,6 +64,7 @@ const AdministracionProvider = ({ children }) => {
           formData.append("title", image.title || ""); // Título del banner
           formData.append("is_active", image.is_active || true); // Estado activo
           formData.append("is_mobil", image.is_mobil || false); // Imagen móvil
+          formData.append("description", ""); // Imagen móvil
 
           const response = await clienteAxios.post(
             `administration/config/banners/`,
@@ -108,8 +109,19 @@ const AdministracionProvider = ({ children }) => {
         console.log(response.data);
         showSuccess(`Imagen ${imagen.title} editada exitosamente.`);
       } catch (error) {
-        console.error("Error al subir las imágenes:", error);
+        console.error("Error al editar las imágenes:", error);
+
+      if (error.response && error.response.data) {
+        // Extraer errores específicos del servidor
+        const errorDetails = error.response.data;
+        const errorMessages = Object.entries(errorDetails)
+          .map(([key, value]) => `${key}: ${value.join(", ")}`)
+          .join("\n");
+
+        showError(`Errores encontrados:\n${errorMessages}`);
+      } else {
         showError("Error al subir las imágenes. Intente nuevamente.");
+      }
       }
     },
     [token]

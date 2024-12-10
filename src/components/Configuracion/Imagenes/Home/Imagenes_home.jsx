@@ -12,8 +12,8 @@ import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
-import { InputNumber } from "primereact/inputnumber";
 import { Dropdown } from "primereact/dropdown";
+import { InputTextarea } from "primereact/inputtextarea";
 const Imagenes = () => {
   const {
     listaImagenes,
@@ -300,9 +300,21 @@ const Imagenes = () => {
       />
     );
   };
+  const longTextEditor = (options) => {
+    return (
+      <InputTextarea
+        value={options.value}
+        onChange={(e) => options.editorCallback(e.target.value)}
+        rows={5} // Número de filas visibles
+        cols={30} // Ancho del editor
+        autoResize // Ajusta automáticamente el tamaño del área de texto
+        className="w-full"
+      />
+    );
+  };
   const [statuses] = useState([false, true]);
   const getMessageEditor = (user) => {
-    console.log(user)
+    console.log(user);
     if (user) {
       return `ACTIVO`;
     } else {
@@ -310,7 +322,7 @@ const Imagenes = () => {
     }
   };
   const getSeverityEditor = (user) => {
-    console.log(user)
+    console.log(user);
 
     if (user) {
       return `success`;
@@ -407,10 +419,23 @@ const Imagenes = () => {
         >
           <Column header="Id" field="id"></Column>
           <Column
+            header="Imagen"
+            field="image_url"
+            body={imageBodyTemplate}
+          ></Column>
+          <Column
             header="Nombre"
             editor={(options) => textEditor(options)}
             field="title"
           ></Column>
+          <Column
+            field="description"
+            header="Descripción"
+            editor={(options) => longTextEditor(options)}
+            body={(rowData) => (
+              <span>{rowData.description || "Sin descripción"}</span>
+            )}
+          />
           <Column
             field="is_active"
             header="Estado"
@@ -425,11 +450,25 @@ const Imagenes = () => {
             body={(rowData) => statusBodyTemplate(rowData, "is_mobil")}
             sortable
           ></Column>
+
           <Column
-            header="Imagen"
-            field="image_url"
-            body={imageBodyTemplate}
+            field="show_button"
+            header="Mostrar Boton"
+            editor={(options) => statusEditor(options)}
+            body={(rowData) => statusBodyTemplate(rowData, "show_button")}
+            sortable
           ></Column>
+          <Column
+            header="Texto botón"
+            editor={(options) => textEditor(options)}
+            field="button_text"
+          ></Column>
+          <Column
+            header="url boton "
+            editor={(options) => textEditor(options)}
+            field="button_url"
+          ></Column>
+
           <Column
             rowEditor={allowEdit}
             bodyStyle={{ textAlign: "center" }}

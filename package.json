@@ -12,6 +12,7 @@
     "dotenv": "^16.4.5",
     "file-saver": "^2.0.5",
     "formik": "^2.4.5",
+    "framer-motion": "^11.13.5",
     "path-browserify": "^1.0.1",
     "pdfjs-dist": "^4.2.67",
     "primeicons": "^7.0.0",

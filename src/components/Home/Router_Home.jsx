@@ -9,6 +9,7 @@ import { ProductoDetallado } from "../Tienda/ProductoDetallado";
 import { ConfigDomicilio } from "../Configuracion/Domicilio/ConfigDomicilio";
 import { ListaPedidos } from "../Pedidos/ListaPedidos";
 import OrderDashboard from "../Pedidos/usuarios/PedidosUsuario";
+import UserProfile from "../Configuracion/Usuario/InfoUsuario";
 import { ListUsers } from "../Configuracion/Domicilio/Usuarios/ListUsers";
 import  Imagenes  from "../Configuracion/Imagenes/Home/Imagenes_home";
 export const Router_Home = () => {
@@ -44,6 +45,7 @@ export const Router_Home = () => {
             <Route path="/tienda" element={<Tienda />} />
             <Route path="/tienda/:id" element={<ProductoDetallado />} />
             <Route path="/lista_pedidos" element={<OrderDashboard />} />
+            <Route path="/perfil" element={<UserProfile />} />
           </Routes>
         </Router>
       )}

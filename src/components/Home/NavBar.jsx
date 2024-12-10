@@ -152,11 +152,11 @@ export const NavBar = () => {
                 },
               },
               {
-                label: "Editar Perfil",
+                label: "MiPerfil",
                 icon: "pi pi-user",
                 template: itemRenderer,
                 command: () => {
-                  navigate("/editar_perfil");
+                  navigate("/perfil");
                 },
               },
             ],
@@ -389,7 +389,7 @@ export const NavBar = () => {
         model={admin ? itemsAdmin : items}
         start={start}
         end={end}
-        className="rounded-none h-auto z-50"
+        className="rounded-none h-auto z-50 border-none"
       />
       <Dialog
         header={headerDialog}
