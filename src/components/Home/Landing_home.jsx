@@ -27,32 +27,31 @@ const HomePage = () => {
   const { productos, obtenerProductos } = useControlProductos();
   const { agregarAlCarrito, unidades, isProductoEnCarrito } =
     useControlPedidos();
-    const [bannerImage, setBannerImage] = useState(null);
+  const [bannerImage, setBannerImage] = useState(null);
 
-    useEffect(() => {
-      // Cargar las imágenes si la lista está vacía
-      if (listaImagenes.length === 0) {
-        ListarImagenesHome();
+  useEffect(() => {
+    // Cargar las imágenes si la lista está vacía
+    if (listaImagenes.length === 0) {
+      ListarImagenesHome();
+    } else {
+      // Filtrar las imágenes activas y seleccionar según el dispositivo
+      const isMobile = window.innerWidth <= 768; // Definir límite para móviles
+      const filteredImages = listaImagenes.filter(
+        (img) => img.is_active && img.is_mobil === isMobile
+      );
+
+      // Seleccionar la primera imagen activa según el dispositivo
+      if (filteredImages.length > 0) {
+        setBannerImage(filteredImages[0]);
       } else {
-        // Filtrar las imágenes activas y seleccionar según el dispositivo
-        const isMobile = window.innerWidth <= 768; // Definir límite para móviles
-        const filteredImages = listaImagenes.filter(
-          (img) => img.is_active && img.is_mobil === isMobile
-        );
-  
-        // Seleccionar la primera imagen activa según el dispositivo
-        if (filteredImages.length > 0) {
-          setBannerImage(filteredImages[0]);
-        } else {
-          // Si no hay imágenes específicas para el dispositivo, usar cualquiera activa
-          const fallbackImages = listaImagenes.filter((img) => img.is_active);
-          if (fallbackImages.length > 0) {
-            setBannerImage(fallbackImages[0]);
-          }
+        // Si no hay imágenes específicas para el dispositivo, usar cualquiera activa
+        const fallbackImages = listaImagenes.filter((img) => img.is_active);
+        if (fallbackImages.length > 0) {
+          setBannerImage(fallbackImages[0]);
         }
       }
-    }, [listaImagenes]);
-  
+    }
+  }, [listaImagenes]);
 
   useEffect(() => {
     if (productos.length === 0) {
@@ -141,25 +140,30 @@ const HomePage = () => {
     <div className="w-full min-h-screen">
       {/* Banner Section */}
       <div className="relative h-[600px] w-full">
-      <img
-        src={bannerImage?.image_url}
-        alt={bannerImage?.title || "Banner"}
-        className="w-full h-full object-cover"
-      />
-      <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
-        <div className="text-center text-white px-4">
-          <h1 className="text-4xl md:text-6xl font-bold mb-4">
-            {bannerImage?.title || "Título del Banner"}
-          </h1>
-          <p className="text-xl md:text-2xl mb-8">
-            {bannerImage?.description || "Descripción del Banner"}
-          </p>
-          <button className="bg-green-500 hover:bg-green-600 text-white px-8 py-3 rounded-full text-lg transition duration-300">
-            Comprar Ahora
-          </button>
+        <img
+          src={bannerImage?.image_url}
+          alt={bannerImage?.title || "Banner"}
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+          <div className="text-center text-white px-4">
+            <h1 className="text-4xl md:text-6xl font-bold mb-4">
+              {bannerImage?.title || "Título del Banner"}
+            </h1>
+            <p className="text-xl md:text-2xl mb-8">
+              {bannerImage?.description || "Descripción del Banner"}
+            </p>
+            <button
+              onClick={() => {
+                navigate(`/tienda/`);
+              }}
+              className="bg-green-500 hover:bg-green-600 text-white px-8 py-3 rounded-full text-lg transition duration-300"
+            >
+              Comprar Ahora
+            </button>
+          </div>
         </div>
       </div>
-    </div>
 
       {/* Sale Products Slider */}
       <div className="py-16 px-4 md:px-8 bg-gray-50">

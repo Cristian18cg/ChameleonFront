@@ -228,13 +228,17 @@ export const NavBar = () => {
       ],
     },
   ];
-  const start = (
-    <img
-      alt="logo"
-      src={chameleonLargo}
-      className="mr-2 w-48 h-14 md:w-64 md:h-20"
-    ></img>
-  );
+  const start = () => {
+  
+    return (
+      <img
+        alt="logo"
+        src={chameleonLargo}
+        className="mr-2 w-48 h-14 md:w-64 md:h-20"
+        onClick={() => navigate("/")} // Pasa la función como un callback
+      />
+    );
+  }
   const panelFooterTemplate = () => {
     const isProductSelected = (filteredProducts || []).some(
       (product) => product["name"] === selectedProduct
