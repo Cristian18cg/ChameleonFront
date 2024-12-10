@@ -95,7 +95,7 @@ const OrderDashboard = () => {
   const MobileOrderCard = ({ order }) => (
     <div className="bg-white p-4 rounded-lg shadow-md mb-4">
       <div className="flex justify-between items-center mb-3">
-        <span className="font-medium text-gray-900">{order.id}</span>
+        <span className="font-medium text-gray-900"># {order.id}</span>
         <div className="flex items-center gap-2">
           {getStatusIcon(order.status)}
           <span className="capitalize text-sm">
@@ -104,7 +104,7 @@ const OrderDashboard = () => {
         </div>
       </div>
       <div className="mb-3">
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-gray-600"> 
           Fecha creación:{" "}
           {new Date(order.created_at).toLocaleString("es-ES", {
             dateStyle: "medium",
@@ -112,7 +112,13 @@ const OrderDashboard = () => {
           })}
         </p>
         <p className="text-sm font-medium text-gray-900 mt-1">
-          Total: ${order.order_value}
+          Total: 
+           {new Intl.NumberFormat("es-CO", {
+            style: "currency",
+            currency: "COP",
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }).format(order.order_value)}
         </p>
       </div>
       <div className="space-y-3">

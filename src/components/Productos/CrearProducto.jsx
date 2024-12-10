@@ -292,30 +292,38 @@ export const CrearProducto = ({ producto }) => {
 
   const itemTemplate = (file, props) => {
     return (
-      <div className="flex align-items-center flex-wrap">
-        <div className="flex align-items-center" style={{ width: "40%" }}>
+      <div className="flex flex-wrap items-center gap-4 md:gap-6 p-4">
+        <div className="flex items-center gap-4 w-full md:w-2/5">
           <img
             alt={file?.name}
             role="presentation"
             src={file?.objectURL}
-            width={50}
+            className="w-16 h-16 object-cover md:w-20 md:h-20 rounded"
           />
-          <span className="flex flex-column text-left ml-3 mx-2">
-            {file?.name}
-            <small>{new Date().toLocaleDateString()}</small>
+          <span className="flex flex-col text-left">
+            <span className="text-sm font-medium text-gray-700">
+              {file?.name}
+            </span>
+            <small className="text-gray-500">
+              {new Date().toLocaleDateString()}
+            </small>
           </span>
         </div>
-        <Tag
-          value={props?.formatSize}
-          severity="warning"
-          className="px-3 py-2 mx-4"
-        />
-        <Button
-          type="button"
-          icon="pi pi-times"
-          className="custom-cancel-btn p-button-outlined p-button-rounded p-button-danger ml-auto"
-          onClick={() => onTemplateRemove(file, props?.onRemove)}
-        />
+        <div className="flex-grow">
+          <Tag
+            value={props?.formatSize}
+            severity="warning"
+            className="text-xs md:text-sm px-2 py-1 md:px-3 md:py-2"
+          />
+        </div>
+        <div className="flex justify-end w-full md:w-auto">
+          <Button
+            type="button"
+            icon="pi pi-times"
+            className="custom-cancel-btn p-button-outlined p-button-rounded p-button-danger"
+            onClick={() => onTemplateRemove(file, props?.onRemove)}
+          />
+        </div>
       </div>
     );
   };
@@ -500,7 +508,6 @@ export const CrearProducto = ({ producto }) => {
             required
             autoFocus
             placeholder=""
-
             className="input-productos"
           />
           {submitted && !product.name && (
@@ -638,7 +645,9 @@ export const CrearProducto = ({ producto }) => {
             onChange={(e) => onInputChange(e, "is_active")}
             className="input-productos xl:mt-7"
           />
-          <label htmlFor="is_active " className="mx-2 font-semibold">¿Producto activo?</label>
+          <label htmlFor="is_active " className="mx-2 font-semibold">
+            ¿Producto activo?
+          </label>
         </div>
       </div>
       <div className="flex justify-center">

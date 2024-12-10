@@ -15,26 +15,45 @@ import {
   FaTree,
   FaBaby,
 } from "react-icons/fa";
+import useControlAdministracion from "../../hooks/useControlAdministracion";
+
 import useControlProductos from "../../hooks/useControlProductos";
 import useControlPedidos from "../../hooks/useControlPedidos";
+import { useNavigate } from "react-router-dom";
+
 const HomePage = () => {
-  const {
-    productos,
-    setProductos,
-    agregarProducto,
-    eliminarProducto,
-    obtenerProductos,
-  } = useControlProductos();
-  const {
-    carrito,
-    agregarAlCarrito,
-    handleUnitChange,
-    setCarrito,
-    unidades,
-    setUnidades,
-    isProductoEnCarrito,
-  } = useControlPedidos();
-  const [activeSlide, setActiveSlide] = useState(0);
+  const navigate = useNavigate();
+  const { listaImagenes, ListarImagenesHome } = useControlAdministracion();
+  const { productos, obtenerProductos } = useControlProductos();
+  const { agregarAlCarrito, unidades, isProductoEnCarrito } =
+    useControlPedidos();
+    const [bannerImage, setBannerImage] = useState(null);
+
+    useEffect(() => {
+      // Cargar las imágenes si la lista está vacía
+      if (listaImagenes.length === 0) {
+        ListarImagenesHome();
+      } else {
+        // Filtrar las imágenes activas y seleccionar según el dispositivo
+        const isMobile = window.innerWidth <= 768; // Definir límite para móviles
+        const filteredImages = listaImagenes.filter(
+          (img) => img.is_active && img.is_mobil === isMobile
+        );
+  
+        // Seleccionar la primera imagen activa según el dispositivo
+        if (filteredImages.length > 0) {
+          setBannerImage(filteredImages[0]);
+        } else {
+          // Si no hay imágenes específicas para el dispositivo, usar cualquiera activa
+          const fallbackImages = listaImagenes.filter((img) => img.is_active);
+          if (fallbackImages.length > 0) {
+            setBannerImage(fallbackImages[0]);
+          }
+        }
+      }
+    }, [listaImagenes]);
+  
+
   useEffect(() => {
     if (productos.length === 0) {
       obtenerProductos();
@@ -122,25 +141,25 @@ const HomePage = () => {
     <div className="w-full min-h-screen">
       {/* Banner Section */}
       <div className="relative h-[600px] w-full">
-        <img
-          src="https://images.unsplash.com/photo-1544829832-c8047d6b6457"
-          alt="Eco-friendly diapers banner"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
-          <div className="text-center text-white px-4">
-            <h1 className="text-4xl md:text-6xl font-bold mb-4">
-              Suave para el Bebé, Amable con la Tierra
-            </h1>
-            <p className="text-xl md:text-2xl mb-8">
-              Pañales Premium Ecológicos para tu Pequeño
-            </p>
-            <button className="bg-green-500 hover:bg-green-600 text-white px-8 py-3 rounded-full text-lg transition duration-300">
-              Comprar Ahora
-            </button>
-          </div>
+      <img
+        src={bannerImage?.image_url}
+        alt={bannerImage?.title || "Banner"}
+        className="w-full h-full object-cover"
+      />
+      <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+        <div className="text-center text-white px-4">
+          <h1 className="text-4xl md:text-6xl font-bold mb-4">
+            {bannerImage?.title || "Título del Banner"}
+          </h1>
+          <p className="text-xl md:text-2xl mb-8">
+            {bannerImage?.description || "Descripción del Banner"}
+          </p>
+          <button className="bg-green-500 hover:bg-green-600 text-white px-8 py-3 rounded-full text-lg transition duration-300">
+            Comprar Ahora
+          </button>
         </div>
       </div>
+    </div>
 
       {/* Sale Products Slider */}
       <div className="py-16 px-4 md:px-8 bg-gray-50">
@@ -162,17 +181,23 @@ const HomePage = () => {
         >
           {saleProducts.map((product) => (
             <SwiperSlide
+              className="mb-6"
               key={product.id}
               style={{ height: "auto" }} // Ajustar altura al contenido
             >
-              <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+              <div
+                onClick={() => {
+                  navigate(`/tienda/${product.id}`);
+                }}
+                className="hover:cursor-pointer bg-white rounded-lg shadow-lg overflow-hidden"
+              >
                 <div className="relative">
                   <img
                     src={product.images[0].image_url}
                     alt={product.name}
                     className="w-60 sm:w-64 xl:w-80 shadow-lg mx-auto "
                   />
-                  <div className="absolute top-4 right-4 bg-purple-500 text-white px-3 py-1 rounded-full">
+                  <div className="absolute top-4 right-4 bg-purple-500 text-white px-3 py-1 rounded-full font-semibold text-xl">
                     {new Intl.NumberFormat("es-CO", {
                       style: "currency",
                       currency: "COP",
@@ -183,7 +208,7 @@ const HomePage = () => {
                 </div>
                 <div className="p-6">
                   <h3 className="text-xl font-semibold mb-2">{product.name}</h3>
-                  <p className="text-gray-600 mb-4">
+                  <p className="text-gray-600 line-through mb-4">
                     {new Intl.NumberFormat("es-CO", {
                       style: "currency",
                       currency: "COP",
@@ -264,8 +289,13 @@ const HomePage = () => {
           }}
         >
           {newArrivals.map((product) => (
-            <SwiperSlide key={product.id}>
-              <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+            <SwiperSlide className="mb-8" key={product.id}>
+              <div
+                onClick={() => {
+                  navigate(`/tienda/${product.id}`);
+                }}
+                className="hover:cursor-pointer bg-white rounded-lg shadow-lg overflow-hidden mb-2"
+              >
                 <img
                   src={product.images[0].image_url}
                   alt={product.name}
@@ -278,7 +308,15 @@ const HomePage = () => {
                       NUEVO
                     </span>
                   </div>
-                  <p className="text-gray-600 mb-4">{product.price}</p>
+                  <p className="text-gray-600 mb-4">
+                    {" "}
+                    {new Intl.NumberFormat("es-CO", {
+                      style: "currency",
+                      currency: "COP",
+                      minimumFractionDigits: 0,
+                      maximumFractionDigits: 2,
+                    }).format(product.price)}
+                  </p>
                   <Button
                     label={
                       isProductoEnCarrito(product.id)

@@ -3,34 +3,63 @@ import { FileUpload } from "primereact/fileupload";
 import { ProgressBar } from "primereact/progressbar";
 import { Button } from "primereact/button";
 import { Tag } from "primereact/tag";
-import useControlAdministracion from '../../../../hooks/useControlAdministracion'
+import useControlAdministracion from "../../../../hooks/useControlAdministracion";
+import { Galleria } from "primereact/galleria";
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
+import { Toast } from "primereact/toast";
+import { IconField } from "primereact/iconfield";
+import { InputIcon } from "primereact/inputicon";
+import { Dialog } from "primereact/dialog";
+import { InputText } from "primereact/inputtext";
+import { InputNumber } from "primereact/inputnumber";
+import { Dropdown } from "primereact/dropdown";
 const Imagenes = () => {
-  const { CrearImagenesHome } = useControlAdministracion();
+  const {
+    listaImagenes,
+    ListarImagenesHome,
+    CrearImagenesHome,
+    setListaImagenes,
+    EditarImagen,
+    EliminarImagen,
+  } = useControlAdministracion();
   const fileUploadRef = useRef(null);
   const toast = useRef(null);
   const [totalSize, setTotalSize] = useState(0);
   const [imageFile, setImageFile] = useState(null);
-  const [images, setImages] = useState({});
+  const [globalFilter, setGlobalFilter] = useState(null);
+  const [images, setImages] = useState([]);
   const [imageFiles, setImageFiles] = useState([]); // Para almacenar múltiples imágenes
+  useEffect(() => {
+    return () => {
+      // Limpiar URLs al desmontar el componente
+      images.forEach((image) => URL.revokeObjectURL(image.objectURL));
+    };
+  }, [images]);
+  useEffect(() => {
+    console.log("images", images);
+  }, [images]);
+  useEffect(() => {
+    if (listaImagenes.length === 0) {
+      ListarImagenesHome();
+    }
+  }, [listaImagenes]);
 
   const onImageSelect = (e) => {
-    console.log("entro imagenes", e);
-    const selectedFiles = Array.from(e.files); // Obtener las nuevas imágenes seleccionadas
+    const selectedFiles = Array.from(e.files);
 
-    // Filtrar las imágenes que no están ya en imageFiles
-    const filteredFiles = selectedFiles.filter((newFile) => {
-      return !imageFiles.some(
-        (existingFile) => existingFile.name === newFile.name
-      ); // Verificar que no se repitan
-    });
+    const filesWithMetadata = selectedFiles.map((file) => ({
+      file: file, // Archivo original
+      objectURL: URL.createObjectURL(file),
+      title: file.name, // Por defecto, usa el nombre del archivo como título
+      is_active: true, // Valor predeterminado
+      is_mobil: false, // Valor predeterminado
+    }));
 
-    if (filteredFiles.length > 0) {
-      setImageFiles([...imageFiles, ...filteredFiles]); // Agregar solo las imágenes no repetidas
-      setImages({ ...images, images: [...imageFiles, ...filteredFiles] }); // Actualizar el estado del producto
-    } else {
-      console.log("Las imágenes ya están seleccionadas.");
-    }
+    setImageFiles([...imageFiles, ...filesWithMetadata]);
+    setImages([...images, ...filesWithMetadata]);
   };
+
   /* Subir imagenes*/
   const onTemplateSelect = (e) => {
     let _totalSize = totalSize;
@@ -59,6 +88,10 @@ const Imagenes = () => {
   };
 
   const onTemplateRemove = (file, callback) => {
+    // Liberar URL generada
+    URL.revokeObjectURL(file.objectURL);
+    setImageFiles(imageFiles.filter((img) => img.name !== file.name));
+    setImages(images.filter((img) => img.name !== file.name));
     setTotalSize(totalSize - file.size);
     callback();
   };
@@ -96,33 +129,42 @@ const Imagenes = () => {
   };
   const itemTemplate = (file, props) => {
     return (
-      <div className="flex align-items-center flex-wrap">
-        <div className="flex align-items-center" style={{ width: "40%" }}>
+      <div className="flex flex-wrap items-center gap-4 md:gap-6 p-4">
+        <div className="flex items-center gap-4 w-full md:w-2/5">
           <img
             alt={file?.name}
             role="presentation"
             src={file?.objectURL}
-            width={50}
+            className="w-16 h-16 object-cover md:w-20 md:h-20 rounded"
           />
-          <span className="flex flex-column text-left ml-3 mx-2">
-            {file?.name}
-            <small>{new Date().toLocaleDateString()}</small>
+          <span className="flex flex-col text-left">
+            <span className="text-sm font-medium text-gray-700">
+              {file?.name}
+            </span>
+            <small className="text-gray-500">
+              {new Date().toLocaleDateString()}
+            </small>
           </span>
         </div>
-        <Tag
-          value={props?.formatSize}
-          severity="warning"
-          className="px-3 py-2 mx-4"
-        />
-        <Button
-          type="button"
-          icon="pi pi-times"
-          className="custom-cancel-btn p-button-outlined p-button-rounded p-button-danger ml-auto"
-          onClick={() => onTemplateRemove(file, props?.onRemove)}
-        />
+        <div className="flex-grow">
+          <Tag
+            value={props?.formatSize}
+            severity="warning"
+            className="text-xs md:text-sm px-2 py-1 md:px-3 md:py-2"
+          />
+        </div>
+        <div className="flex justify-end w-full md:w-auto">
+          <Button
+            type="button"
+            icon="pi pi-times"
+            className="custom-cancel-btn p-button-outlined p-button-rounded p-button-danger"
+            onClick={() => onTemplateRemove(file, props?.onRemove)}
+          />
+        </div>
       </div>
     );
   };
+
   const emptyTemplate = () => {
     return (
       <div className="flex align-items-center flex-column">
@@ -156,12 +198,180 @@ const Imagenes = () => {
     className:
       "custom-cancel-btn p-button-danger p-button-rounded p-button-outlined",
   };
-  const subirImagenes = () => { 
-    CrearImagenesHome()
-  }
+  const subirImagenes = () => {
+    CrearImagenesHome(images);
+  };
+  const responsiveOptions = [
+    {
+      breakpoint: "1200px",
+      numVisible: 4,
+    },
+    {
+      breakpoint: "991px",
+      numVisible: 3,
+    },
+    {
+      breakpoint: "767px",
+      numVisible: 2,
+    },
+    {
+      breakpoint: "575px",
+      numVisible: 1,
+    },
+  ];
+  const itemTemplateImg = (item) => {
+    console.log("itemmme", item);
+    return (
+      <img
+        alt={item?.name}
+        src={item?.objectURL} // Usar la propiedad correcta
+        className="rounded"
+      />
+    );
+  };
+
+  const thumbnailTemplate = (item) => {
+    return (
+      <img
+        alt={item?.name}
+        src={item?.objectURL} // Usar la propiedad correcta
+        className="w-12 md:w-44 lg:w-44 xl:w-44"
+      />
+    );
+  };
+  const header = (
+    <div className="flex flex-wrap gap-2 align-items-center justify-content-between">
+      <h3 className="m-3">Administrar imagenes home</h3>
+      <IconField iconPosition="right">
+        <InputIcon className="pi pi-search " />
+        <InputText
+          type="search"
+          unstyled
+          onInput={(e) => setGlobalFilter(e.target.value)}
+          placeholder="Buscar imagen..."
+          className="input-productos p-inputtext p-component p-input "
+        />
+      </IconField>
+    </div>
+  );
+  const imageBodyTemplate = (rowData) => {
+    return (
+      <img
+        src={`${rowData.image_url}`}
+        alt={rowData.name}
+        className="shadow-md shadow-slate-200 rounded"
+        style={{ width: "64px" }}
+      />
+    );
+  };
+  const getSeverity = (user, campo) => {
+    if (user[campo]) {
+      return `success`;
+    } else {
+      return `danger`;
+    }
+  };
+
+  const getMessage = (user, campo) => {
+    if (user[campo]) {
+      return `ACTIVO`;
+    } else {
+      return `INACTIVO`;
+    }
+  };
+
+  const statusBodyTemplate = (rowData, campo) => {
+    return (
+      <Tag
+        value={getMessage(rowData, campo)}
+        severity={getSeverity(rowData, campo)}
+      ></Tag>
+    );
+  };
+  const allowEdit = (rowData) => {
+    return rowData.name !== "Blue Band";
+  };
+  const textEditor = (options) => {
+    return (
+      <InputText
+        type="text"
+        value={options.value}
+        onChange={(e) => options.editorCallback(e.target.value)}
+      />
+    );
+  };
+  const [statuses] = useState([false, true]);
+  const getMessageEditor = (user) => {
+    console.log(user)
+    if (user) {
+      return `ACTIVO`;
+    } else {
+      return `INACTIVO`;
+    }
+  };
+  const getSeverityEditor = (user) => {
+    console.log(user)
+
+    if (user) {
+      return `success`;
+    } else {
+      return `danger`;
+    }
+  };
+
+  const statusEditor = (options) => {
+    return (
+      <Dropdown
+        value={options.value}
+        options={statuses}
+        onChange={(e) => options.editorCallback(e.value)}
+        placeholder="Select a Status"
+        itemTemplate={(option) => {
+          return (
+            <Tag
+              value={getMessageEditor(option)}
+              severity={getSeverityEditor(option)}
+            ></Tag>
+          );
+        }}
+      />
+    );
+  };
+  const onRowEditComplete = (e) => {
+    let { newData, index } = e;
+
+    EditarImagen(newData);
+  };
+
+  const botonEliminar = (rowData) => {
+    return (
+      <Button
+        icon="pi pi-trash"
+        rounded
+        outlined
+        severity="danger"
+        onClick={() => {
+          EliminarImagen(rowData.id);
+        }}
+      />
+    );
+  };
   return (
     <div className="mt-24">
-      <div className="p-20">
+      <div className="p-2 md:p-20">
+        {images.length > 0 && (
+          <div className="card flex-col justify-center">
+            <Galleria
+              value={images} // El arreglo de imágenes
+              responsiveOptions={responsiveOptions}
+              numVisible={6}
+              item={itemTemplateImg}
+              thumbnail={thumbnailTemplate}
+              thumbnailsPosition="bottom"
+              indicatorsPosition="bottom"
+            />
+          </div>
+        )}
         Banners Home
         <FileUpload
           ref={fileUploadRef}
@@ -180,17 +390,52 @@ const Imagenes = () => {
           cancelOptions={cancelOptions}
         />
         <Button
-          disabled={() => {
-            if (images.length > 0) {
-              return false;
-            } else {
-              return true;
-            }
-          }}
+          disabled={images.length === 0} // Evalúa si no hay imágenes
           className="mt-2"
           label="Subir Imagenes"
           onClick={subirImagenes}
-        ></Button>
+        />
+      </div>
+      <div className="card">
+        <DataTable
+          value={listaImagenes}
+          header={header}
+          className="p-datatable-striped"
+          editMode="row"
+          onRowEditComplete={onRowEditComplete}
+          globalFilter={globalFilter}
+        >
+          <Column header="Id" field="id"></Column>
+          <Column
+            header="Nombre"
+            editor={(options) => textEditor(options)}
+            field="title"
+          ></Column>
+          <Column
+            field="is_active"
+            header="Estado"
+            editor={(options) => statusEditor(options)}
+            body={(rowData) => statusBodyTemplate(rowData, "is_active")}
+            sortable
+          ></Column>
+          <Column
+            field="is_mobil"
+            header="Imagen Celular"
+            editor={(options) => statusEditor(options)}
+            body={(rowData) => statusBodyTemplate(rowData, "is_mobil")}
+            sortable
+          ></Column>
+          <Column
+            header="Imagen"
+            field="image_url"
+            body={imageBodyTemplate}
+          ></Column>
+          <Column
+            rowEditor={allowEdit}
+            bodyStyle={{ textAlign: "center" }}
+          ></Column>
+          <Column body={botonEliminar}></Column>
+        </DataTable>
       </div>
     </div>
   );

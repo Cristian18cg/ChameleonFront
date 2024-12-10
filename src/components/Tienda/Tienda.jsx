@@ -302,7 +302,6 @@ export const Tienda = () => {
               <span
                 className="font-semibold text-gray-700"
                 onClick={() => {
-                  console.log("categoria", product.categories);
                 }}
               >
                 {product.categories && product.categories.length > 0

@@ -174,8 +174,11 @@ html {
 }
 
 .swiper-wrapper {
-  height: auto !important;
+  height: auto!important;
 }
-.swiper-pagination{
-  margin-top: 15px!important;
+.swiper-pagination .swiper-pagination-horizontal{
+  padding-top: 15px!important;
+}
+.swiper-button-next{
+margin-bottom: 100px;
 }

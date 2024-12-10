@@ -54,12 +54,7 @@ export default function ProductsDemo() {
     }
   }, [productos]);
 
-  const formatCurrency = (value) => {
-    return value.toLocaleString("es-CO", {
-      style: "currency",
-      currency: "COP",
-    });
-  };
+ 
 
   const openNew = () => {
     setProduct(emptyProduct);
@@ -221,10 +216,7 @@ export default function ProductsDemo() {
     );
   };
 
-  const priceBodyTemplate = (rowData) => {
-    return formatCurrency(rowData.price);
-  };
-
+ 
   const ratingBodyTemplate = (rowData) => {
     return <Rating value={rowData.rating} readOnly cancel={false} />;
   };
@@ -296,17 +288,7 @@ export default function ProductsDemo() {
       </IconField>
     </div>
   );
-  const productDialogFooter = (
-    <React.Fragment>
-      <Button
-        label="Cancelar"
-        icon="pi pi-times"
-        outlined
-        onClick={hideDialog}
-      />
-      <Button label="Guardar" icon="pi pi-check" onClick={saveProduct} />
-    </React.Fragment>
-  );
+
 
   const deleteProductsDialogFooter = (
     <React.Fragment>
