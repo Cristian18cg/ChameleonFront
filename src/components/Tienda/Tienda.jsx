@@ -613,7 +613,7 @@ export const Tienda = () => {
               <InputText
                 value={globalFilter}
                 onChange={(e) => setGlobalFilter(e.target.value)}
-                placeholder="Buscar productos"
+                placeholder="Filtrar productos"
                 className="w-auto md:max-w-sm p-inputtext"
               />
             </IconField>
