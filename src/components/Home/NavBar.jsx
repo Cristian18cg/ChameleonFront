@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Menubar } from "primereact/menubar";
 import { Sidebar } from "primereact/sidebar";
-
+import { IconField } from "primereact/iconfield";
+import { InputIcon } from "primereact/inputicon";
 import { Badge } from "primereact/badge";
 import { Avatar } from "primereact/avatar";
 import chameleonLargo from "../../img/chameleonlargo.png";
@@ -235,13 +236,13 @@ export const NavBar = () => {
       <img
         alt="logo"
         src={chameleonLargo}
-        className="hidden md:block mr-2 w-48 h-14 md:w-64 md:h-20"
+        className="hidden md:block mr-2 w-48 h-14 md:w-64 md:h-20 object-contain"
         onClick={() => navigate("/")} // Pasa la función como un callback
       />
       <img
         alt="logo"
         src={icono_color}
-        className="md:hidden mr-2 w-10 h-14 md:w-64 md:h-20"
+        className="md:hidden mr-2 w-14 h-14 md:w-64 md:h-20"
         onClick={() => navigate("/")} // Pasa la función como un callback
       />
       </div>
@@ -321,6 +322,7 @@ export const NavBar = () => {
   };
   const end = (
     <div className="flex   align-items-center gap-3">
+       
       <AutoComplete
         placeholder="Buscar producto"
         field="name"
@@ -331,7 +333,9 @@ export const NavBar = () => {
         itemTemplate={itemTemplate}
         panelFooterTemplate={panelFooterTemplate}
         className="  m-2.5  md:block w-auto"
+        
       />
+      <div className="flex items-center gap-3"></div>
       {isLoggedIn ? (
         <>
           <div className="p-menuitem-content">
@@ -358,7 +362,7 @@ export const NavBar = () => {
             icon="pi pi-user"
             shape="circle"
             size="large"
-            className="ml-2 mt-2 transition duration-300 ease-in-out cursor-pointer"
+            className="ml-2 mt-2 transition duration-300 ease-in-out cursor-pointer bg-purple-400 text-gray-100"
             onClick={() => {
               setVisibleProfile(true);
             }}

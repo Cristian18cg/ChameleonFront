@@ -221,7 +221,7 @@ const HomePage = () => {
                   <img
                     src={product.images[0].image_url}
                     alt={product.name}
-                    className="w-60 sm:w-64 xl:w-80 shadow-lg mx-auto "
+                    className="w-60 sm:w-64 xl:w-80 shadow-lg mx-auto rounded  object-contain"
                   />
                   <div className="absolute top-4 right-4 bg-purple-500 text-white px-3 py-1 rounded-full font-semibold text-xl">
                     {new Intl.NumberFormat("es-CO", {
@@ -325,7 +325,7 @@ const HomePage = () => {
                 <img
                   src={product.images[0].image_url}
                   alt={product.name}
-                  className="w-60 sm:w-64 xl:w-80 shadow-lg mx-auto "
+                  className="w-60 sm:w-64 xl:w-80 shadow-lg mx-auto  rounded object-contain"
                 />
                 <div className="p-6">
                   <div className="flex items-center mb-2">
