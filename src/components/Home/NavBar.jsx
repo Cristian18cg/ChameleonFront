@@ -335,25 +335,24 @@ export const NavBar = () => {
         className="  m-2.5  md:block w-auto"
         
       />
-      <div className="flex items-center gap-3"></div>
       {isLoggedIn ? (
         <>
           <div className="p-menuitem-content">
             <a
-              className="flex align-items-center p-menuitem p-3 mt-4"
+              className="flex align-items-center p-menuitem md:p-3 mt-6 md:mt-3"
               onClick={() => {
                 logout();
               }}
             >
-              <span className="pi pi-sign-out p-menuitem-icon" />
-              <span className="p-menuitem-text mx-2">Cerrar Sesion</span>
+              <span className="pi pi-sign-out p-menuitem-icon " style={{fontSize:"1rem"}} />
+              <span className="p-menuitem-text mx-2 hidden md:block">Cerrar Sesion</span>
             </a>
           </div>
           <Avatar
             shape="circle"
             size="large"
             label={usuario ? usuario.charAt(0).toUpperCase() : ""}
-            className="ml-2 mt-2 transition duration-300 ease-in-out cursor-pointer bg-green-400 bg-opacity-55 text-white"
+            className="md:ml-2 mt-2 transition duration-300 ease-in-out cursor-pointer bg-green-400 bg-opacity-55 text-white"
           />
         </>
       ) : (
