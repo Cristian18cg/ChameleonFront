@@ -44,7 +44,6 @@ export const Router_Home = () => {
               element={<PoliticaPrivacidad />}
             />
           </Routes>
-          <Footer />
         </Router>
       ) : (
         <Router>
