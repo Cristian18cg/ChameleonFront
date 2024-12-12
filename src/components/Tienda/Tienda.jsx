@@ -202,56 +202,56 @@ export const Tienda = () => {
               />
             </div>
 
-            
             {/* Unidades y botón de agregar al carrito */}
             <div className="mt-1 flex flex-col justify-center items-center w-full">
               {/* Precio */}
-            <div className="flex  flex-col justify-center lg:mx-24 mb-3">
-              <div
-                className={`grid ${
-                  product.discount_percentage && product.discount_percentage > 0
-                    ? "grid-cols-1 md:grid-cols-2  lg:gap-5"
-                    : "grid-cols-1"
-                }`}
-              >
-                {product.discount_percentage &&
-                  product.discount_percentage > 0 && (
-                    <div className="flex justify-center">
-                      <span className="text-lg md:text-xl font-semibold text-red-400 line-through md:mt-1 lg:mx-2  ">
-                        {new Intl.NumberFormat("es-CO", {
-                          style: "currency",
-                          currency: "COP",
-                          minimumFractionDigits: 0,
-                          maximumFractionDigits: 2,
-                        }).format(product.price)}
-                      </span>
-                    </div>
-                  )}
-
+              <div className="flex  flex-col justify-center lg:mx-24 mb-3">
                 <div
-                  className={`flex ${
+                  className={`grid ${
                     product.discount_percentage &&
                     product.discount_percentage > 0
-                      ? "justify-start"
-                      : "justify-center"
+                      ? "grid-cols-1 md:grid-cols-2  lg:gap-5"
+                      : "grid-cols-1"
                   }`}
                 >
-                  <span className=" text-2xl md:text-3xl font-semibold text-gray-900">
-                    {new Intl.NumberFormat("es-CO", {
-                      style: "currency",
-                      currency: "COP",
-                      minimumFractionDigits: 0,
-                      maximumFractionDigits: 2,
-                    }).format(
-                      product.discount_percentage &&
-                        product.discount_percentage > 0
-                        ? product.discount_price
-                        : product.price
+                  {product.discount_percentage &&
+                    product.discount_percentage > 0 && (
+                      <div className="flex justify-center">
+                        <span className="text-lg md:text-xl font-semibold text-red-400 line-through md:mt-1 lg:mx-2  ">
+                          {new Intl.NumberFormat("es-CO", {
+                            style: "currency",
+                            currency: "COP",
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 2,
+                          }).format(product.price)}
+                        </span>
+                      </div>
                     )}
-                  </span>
+
+                  <div
+                    className={`flex ${
+                      product.discount_percentage &&
+                      product.discount_percentage > 0
+                        ? "justify-start"
+                        : "justify-center"
+                    }`}
+                  >
+                    <span className=" text-2xl md:text-3xl font-semibold text-gray-900">
+                      {new Intl.NumberFormat("es-CO", {
+                        style: "currency",
+                        currency: "COP",
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 2,
+                      }).format(
+                        product.discount_percentage &&
+                          product.discount_percentage > 0
+                          ? product.discount_price
+                          : product.price
+                      )}
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
               <InputNumber
                 inputId="horizontal-buttons"
                 value={unidades[product.id] || 0}
@@ -309,13 +309,20 @@ export const Tienda = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <i className="pi pi-tag text-gray-500"></i>
-              <span className="font-semibold text-gray-700 text-sm md:text-lg"  onClick={() => {}}>
+              <span
+                className="font-semibold text-gray-700 text-sm md:text-lg"
+                onClick={() => {}}
+              >
                 {product.categories && product.categories.length > 0
                   ? product.categories.join(", ")
                   : "Sin categoría"}
               </span>
             </div>
-            <Tag value={getMessage(product)} severity={getSeverity(product)} className="tag-tienda"/>
+            <Tag
+              value={getMessage(product)}
+              severity={getSeverity(product)}
+              className="tag-tienda"
+            />
           </div>
 
           {/* Imagen y nombre del producto */}
@@ -419,63 +426,61 @@ export const Tienda = () => {
           </div>
 
           {/* Unidades y botón de agregar al carrito */}
-          <div
-  className="mt-1 flex  gap-1 justify-between md:items-center md:flex-row md:justify-center md:gap-2 w-full"
->
-  {/* InputNumber en dispositivos móviles */}
-  <div className="md:hidden">
-    <InputNumber
-      inputId="horizontal-buttons"
-      value={unidades[product.id] || 0}
-      onValueChange={(e) => handleUnitChange(product.id, e.value)}
-      showButtons
-      min={product.stock === 0 ? 0 : 1}
-      disabled={product.stock === 0}
-      max={product.stock}
-      decrementButtonClassName="p-button-danger"
-      incrementButtonClassName="p-button-success"
-      className="button-number"
-    />
-  </div>
+          <div className="mt-1 flex   justify-between md:items-center md:flex-row md:justify-center md:gap-2 w-full">
+            {/* InputNumber en dispositivos móviles */}
+            <div className="md:hidden">
+              <InputNumber
+                inputId="horizontal-buttons"
+                value={unidades[product.id] || 0}
+                onValueChange={(e) => handleUnitChange(product.id, e.value)}
+                showButtons
+                min={product.stock === 0 ? 0 : 1}
+                disabled={product.stock === 0}
+                max={product.stock}
+                decrementButtonClassName="p-button-danger"
+                incrementButtonClassName="p-button-success"
+                className="button-number"
+              />
+            </div>
 
-  {/* InputNumber en dispositivos de escritorio */}
-  <div className="hidden md:flex md:w-1/4 ">
-    <InputNumber
-      inputId="horizontal-buttons"
-      value={unidades[product.id] || 0}
-      onValueChange={(e) => handleUnitChange(product.id, e.value)}
-      showButtons
-      min={product.stock === 0 ? 0 : 1}
-      max={product.stock}
-      disabled={product.stock === 0}
-      buttonLayout="horizontal"
-      decrementButtonClassName="p-button-danger"
-      incrementButtonClassName="p-button-success"
-      incrementButtonIcon="pi pi-plus"
-      decrementButtonIcon="pi pi-minus"
-      className="input-number-cart"
-    />
-  </div>
+            {/* InputNumber en dispositivos de escritorio */}
+            <div className="hidden md:flex md:w-1/4 ">
+              <InputNumber
+                inputId="horizontal-buttons"
+                value={unidades[product.id] || 0}
+                onValueChange={(e) => handleUnitChange(product.id, e.value)}
+                showButtons
+                min={product.stock === 0 ? 0 : 1}
+                max={product.stock}
+                disabled={product.stock === 0}
+                buttonLayout="horizontal"
+                decrementButtonClassName="p-button-danger"
+                incrementButtonClassName="p-button-success"
+                incrementButtonIcon="pi pi-plus"
+                decrementButtonIcon="pi pi-minus"
+                className="input-number-cart"
+              />
+            </div>
 
-  {/* Botón "Agregar" */}
-  <Button
-    label={isProductoEnCarrito(product.id) ? "Agregado" : "Agregar"}
-    icon={
-      isProductoEnCarrito(product.id)
-        ? "pi pi-check"
-        : "pi pi-cart-plus"
-    }
-    className={`p-button ${
-      isProductoEnCarrito(product.id)
-        ? "p-button-success"
-        : "p-button-primary"
-    }  md:w-full  md:min-w-36 xl:min-w-64`}
-    disabled={isProductoEnCarrito(product.id) || product.stock === 0}
-    onClick={() =>
-      agregarAlCarrito(product, unidades[product.id] || 1)
-    }
-  />
-</div>
+            {/* Botón "Agregar" */}
+            <Button
+              label={isProductoEnCarrito(product.id) ? "Agregado" : "Agregar"}
+              icon={
+                isProductoEnCarrito(product.id)
+                  ? "pi pi-check"
+                  : "pi pi-cart-plus"
+              }
+              className={`p-button ${
+                isProductoEnCarrito(product.id)
+                  ? "p-button-success"
+                  : "p-button-primary"
+              } w-full mx-1 md:w-full  md:min-w-36 xl:min-w-64`}
+              disabled={isProductoEnCarrito(product.id) || product.stock === 0}
+              onClick={() =>
+                agregarAlCarrito(product, unidades[product.id] || 1)
+              }
+            />
+          </div>
         </div>
       </div>
     );
