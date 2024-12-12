@@ -352,7 +352,7 @@ export const NavBar = () => {
             shape="circle"
             size="large"
             label={usuario ? usuario.charAt(0).toUpperCase() : ""}
-            className="md:ml-2 mt-2 transition duration-300 ease-in-out cursor-pointer bg-green-400 bg-opacity-55 text-white"
+            className=" mt-2 transition duration-300 ease-in-out cursor-pointer bg-green-400 bg-opacity-55 text-white"
           />
         </>
       ) : (
