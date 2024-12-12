@@ -2,7 +2,7 @@ import React from 'react';
 
 const TerminosCondiciones = () => {
     return (
-        <div className="card mt-24 px-96 py-10   bg-gray-50 rounded-lg shadow-lg">
+        <div className="card mt-24 p-2 md:px-96 md:py-10   bg-gray-50 rounded-lg shadow-lg">
             <h1 className="font-bold text-6xl text-center text-green-600">Términos y Condiciones</h1>
             <p className="text-gray-700 text-sm mt-4">Última actualización: [12/12/2024]</p>
 
