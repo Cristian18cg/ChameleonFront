@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import useControl from "../../../../hooks/useControl";
+import useControl from "../../../hooks/useControl";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 

@@ -209,8 +209,7 @@ const LoginProvider = ({ children }) => {
           return Swal.fire({
             icon: "error",
             title: "Error de red",
-            text:
-              "No se puede conectar al servidor. Por favor, verifica tu conexión.",
+            text: "No se puede conectar al servidor. Por favor, verifica tu conexión.",
           });
         }
 
@@ -343,7 +342,6 @@ const LoginProvider = ({ children }) => {
   const departments = useCallback(async () => {
     try {
       const respuesta = await clienteAxios.get(`users/info/departments/`);
-      console.log(respuesta);
       if (respuesta.status !== 200) {
         // Cambiado a 205 porque es el código que esperas en la respuesta
         return Swal.fire({
@@ -467,7 +465,7 @@ const LoginProvider = ({ children }) => {
     async (usuario) => {
       try {
         setloadingEdicion(true);
-console.log(usuario)      // Construir dinámicamente el payload solo con los campos que han cambiado
+        console.log(usuario); // Construir dinámicamente el payload solo con los campos que han cambiado
         const payload = {
           ...(usuario.correo !== user.email && { email: usuario.correo }),
           ...(usuario.nombres !== user.first_name && {
@@ -482,9 +480,10 @@ console.log(usuario)      // Construir dinámicamente el payload solo con los ca
           ...(usuario.is_superuser !== user.is_superuser && {
             is_superuser: usuario.is_superuser,
           }),
-          ...(usuario.contrasena === usuario.confirmarContrasena && usuario.contrasena  && {
-            password: usuario.contrasena,
-          }),
+          ...(usuario.contrasena === usuario.confirmarContrasena &&
+            usuario.contrasena && {
+              password: usuario.contrasena,
+            }),
           profile: {
             ...(usuario.direccion !== user.profile.address && {
               address: usuario.direccion,
@@ -539,8 +538,7 @@ console.log(usuario)      // Construir dinámicamente el payload solo con los ca
           return Swal.fire({
             icon: "error",
             title: "Error de red",
-            text:
-              "No se puede conectar al servidor. Por favor, verifica tu conexión.",
+            text: "No se puede conectar al servidor. Por favor, verifica tu conexión.",
           });
         }
 
@@ -586,6 +584,77 @@ console.log(usuario)      // Construir dinámicamente el payload solo con los ca
     },
     [user, token]
   );
+  const ActualizarPerfil = useCallback(
+    async (formData) => {
+      try {
+        const payload = {
+          first_name: formData.firstName,
+          last_name: formData.lastName,
+          email: formData.email,
+          password: formData.password !== "********" ? formData.password : undefined,
+          profile: { // Agrupa los datos del perfil aquí
+            phone: formData.phone,
+            type_document: formData.type_document,
+            number_document: formData.idNumber,
+            city: formData.city,
+            department: formData.department,
+            address: formData.address,
+          },
+        };
+  
+        // Compara con `jsonlogin` para enviar solo los campos modificados
+        const filteredPayload = {};
+        for (const key in payload) {
+          if (typeof payload[key] === "object" && payload[key] !== null) {
+            const filteredSubPayload = {};
+            for (const subKey in payload[key]) {
+              if (payload[key][subKey] !== jsonlogin[subKey]) {
+                filteredSubPayload[subKey] = payload[key][subKey];
+              }
+            }
+            if (Object.keys(filteredSubPayload).length > 0) {
+              filteredPayload[key] = filteredSubPayload;
+            }
+          } else if (payload[key] !== jsonlogin[key]) {
+            filteredPayload[key] = payload[key];
+          }
+        }
+  
+        const response = await clienteAxios.put(
+          `users/update-profile/`,
+          filteredPayload,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+  
+        if (response.status === 200) {
+          showSuccess(`Se editó con éxito.`);
+        }
+        console.log("response ", response);
+      } catch (error) {
+        console.error("Error al actualizar el perfil:", error);
+        if (error.response) {
+          let mensajeError = "";
+          for (const campo in error.response.data) {
+            const erroresCampo = error.response.data[campo];
+            mensajeError += Array.isArray(erroresCampo)
+              ? erroresCampo.join(", ") + "\n"
+              : erroresCampo + "\n";
+          }
+          Swal.fire("Error", mensajeError || "Ocurrió un error.", "error");
+        } else {
+          Swal.fire("Error", "No se pudo actualizar el perfil.", "error");
+        }
+      }
+    },
+    [user, token, jsonlogin]
+  );
+  
+
   const contextValue = useMemo(() => {
     return {
       // ... tus valores de contexto
@@ -613,6 +682,7 @@ console.log(usuario)      // Construir dinámicamente el payload solo con los ca
       setUsuarioDialog,
       EditarUsuario,
       setloadingEdicion,
+      ActualizarPerfil,
       loadingEdicion,
       loadingRegistro,
       UsuarioDialog,
@@ -659,6 +729,7 @@ console.log(usuario)      // Construir dinámicamente el payload solo con los ca
     setUsuarioDialog,
     EditarUsuario,
     setloadingEdicion,
+    ActualizarPerfil,
     loadingEdicion,
     loadingRegistro,
     UsuarioDialog,

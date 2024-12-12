@@ -10,7 +10,7 @@ import { ConfigDomicilio } from "../Configuracion/Domicilio/ConfigDomicilio";
 import { ListaPedidos } from "../Pedidos/ListaPedidos";
 import OrderDashboard from "../Pedidos/usuarios/PedidosUsuario";
 import UserProfile from "../Configuracion/Usuario/InfoUsuario";
-import { ListUsers } from "../Configuracion/Domicilio/Usuarios/ListUsers";
+import { ListUsers } from "../Configuracion/Usuario/ListUsers";
 import  Imagenes  from "../Configuracion/Imagenes/Home/Imagenes_home";
 export const Router_Home = () => {
   const { admin } = useControl();

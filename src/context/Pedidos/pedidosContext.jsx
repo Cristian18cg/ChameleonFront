@@ -671,6 +671,69 @@ const PedidosProvider = ({ children }) => {
     [token,listaPedidos]
   );
 
+  const CancelarPedido = useCallback(
+    async (idpedido) => {
+      try {
+        setloadingPedidosLista(true);
+  
+        // Realizar la solicitud para cancelar el pedido
+        const response = await clienteAxios.post(
+          `orders/orders/${idpedido}/cancel/`,
+          {}, // Cuerpo vacío, ya que no se necesita enviar datos adicionales
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+  
+        // Verificar si hay un mensaje en la respuesta
+        if (response.data.detail) {
+          showSuccess(response.data.detail);
+        } else {
+          showSuccess("El pedido fue cancelado correctamente.");
+        }
+  
+        // Actualizar la lista de pedidos
+        obtenerProductos();
+      } catch (error) {
+        setloadingPedidosLista(false);
+  
+        // Manejo de errores del backend
+        if (error.response) {
+          const status = error.response.status;
+          const data = error.response.data;
+  
+          console.error("Error eliminando el pedido:", data);
+  
+          // Mostrar mensajes específicos según el error
+          if (status === 400 && data.detail) {
+            showError(data.detail); // Mensaje de validación del backend
+          } else if (status === 404) {
+            showError("El pedido no se encontró o no pertenece al usuario.");
+          } else if (status === 500) {
+            showError(
+              "Ocurrió un error interno en el servidor. Intente más tarde."
+            );
+          } else {
+            showError(
+              `Error inesperado (${status}): ${data.detail || "Intente nuevamente."}`
+            );
+          }
+        } else {
+          // Manejo de errores sin respuesta del servidor (ej. desconexión)
+          console.error("Error de conexión o solicitud:", error);
+          showError(
+            "No se pudo conectar con el servidor. Verifique su conexión e intente nuevamente."
+          );
+        }
+      } finally {
+        setloadingPedidosLista(false);
+      }
+    },
+    [token, listarPedidos]
+  );
+  
 
 
 
@@ -693,6 +756,7 @@ const PedidosProvider = ({ children }) => {
       loadingEditar,
       loadingPedidosUsuario,
       pedidosUsuario,
+      CancelarPedido,
       listarPedidosUsuario,
       setlistaPedidosUsuario,
       setloadingPedidosUsuario,
@@ -743,6 +807,7 @@ const PedidosProvider = ({ children }) => {
     loadingEditar,
     loadingPedidosUsuario,
     pedidosUsuario,
+    CancelarPedido,
     listarPedidosUsuario,
     setlistaPedidosUsuario,
     setloadingPedidosUsuario,

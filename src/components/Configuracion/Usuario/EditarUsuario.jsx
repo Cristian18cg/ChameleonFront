@@ -6,7 +6,7 @@ import { Password } from "primereact/password";
 import { Dropdown } from "primereact/dropdown";
 import { Toast } from "primereact/toast";
 import { InputMask } from "primereact/inputmask";
-import useControl from "../../../../hooks/useControl";
+import useControl from "../../../hooks/useControl";
 import { json } from "react-router-dom";
 import { InputSwitch } from "primereact/inputswitch";
 

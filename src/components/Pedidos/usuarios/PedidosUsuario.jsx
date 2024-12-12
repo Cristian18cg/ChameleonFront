@@ -8,9 +8,19 @@ import {
 import { BsBoxSeam, BsTruck, BsCheckCircle } from "react-icons/bs";
 import { MdError } from "react-icons/md";
 import useControlPedidos from "../../../hooks/useControlPedidos";
+import useControl from "../../../hooks/useControl";
+import { Button } from "primereact/button";
+import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
+import { MdOutlineCancel } from "react-icons/md";
 const OrderDashboard = () => {
-  const { listarPedidosUsuario, pedidosUsuario, loadingPedidosUsuario } =
-    useControlPedidos();
+  const {
+    listarPedidosUsuario,
+    pedidosUsuario,
+    loadingPedidosUsuario,
+    CancelarPedido,
+  } = useControlPedidos();
+  const { token } = useControl();
+  const [isModalOpen, setisModalOpen] = useState(false);
   const [orders, setOrders] = useState([]);
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [error, setError] = useState(null);
@@ -18,15 +28,14 @@ const OrderDashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const ordersPerPage = 5;
-
+  const [pedidoEliminar, setpedidoEliminar] = useState(null);
   useEffect(() => {
-    if (pedidosUsuario.length === 0) {
+    if (pedidosUsuario.length === 0 && token) {
       listarPedidosUsuario();
     } else {
       setOrders(pedidosUsuario);
     }
-    console.log(pedidosUsuario);
-  }, [pedidosUsuario]);
+  }, [pedidosUsuario, token]);
 
   useEffect(() => {
     try {
@@ -67,7 +76,7 @@ const OrderDashboard = () => {
       case "COMPLETED":
         return <BsCheckCircle className="text-green-500" />;
       case "CANCELLED":
-        return <BsCheckCircle className="text-green-500" />;
+        return <MdOutlineCancel className="text-red-500" />;
       default:
         return null;
     }
@@ -92,6 +101,23 @@ const OrderDashboard = () => {
     }
   };
 
+  const accept = () => {
+    CancelarPedido(pedidoEliminar);
+  };
+
+  const reject = () => {};
+
+  const confirm1 = (id) => {
+    confirmDialog({
+      message: `Estas seguro de eliminar el pedido #${id}`,
+      header: " Confirmación",
+      icon: "pi pi-exclamation-triangle",
+      defaultFocus: "accept",
+      accept,
+      reject,
+    });
+  };
+
   const MobileOrderCard = ({ order }) => (
     <div className="bg-white p-4 rounded-lg shadow-md mb-4">
       <div className="flex justify-between items-center mb-3">
@@ -104,7 +130,7 @@ const OrderDashboard = () => {
         </div>
       </div>
       <div className="mb-3">
-        <p className="text-sm text-gray-600"> 
+        <p className="text-sm text-gray-600">
           Fecha creación:{" "}
           {new Date(order.created_at).toLocaleString("es-ES", {
             dateStyle: "medium",
@@ -112,8 +138,8 @@ const OrderDashboard = () => {
           })}
         </p>
         <p className="text-sm font-medium text-gray-900 mt-1">
-          Total: 
-           {new Intl.NumberFormat("es-CO", {
+          Total:
+          {new Intl.NumberFormat("es-CO", {
             style: "currency",
             currency: "COP",
             minimumFractionDigits: 2,
@@ -168,6 +194,20 @@ const OrderDashboard = () => {
             </div>
           </div>
         ))}
+        {order.status === "PENDING" && (
+          <Button
+            onClick={() => {
+              confirm1(order.id);
+              setpedidoEliminar(order.id);
+              setisModalOpen(true);
+            }}
+            className="w-full py-2 px-4 bg-red-600 text-white rounded-lg hover:bg-red-600"
+            label=" Cancelar Pedido"
+            icon="pi pi-trash"
+            iconPosition="left"
+            severity="danger"
+          ></Button>
+        )}
       </div>
     </div>
   );
@@ -192,7 +232,7 @@ const OrderDashboard = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Mis pedidos</h1>
-
+      {isModalOpen && <ConfirmDialog />}
       <div className="mb-6 flex flex-col md:flex-row gap-4">
         <div className="relative flex-1">
           <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -241,6 +281,9 @@ const OrderDashboard = () => {
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Fecha creación
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Cancelar pedido
                 </th>
               </tr>
             </thead>
@@ -314,6 +357,24 @@ const OrderDashboard = () => {
                       dateStyle: "medium",
                       timeStyle: "short",
                     })}
+                  </td>
+                  <td className="   whitespace-nowrap text-sm text-gray-500">
+                    {order.status === "PENDING" && (
+                      <Button
+                        onClick={() => {
+                          confirm1(order.id);
+                          setpedidoEliminar(order.id);
+                          setisModalOpen(true);
+                        }}
+                 
+                     
+                        icon="pi pi-trash"
+                        outlined
+                        rounded
+                        className="mx-10"
+                        severity="danger"
+                      ></Button>
+                    )}
                   </td>
                 </tr>
               ))}

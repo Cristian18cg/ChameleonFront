@@ -11,6 +11,9 @@ import { Tree } from "primereact/tree";
 import { useNavigate } from "react-router-dom";
 import { InputNumber } from "primereact/inputnumber";
 import { Skeleton } from "primereact/skeleton";
+
+import { Sidebar } from "primereact/sidebar";
+
 export const Tienda = () => {
   const navigate = useNavigate();
 
@@ -43,7 +46,7 @@ export const Tienda = () => {
   const [selectedKey, setSelectedKey] = useState("");
   const [disabledFiltroCate, setdisabledFiltroCate] = useState(true);
   const [hoverStates, setHoverStates] = useState({});
-
+  const [visible, setVisible] = useState(false);
   const handleMouseEnter = (id) => {
     setHoverStates((prev) => ({ ...prev, [id]: true }));
   };
@@ -169,10 +172,12 @@ export const Tienda = () => {
           <div className="flex flex-col sm:flex-row justify-between items-center xl:items-start flex-1 gap-4">
             {/* Información del producto */}
             <div className="flex flex-col items-center sm:items-start gap-3">
-              <div className="text-2xl font-bold text-gray-900 hover:cursor-pointer"
+              <div
+                className="text-2xl font-bold text-gray-900 hover:cursor-pointer"
                 onClick={() => {
                   navigate(`/tienda/${product.id}`);
-                }}>
+                }}
+              >
                 {product.name}
               </div>
               <Rating
@@ -299,11 +304,7 @@ export const Tienda = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <i className="pi pi-tag text-gray-500"></i>
-              <span
-                className="font-semibold text-gray-700"
-                onClick={() => {
-                }}
-              >
+              <span className="font-semibold text-gray-700" onClick={() => {}}>
                 {product.categories && product.categories.length > 0
                   ? product.categories.join(", ")
                   : "Sin categoría"}
@@ -333,7 +334,7 @@ export const Tienda = () => {
                 />
                 {product?.images[1] && (
                   <img
-                    className={`w-full h-auto absolute inset-0 shadow-lg rounded-lg transition-opacity duration-400 ${
+                    className={`w-full h-auto absolute inset-0 shadow-lg  rounded-lg transition-opacity duration-400 ${
                       isHovering ? "opacity-100" : "opacity-0"
                     }`}
                     src={product?.images[1]?.image_url}
@@ -554,7 +555,14 @@ export const Tienda = () => {
 
   const header = () => {
     return (
-      <div className="flex justify-between  bg-transparent unded-lg ">
+      <div className="flex  justify-between w-full  bg-transparent unded-lg ">
+        <Button
+        icon={"pi pi-filter"}
+          label="Filtros"
+          className="mb-2 md:hidden bg-transparent text-gray-600 border-gray-300"
+          onClick={() => setVisible(true)}
+        />
+
         <Dropdown
           options={sortOptions}
           value={sortKey}
@@ -586,9 +594,10 @@ export const Tienda = () => {
           <div className="grid md:grid-cols-2 grid-cols-1">
             <Button
               label="Filtrar Categoria"
-              className="bg-green-500 border-green-600 hover:bg-green-400 hover:border-green-500"
+              className="mb-2  mt-2 md:mt-0 md:mb-0 bg-green-500 border-green-600 hover:bg-green-400 hover:border-green-500"
               onClick={() => {
                 filtrarCategoria(selectedKey);
+                setVisible(false);
               }}
             />
             <Button
@@ -599,6 +608,7 @@ export const Tienda = () => {
                 obtenerProductos();
                 setdisabledFiltroCate(true);
                 setSelectedKey(null);
+                setVisible(false);
               }}
               className="md:mx-2"
             />
@@ -610,6 +620,28 @@ export const Tienda = () => {
   return (
     <div className="mt-20 md:mt-24 min-w-full flex justify-center overflow-hidden">
       <div className="  md:w-5/6 grid grid-cols-2  sm:grid-cols-12 md:grid-cols-12 ">
+        <div className="md:hidden card flex justify-content-center">
+          <Sidebar
+            visible={visible}
+            onHide={() => setVisible(false)}
+            className="p-0"
+          >
+            <div className="flex justify-center ">
+              <h1 className="font-extrabold text-2xl p-2 rounded-sm">
+                FILTROS
+              </h1>
+            </div>
+            <Tree
+              value={nodeCategoria}
+              selectionMode="single"
+              selectionKeys={selectedKey}
+              onSelectionChange={(e) => setSelectedKey(e.value)}
+              className="w-full md:w-30rem mt-1 "
+              header={headertree}
+              footer={footertree}
+            />
+          </Sidebar>
+        </div>
         <div className=" hidden sm:block col-span-12 sm:col-span-12 md:col-span-3 ">
           <div className="flex justify-center ">
             <h1 className="font-extrabold text-2xl p-2 rounded-sm">FILTROS</h1>

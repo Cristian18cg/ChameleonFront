@@ -11,7 +11,7 @@ import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { Tag } from "primereact/tag";
 import { Skeleton } from "primereact/skeleton";
-import useControl from "../../../../hooks/useControl";
+import useControl from "../../../hooks/useControl";
 import { EliminarUsuario } from "./EliminarUsuario";
 import { EditarUsuario } from "./EditarUsuario";
 export const ListUsers = () => {
