@@ -8,17 +8,20 @@ import { Toast } from "primereact/toast";
 import { InputMask } from "primereact/inputmask";
 import useControl from "../../../hooks/useControl";
 import { json } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { InputSwitch } from "primereact/inputswitch";
 
 export const FormularioRegistro = () => {
+  const navigate = useNavigate();
+
   const {
     registro,
     departments,
     cities,
     departamentos,
     ciudades,
-    loadingRegistro
+    loadingRegistro,
   } = useControl();
   const [selectedDepartment, setSelectedDepartment] = useState(null);
   const toast = useRef(null);
@@ -412,34 +415,32 @@ export const FormularioRegistro = () => {
               checked={usuario.terms_accepted}
               onChange={handleInputChange}
             />
-         
+
             <label htmlFor="terms_accepted">
-              Acepto los 
-              <a
-                href="/ruta-a-terminos"
+              Acepto los
+              <span
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-purple-500 mx-1"
+                onClick={() => {
+                  navigate("/terminos_y_condiciones");
+                }}
               >
-                 términos y condiciones
-              </a>
+                términos y condiciones
+              </span>
             </label>
           </div>
-          
         </div>
         {errores.terms_accepted && (
-            <small className="p-error min-w-full">
-              {errores.terms_accepted}
-            </small>
-          )}
+          <small className="p-error min-w-full">{errores.terms_accepted}</small>
+        )}
         {/* Botón de Registro */}
         <div className=" md:col-span-2 flex justify-center mt-4">
           <Button
-          loading={loadingRegistro}
+            loading={loadingRegistro}
             type="submit"
             label="Registrarse"
             className="w-full bg-purple-500 border-purple-400 hover:bg-purple-800  "
-            
           />
         </div>
       </form>

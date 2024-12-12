@@ -11,7 +11,10 @@ import { ListaPedidos } from "../Pedidos/ListaPedidos";
 import OrderDashboard from "../Pedidos/usuarios/PedidosUsuario";
 import UserProfile from "../Configuracion/Usuario/InfoUsuario";
 import { ListUsers } from "../Configuracion/Usuario/ListUsers";
-import  Imagenes  from "../Configuracion/Imagenes/Home/Imagenes_home";
+import Terminos from "../Terminos/Terminos";
+import Footer from "../Home/Footer";
+import PoliticaPrivacidad from "../Terminos/PoliticaPrivacidad";
+import Imagenes from "../Configuracion/Imagenes/Home/Imagenes_home";
 export const Router_Home = () => {
   const { admin } = useControl();
   const [Manager, setManager] = useState(false);
@@ -35,7 +38,13 @@ export const Router_Home = () => {
             <Route path="/configuracion/usuarios" element={<ListUsers />} />
             <Route path="/configuracion/imagenes" element={<Imagenes />} />
             <Route path="/pedidos/lista_pedidos" element={<ListaPedidos />} />
+            <Route path="/terminos_y_condiciones" element={<Terminos />} />
+            <Route
+              path="/politicas_y_privacidad"
+              element={<PoliticaPrivacidad />}
+            />
           </Routes>
+          <Footer />
         </Router>
       ) : (
         <Router>
@@ -46,7 +55,14 @@ export const Router_Home = () => {
             <Route path="/tienda/:id" element={<ProductoDetallado />} />
             <Route path="/lista_pedidos" element={<OrderDashboard />} />
             <Route path="/perfil" element={<UserProfile />} />
+            <Route path="/terminos_y_condiciones" element={<Terminos />} />
+            <Route
+              path="/politicas_y_privacidad"
+              element={<PoliticaPrivacidad />}
+            />
           </Routes>
+          <Footer />
+
         </Router>
       )}
     </div>
