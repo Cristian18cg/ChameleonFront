@@ -15,6 +15,7 @@ const ProductosProvider = ({ children }) => {
   const [loadingProducts, setloadingProducts] = useState(true);
   const categoriapadre = [{ name: "Sin categoria", id: null }];
   const [productDialog, setProductDialog] = useState(false);
+  const [loadingProducto, setloadingProducto] = useState(true);
   const [deleteProductDialog, setDeleteProductDialog] = useState(false);
   let emptyProduct = {
     id: null,
@@ -310,6 +311,7 @@ const ProductosProvider = ({ children }) => {
   );
   const obtenerProducto = useCallback(
     async (producto) => {
+      setloadingProducto(true);
       if (!producto) {
         Swal.fire({
           icon: "error",
@@ -325,7 +327,10 @@ const ProductosProvider = ({ children }) => {
         );
 
         setProducto(response.data);
+        setloadingProducto(false);
       } catch (error) {
+        setloadingProducto(false);
+
         console.error("Error obteniendo el producto:", error);
 
         if (error.response) {
@@ -582,6 +587,8 @@ const ProductosProvider = ({ children }) => {
       setProducto,
       setbtndelCate,
       setloadingProducts,
+      setloadingProducto,
+      loadingProducto, 
       loadingProducts,
       btndelCate,
       producto,
@@ -611,6 +618,8 @@ const ProductosProvider = ({ children }) => {
     editarProducto,
     setbtndelCate,
     setloadingProducts,
+    setloadingProducto,
+    loadingProducto, 
     loadingProducts,
     btndelCate,
     producto,

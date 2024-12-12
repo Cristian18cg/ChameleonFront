@@ -261,8 +261,8 @@ const OrderDashboard = () => {
       </div>
 
       {/* Desktop View */}
-      <div className="hidden md:block bg-white rounded-lg shadow-lg overflow-hidden">
-        <div className="overflow-x-auto">
+      <div className="hidden md:block bg-white rounded-lg shadow-lg overflow-hidden ">
+        <div className="overflow-x-auto p-10">
           <table className="w-full" role="table">
             <thead className="bg-gray-50">
               <tr>
@@ -304,12 +304,13 @@ const OrderDashboard = () => {
                           <img
                             src={`${product.images[0]?.image_url}`}
                             alt={product.product_name}
-                            className="w-10 h-12 object-cover rounded"
+                            className="w-20 object-cover rounded"
                             onError={(e) => {
                               e.target.src =
                                 "https://images.unsplash.com/photo-1560393464-5c69a73c5770";
                             }}
                           />
+                          <div className="flex flex-col gap-2">
                           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                             {product.product_name} (x{product.quantity})
                           </span>
@@ -331,6 +332,7 @@ const OrderDashboard = () => {
                               maximumFractionDigits: 2,
                             }).format(product.subtotal)}
                           </span>
+                          </div>
                         </div>
                       ))}
                     </div>

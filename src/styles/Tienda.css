@@ -1,25 +1,59 @@
-.data-view-custom .p-dataview-header{
- background-color: transparent;
+.data-view-custom .p-dataview-header {
+  background-color: transparent;
 }
 .input-number-cart .p-inputnumber-input {
-    max-width:35% !important;
-    text-align: center;
-    border-radius: 0;
-
+  max-width: 15% !important;
+  text-align: center;
+  border-radius: 0;
+  font-size: 1rem;
+  border-left: none !important;
+  border-right: none !important;
 }
-.input-number-cart{
-    justify-content: center;
-    height: 2rem;
+
+.input-number-cart {
+  height: 2.6rem;
 }
 .input-number-cart .pi {
-font-size: 0.7rem;
+  font-size: 0.8rem;
+}
+.input-number-cart .p-button-success {
+  background-color: rgb(6, 168, 76) !important;
+
+  border-color: transparent;
+  border-left: none;
+  width: 2rem;
+}
+
+.input-number-cart .p-button-danger {
+  width: 2rem;
+}
+.input-number-cart .p-inputtext:enabled {
+  box-shadow: none !important;
+}
+.button-number .p-inputnumber-input {
+  width: 2.2rem !important;
+  text-align: center;
+}
+.button-number .p-button-success {
+  width: 1.3rem !important;
+  background-color: rgb(4, 139, 4) !important;
+  border: 0;
+}
+.button-number .p-button-danger {
+  width: 1.3rem !important;
+}
+.tag-tienda {
+  font-size: 10px;
+}
+
+.input-number-cart2{
+    justify-content: center;
 
 }
-.input-number-cart .p-button-success{
-    border-color: transparent;
- }
+.input-number-cart2 .p-inputnumber-input{
+    justify-content: center;
+    width: 5rem;
+  text-align: center;
 
-  .input-number-cart .p-inputtext:enabled{
-    box-shadow: none!important;
- }
- 
+    
+}

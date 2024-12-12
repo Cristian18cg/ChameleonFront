@@ -11,8 +11,11 @@ import { Tree } from "primereact/tree";
 import { useNavigate } from "react-router-dom";
 import { InputNumber } from "primereact/inputnumber";
 import { Skeleton } from "primereact/skeleton";
-
+import { InputText } from "primereact/inputtext";
 import { Sidebar } from "primereact/sidebar";
+
+import { IconField } from "primereact/iconfield";
+import { InputIcon } from "primereact/inputicon";
 
 export const Tienda = () => {
   const navigate = useNavigate();
@@ -37,6 +40,7 @@ export const Tienda = () => {
     btndelCate,
     setbtndelCate,
   } = useControlProductos();
+  const [globalFilter, setGlobalFilter] = useState("");
   const [products, setProducts] = useState([]);
   const [layout, setLayout] = useState("grid");
   const [sortOrder, setSortOrder] = useState(0);
@@ -158,13 +162,13 @@ export const Tienda = () => {
       <div className="  w-full" key={product.id}>
         <div
           className={classNames(
-            "flex flex-row xl:flex-row xl:items-start p-4 gap-4",
+            "flex flex-row xl:flex-row xl:items-start p-2 md:p-4 gap-4",
             { "border-t border-gray-200": index !== 0 }
           )}
         >
           {/* Imagen del producto */}
           <img
-            className="w-52 sm:w-64 xl:w-40 shadow-lg mx-auto rounded-lg "
+            className="w-40 h-64 sm:w-64 xl:w-48 shadow-lg  mx-auto rounded-lg "
             src={`${product?.images[0].image_url}`}
             alt={product.name}
           />
@@ -198,7 +202,10 @@ export const Tienda = () => {
               />
             </div>
 
-            {/* Precio */}
+            
+            {/* Unidades y botón de agregar al carrito */}
+            <div className="mt-1 flex flex-col justify-center items-center w-full">
+              {/* Precio */}
             <div className="flex  flex-col justify-center lg:mx-24 mb-3">
               <div
                 className={`grid ${
@@ -245,8 +252,6 @@ export const Tienda = () => {
                 </div>
               </div>
             </div>
-            {/* Unidades y botón de agregar al carrito */}
-            <div className="mt-1 flex flex-col justify-center items-center w-full">
               <InputNumber
                 inputId="horizontal-buttons"
                 value={unidades[product.id] || 0}
@@ -260,7 +265,7 @@ export const Tienda = () => {
                 incrementButtonClassName="p-button-success"
                 incrementButtonIcon="pi pi-plus"
                 decrementButtonIcon="pi pi-minus"
-                className="input-number-cart"
+                className="max-w-10 input-number-cart2 "
               />
 
               <Button
@@ -274,7 +279,7 @@ export const Tienda = () => {
                     ? "pi pi-check"
                     : "pi pi-shopping-cart"
                 }
-                className={`p-button mt-2 ${
+                className={`p-button md:mx-30 mt-2 ${
                   isProductoEnCarrito(product.id)
                     ? "p-button-success"
                     : "p-button-primary"
@@ -304,13 +309,13 @@ export const Tienda = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <i className="pi pi-tag text-gray-500"></i>
-              <span className="font-semibold text-gray-700" onClick={() => {}}>
+              <span className="font-semibold text-gray-700 text-sm md:text-lg"  onClick={() => {}}>
                 {product.categories && product.categories.length > 0
                   ? product.categories.join(", ")
                   : "Sin categoría"}
               </span>
             </div>
-            <Tag value={getMessage(product)} severity={getSeverity(product)} />
+            <Tag value={getMessage(product)} severity={getSeverity(product)} className="tag-tienda"/>
           </div>
 
           {/* Imagen y nombre del producto */}
@@ -371,14 +376,14 @@ export const Tienda = () => {
             <div
               className={`grid ${
                 product.discount_percentage && product.discount_percentage > 0
-                  ? "grid-cols-1 md:grid-cols-2 "
+                  ? "grid-cols-2 "
                   : "grid-cols-1"
               }`}
             >
               {product.discount_percentage &&
                 product.discount_percentage > 0 && (
-                  <div className="flex justify-center">
-                    <span className="text-lg md:text-xl font-semibold text-red-400 line-through md:mt-1  ">
+                  <div className="flex justify-center items-center">
+                    <span className="text-sm md:text-xl font-semibold text-red-400 line-through md:mt-1  ">
                       {new Intl.NumberFormat("es-CO", {
                         style: "currency",
                         currency: "COP",
@@ -396,7 +401,7 @@ export const Tienda = () => {
                     : "justify-center"
                 }`}
               >
-                <span className=" text-2xl md:text-3xl font-semibold text-gray-900">
+                <span className=" text-xl md:text-2xl  xl:text-3xl font-semibold text-gray-900">
                   {new Intl.NumberFormat("es-CO", {
                     style: "currency",
                     currency: "COP",
@@ -414,45 +419,63 @@ export const Tienda = () => {
           </div>
 
           {/* Unidades y botón de agregar al carrito */}
-          <div className="mt-1 flex flex-col justify-center items-center w-full">
-            <InputNumber
-              inputId="horizontal-buttons"
-              value={unidades[product.id] || 0}
-              onValueChange={(e) => handleUnitChange(product.id, e.value)}
-              showButtons
-              min={product.stock === 0 ? 0 : 1}
-              disabled={product.stock === 0}
-              max={product.stock}
-              buttonLayout="horizontal"
-              decrementButtonClassName="p-button-danger"
-              incrementButtonClassName="p-button-success"
-              incrementButtonIcon="pi pi-plus"
-              decrementButtonIcon="pi pi-minus"
-              className="input-number-cart"
-            />
+          <div
+  className="mt-1 flex  gap-1 justify-between md:items-center md:flex-row md:justify-center md:gap-2 w-full"
+>
+  {/* InputNumber en dispositivos móviles */}
+  <div className="md:hidden">
+    <InputNumber
+      inputId="horizontal-buttons"
+      value={unidades[product.id] || 0}
+      onValueChange={(e) => handleUnitChange(product.id, e.value)}
+      showButtons
+      min={product.stock === 0 ? 0 : 1}
+      disabled={product.stock === 0}
+      max={product.stock}
+      decrementButtonClassName="p-button-danger"
+      incrementButtonClassName="p-button-success"
+      className="button-number"
+    />
+  </div>
 
-            <Button
-              label={
-                isProductoEnCarrito(product.id)
-                  ? "Agregado"
-                  : "Agregar al Carrito"
-              }
-              icon={
-                isProductoEnCarrito(product.id)
-                  ? "pi pi-check"
-                  : "pi pi-shopping-cart"
-              }
-              className={`p-button mt-2 ${
-                isProductoEnCarrito(product.id)
-                  ? "p-button-success"
-                  : "p-button-primary"
-              }`}
-              disabled={isProductoEnCarrito(product.id) || product.stock === 0}
-              onClick={() =>
-                agregarAlCarrito(product, unidades[product.id] || 1)
-              }
-            />
-          </div>
+  {/* InputNumber en dispositivos de escritorio */}
+  <div className="hidden md:flex md:w-1/4 ">
+    <InputNumber
+      inputId="horizontal-buttons"
+      value={unidades[product.id] || 0}
+      onValueChange={(e) => handleUnitChange(product.id, e.value)}
+      showButtons
+      min={product.stock === 0 ? 0 : 1}
+      max={product.stock}
+      disabled={product.stock === 0}
+      buttonLayout="horizontal"
+      decrementButtonClassName="p-button-danger"
+      incrementButtonClassName="p-button-success"
+      incrementButtonIcon="pi pi-plus"
+      decrementButtonIcon="pi pi-minus"
+      className="input-number-cart"
+    />
+  </div>
+
+  {/* Botón "Agregar" */}
+  <Button
+    label={isProductoEnCarrito(product.id) ? "Agregado" : "Agregar"}
+    icon={
+      isProductoEnCarrito(product.id)
+        ? "pi pi-check"
+        : "pi pi-cart-plus"
+    }
+    className={`p-button ${
+      isProductoEnCarrito(product.id)
+        ? "p-button-success"
+        : "p-button-primary"
+    }  md:w-full  md:min-w-36 xl:min-w-64`}
+    disabled={isProductoEnCarrito(product.id) || product.stock === 0}
+    onClick={() =>
+      agregarAlCarrito(product, unidades[product.id] || 1)
+    }
+  />
+</div>
         </div>
       </div>
     );
@@ -552,34 +575,66 @@ export const Tienda = () => {
       </div>
     );
   };
+  // Función para filtrar los productos
+  const filteredProducts = products.filter((product) => {
+    const searchTerm = globalFilter.toLowerCase();
 
+    return (
+      product.name.toLowerCase().includes(searchTerm) || // Filtrar por nombre
+      (product.categories &&
+        product.categories.some((cat) =>
+          cat.toLowerCase().includes(searchTerm)
+        )) || // Filtrar por categoría
+      product.price.toString().includes(searchTerm) // Filtrar por precio
+    );
+  });
   const header = () => {
     return (
-      <div className="flex  justify-between w-full  bg-transparent unded-lg ">
-        <Button
-        icon={"pi pi-filter"}
-          label="Filtros"
-          className="mb-2 md:hidden bg-transparent text-gray-600 border-gray-300"
-          onClick={() => setVisible(true)}
-        />
+      <div className="flex flex-col md:flex-row items-center justify-between w-full bg-transparent gap-2 rounded-lg">
+        <div className="flex justify-between w-full gap-5">
+          {/* Botón para abrir filtros en móvil */}
+          <Button
+            icon={"pi pi-filter"}
+            label="Filtros"
+            className="w-36 md:w-auto md:hidden bg-transparent text-gray-600 border-gray-300"
+            onClick={() => setVisible(true)}
+          />
 
-        <Dropdown
-          options={sortOptions}
-          value={sortKey}
-          optionLabel="label"
-          placeholder="Ordenar por precio"
-          onChange={onSortChange}
-          className=" max-w-52 w-auto p-0 md:w-14rem h-auto sm:w-14rem mx-5"
-        />
+          {/* Campo de búsqueda */}
+          <div className=" w-full md:w-auto ">
+            <IconField iconPosition="left">
+              <InputIcon className="pi pi-search"> </InputIcon>
 
-        <DataViewLayoutOptions
-          layout={layout}
-          className="text-gray-600 botones-tienda"
-          onChange={(e) => setLayout(e.value)}
-        />
+              <InputText
+                value={globalFilter}
+                onChange={(e) => setGlobalFilter(e.target.value)}
+                placeholder="Buscar productos"
+                className="w-auto md:max-w-sm p-inputtext"
+              />
+            </IconField>
+          </div>
+        </div>
+        <div className="flex justify-between  md:justify-end  md:gap-2 w-full">
+          {/* Dropdown para ordenar */}
+          <Dropdown
+            options={sortOptions}
+            value={sortKey}
+            optionLabel="label"
+            placeholder="Ordenar por precio"
+            onChange={onSortChange}
+            className="md:w-full  md:w-52"
+          />
+          {/* Opciones de visualización (grid/list) */}
+          <DataViewLayoutOptions
+            layout={layout}
+            className="text-gray-600"
+            onChange={(e) => setLayout(e.value)}
+          />
+        </div>
       </div>
     );
   };
+
   const headertree = () => {
     return (
       <div>
@@ -657,9 +712,9 @@ export const Tienda = () => {
           />
         </div>
         <div className="card col-span-12  sm:col-span-12 md:col-span-9">
-          {products && products.length > 0 ? (
+          {filteredProducts && filteredProducts.length > 0 ? (
             <DataView
-              value={products}
+              value={filteredProducts}
               listTemplate={listTemplate}
               layout={layout}
               header={header()}
