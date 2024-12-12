@@ -231,12 +231,20 @@ export const NavBar = () => {
   const start = () => {
   
     return (
+      <div>
       <img
         alt="logo"
         src={chameleonLargo}
-        className="mr-2 w-48 h-14 md:w-64 md:h-20"
+        className="hidden md:block mr-2 w-48 h-14 md:w-64 md:h-20"
         onClick={() => navigate("/")} // Pasa la función como un callback
       />
+      <img
+        alt="logo"
+        src={icono_color}
+        className="md:hidden mr-2 w-10 h-14 md:w-64 md:h-20"
+        onClick={() => navigate("/")} // Pasa la función como un callback
+      />
+      </div>
     );
   }
   const panelFooterTemplate = () => {
@@ -312,7 +320,7 @@ export const NavBar = () => {
     }
   };
   const end = (
-    <div className="flex align-items-center gap-3">
+    <div className="flex   align-items-center gap-3">
       <AutoComplete
         placeholder="Buscar producto"
         field="name"
@@ -322,7 +330,7 @@ export const NavBar = () => {
         onChange={handleProductSelect}
         itemTemplate={itemTemplate}
         panelFooterTemplate={panelFooterTemplate}
-        className="  m-2.5 hidden md:block w-auto"
+        className="  m-2.5  md:block w-auto"
       />
       {isLoggedIn ? (
         <>
@@ -391,6 +399,7 @@ export const NavBar = () => {
         end={end}
         className="rounded-none h-auto z-50 border-none"
       />
+     
       <Dialog
         header={headerDialog}
         modal
