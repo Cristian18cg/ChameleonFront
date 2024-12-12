@@ -63,8 +63,9 @@ const AdministracionProvider = ({ children }) => {
           formData.append("images", image.file); // Archivo de la imagen
           formData.append("title", image.title || ""); // Título del banner
           formData.append("is_active", image.is_active || true); // Estado activo
-          formData.append("is_mobil", image.is_mobil || false); // Imagen móvil
           formData.append("description", ""); // Imagen móvil
+          formData.append("is_mobil", image.is_mobil || false); // Imagen móvil
+          formData.append("button_url", image.button_url || "https://xn--paalesecologicos-7tb.com.co/tienda"); // Imagen móvil
 
           const response = await clienteAxios.post(
             `administration/config/banners/`,

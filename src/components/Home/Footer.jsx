@@ -21,7 +21,7 @@ const Footer = () => {
             Términos y Condiciones
           </a>
           <a
-            href="https://wa.me/3202153327"
+            href="https://wa.me/573202153327"
             className="text-sm hover:underline flex items-center"
           >
             <i className="pi pi-whatsapp mr-2"></i> Contacto
