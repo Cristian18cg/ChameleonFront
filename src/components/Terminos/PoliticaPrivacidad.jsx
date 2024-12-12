@@ -4,7 +4,7 @@ const PoliticasPrivacidad = () => {
     return (
         <div className="card mt-24 px-2 md:px-96 md:py-10    bg-gray-100 rounded-lg shadow-lg">
             <h1 className="font-bold text-4xl text-center text-green-600">Políticas de Privacidad</h1>
-            <p className="text-gray-700 text-sm mt-4">Última actualización: [Fecha de actualización]</p>
+            <p className="text-gray-700 text-sm mt-4">Última actualización: [12/12/2024]</p>
 
             <h2 className="font-semibold text-xl text-gray-800 mt-6">Introducción</h2>
             <p className="text-gray-600 text-justify mt-2">
