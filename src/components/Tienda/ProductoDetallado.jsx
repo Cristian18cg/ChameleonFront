@@ -117,12 +117,11 @@ export const ProductoDetallado = () => {
       <Dialog
         header=" METODOS DE PAGO"
         visible={visible}
-        style={{ width: "15vw" }}
         onHide={() => {
           if (!visible) return;
           setVisible(false);
         }}
-        className="bg-gray-300"
+        className="w-11/12 md:w-1/3 bg-gray-300"
       >
         {/* Contenedor de las imágenes */}
         <div className="flex  w-full mt-1 bg-gray-100  justify-center items-center gap-4">

@@ -101,19 +101,19 @@ const OrderDashboard = () => {
     }
   };
 
-  const accept = () => {
-    CancelarPedido(pedidoEliminar);
+  const accept = (id) => {
+    CancelarPedido(id); 
   };
 
   const reject = () => {};
 
   const confirm1 = (id) => {
     confirmDialog({
-      message: `Estas seguro de eliminar el pedido #${id}`,
-      header: " Confirmación",
+      message: `¿Estás seguro de eliminar el pedido #${id}?`,
+      header: "Confirmación",
       icon: "pi pi-exclamation-triangle",
       defaultFocus: "accept",
-      accept,
+      accept: () => accept(id), // Pasamos el ID directamente aquí
       reject,
     });
   };
@@ -196,11 +196,7 @@ const OrderDashboard = () => {
         ))}
         {order.status === "PENDING" && (
           <Button
-            onClick={() => {
-              confirm1(order.id);
-              setpedidoEliminar(order.id);
-              setisModalOpen(true);
-            }}
+            onClick={() => confirm1(order.id)}
             className="w-full py-2 px-4 bg-red-600 text-white rounded-lg hover:bg-red-600"
             label=" Cancelar Pedido"
             icon="pi pi-trash"
@@ -232,7 +228,7 @@ const OrderDashboard = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Mis pedidos</h1>
-      {isModalOpen && <ConfirmDialog />}
+      <ConfirmDialog />
       <div className="mb-6 flex flex-col md:flex-row gap-4">
         <div className="relative flex-1">
           <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -311,27 +307,27 @@ const OrderDashboard = () => {
                             }}
                           />
                           <div className="flex flex-col gap-2">
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                            {product.product_name} (x{product.quantity})
-                          </span>
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">
-                            Precio unitario:{" "}
-                            {new Intl.NumberFormat("es-CO", {
-                              style: "currency",
-                              currency: "COP",
-                              minimumFractionDigits: 0,
-                              maximumFractionDigits: 2,
-                            }).format(product.unit_price)}
-                          </span>
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">
-                            Subtotal:{" "}
-                            {new Intl.NumberFormat("es-CO", {
-                              style: "currency",
-                              currency: "COP",
-                              minimumFractionDigits: 0,
-                              maximumFractionDigits: 2,
-                            }).format(product.subtotal)}
-                          </span>
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                              {product.product_name} (x{product.quantity})
+                            </span>
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">
+                              Precio unitario:{" "}
+                              {new Intl.NumberFormat("es-CO", {
+                                style: "currency",
+                                currency: "COP",
+                                minimumFractionDigits: 0,
+                                maximumFractionDigits: 2,
+                              }).format(product.unit_price)}
+                            </span>
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">
+                              Subtotal:{" "}
+                              {new Intl.NumberFormat("es-CO", {
+                                style: "currency",
+                                currency: "COP",
+                                minimumFractionDigits: 0,
+                                maximumFractionDigits: 2,
+                              }).format(product.subtotal)}
+                            </span>
                           </div>
                         </div>
                       ))}
@@ -363,13 +359,7 @@ const OrderDashboard = () => {
                   <td className="   whitespace-nowrap text-sm text-gray-500">
                     {order.status === "PENDING" && (
                       <Button
-                        onClick={() => {
-                          confirm1(order.id);
-                          setpedidoEliminar(order.id);
-                          setisModalOpen(true);
-                        }}
-                 
-                     
+                        onClick={() => confirm1(order.id)}
                         icon="pi pi-trash"
                         outlined
                         rounded

@@ -55,13 +55,16 @@ export const ListaPedidos = () => {
 
   useEffect(() => {
     if (listaPedidos.length === 0) {
-      listarPedidos();
-    } else {
-      // Asegura el orden descendente en caso necesario
-      const pedidosOrdenados = [...listaPedidos].sort((a, b) => b.id - a.id);
+      listarPedidos(); // Llama solo si la lista está vacía
+    }
+  }, [listarPedidos]); // Dependencia solo de listarPedidos
+  useEffect(() => {
+    const pedidosOrdenados = [...listaPedidos].sort((a, b) => b.id - a.id);
+    if (JSON.stringify(listaPedidos) !== JSON.stringify(pedidosOrdenados)) {
       setlistaPedidos(pedidosOrdenados);
     }
-  }, [listaPedidos]);
+  }, [listaPedidos, setlistaPedidos]);
+
   const onRowExpand = (event) => {};
 
   const onRowCollapse = (event) => {};
@@ -445,31 +448,29 @@ export const ListaPedidos = () => {
                 <Button
                   icon="pi pi-search"
                   onClick={() => {
-                    const pedidosFiltrados = listaPedidos.filter(
-                      (pedido) => {
-                        const searchText = filtro.trim().toLowerCase();
-                        return (
-                          pedido.id
-                            .toString()
-                            .toLowerCase()
-                            .includes(searchText) ||
-                          `${pedido.user.first_name} ${pedido.user.last_name}`
-                            .toLowerCase()
-                            .includes(searchText) ||
-                          (pedido.different_shipping &&
-                            pedido.shipping_address
-                              ?.toLowerCase()
-                              .includes(searchText)) ||
-                          pedido.user.profile.address
+                    const pedidosFiltrados = listaPedidos.filter((pedido) => {
+                      const searchText = filtro.trim().toLowerCase();
+                      return (
+                        pedido.id
+                          .toString()
+                          .toLowerCase()
+                          .includes(searchText) ||
+                        `${pedido.user.first_name} ${pedido.user.last_name}`
+                          .toLowerCase()
+                          .includes(searchText) ||
+                        (pedido.different_shipping &&
+                          pedido.shipping_address
                             ?.toLowerCase()
-                            .includes(searchText) ||
-                          pedido.user.profile.city.name
-                            ?.toLowerCase()
-                            .includes(searchText) ||
-                          pedido.status.toLowerCase().includes(searchText)
-                        );
-                      }
-                    );
+                            .includes(searchText)) ||
+                        pedido.user.profile.address
+                          ?.toLowerCase()
+                          .includes(searchText) ||
+                        pedido.user.profile.city.name
+                          ?.toLowerCase()
+                          .includes(searchText) ||
+                        pedido.status.toLowerCase().includes(searchText)
+                      );
+                    });
                     setlistaPedidos(pedidosFiltrados);
                   }}
                   severity="primary"

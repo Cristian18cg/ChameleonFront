@@ -1,11 +1,13 @@
 import { useState, createContext, useMemo, useCallback } from "react";
 import clienteAxios from "../../config/url";
 import Swal from "sweetalert2";
+
+
 const ContextControl = createContext();
 
 const LoginProvider = ({ children }) => {
   const [vistaLog, setVistaLog] = useState(1);
-
+ 
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [jsonlogin, setJsonlogin] = useState({});
   const [jsonusuarios, setJsonusuarios] = useState({});
@@ -275,7 +277,7 @@ const LoginProvider = ({ children }) => {
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("user");
       localStorage.removeItem("is_superuser");
-      window.location.reload();
+      window.location.replace("/");
       try {
         const headers = {
           "Content-Type": "application/json",
@@ -305,7 +307,6 @@ const LoginProvider = ({ children }) => {
         localStorage.removeItem("user");
         localStorage.removeItem("is_superuser");
 
-        window.location.reload();
       } catch (error) {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");

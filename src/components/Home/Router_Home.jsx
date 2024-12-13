@@ -10,13 +10,15 @@ import { ConfigDomicilio } from "../Configuracion/Domicilio/ConfigDomicilio";
 import { ListaPedidos } from "../Pedidos/ListaPedidos";
 import OrderDashboard from "../Pedidos/usuarios/PedidosUsuario";
 import UserProfile from "../Configuracion/Usuario/InfoUsuario";
+import RequestPasswordReset from "../Configuracion/Usuario/EnviarRecuperacion";
+import ResetPassword from "../Configuracion/Usuario/CambiarContraseña";
 import { ListUsers } from "../Configuracion/Usuario/ListUsers";
 import Terminos from "../Terminos/Terminos";
 import Footer from "../Home/Footer";
 import PoliticaPrivacidad from "../Terminos/PoliticaPrivacidad";
 import Imagenes from "../Configuracion/Imagenes/Home/Imagenes_home";
 export const Router_Home = () => {
-  const { admin } = useControl();
+  const { admin, isLoggedIn } = useControl();
   const [Manager, setManager] = useState(false);
   useEffect(() => {
     setManager(admin);
@@ -43,6 +45,14 @@ export const Router_Home = () => {
               path="/politicas_y_privacidad"
               element={<PoliticaPrivacidad />}
             />
+            <Route
+              path="/recuperar_contraseña"
+              element={<RequestPasswordReset />}
+            />
+            <Route
+              path="/reset-password"
+              element={<ResetPassword />} // Nueva ruta para restablecer contraseña
+            />
           </Routes>
         </Router>
       ) : (
@@ -52,16 +62,28 @@ export const Router_Home = () => {
             <Route path="/" element={<HomePage />} />
             <Route path="/tienda" element={<Tienda />} />
             <Route path="/tienda/:id" element={<ProductoDetallado />} />
-            <Route path="/lista_pedidos" element={<OrderDashboard />} />
-            <Route path="/perfil" element={<UserProfile />} />
+            {isLoggedIn && (
+              <>
+                <Route path="/lista_pedidos" element={<OrderDashboard />} />
+                <Route path="/perfil" element={<UserProfile />} />
+              </>
+            )}
             <Route path="/terminos_y_condiciones" element={<Terminos />} />
             <Route
               path="/politicas_y_privacidad"
               element={<PoliticaPrivacidad />}
             />
+            <Route
+              path="/recuperar_contraseña"
+              element={<RequestPasswordReset />}
+            />
+
+            <Route
+              path="/reset-password"
+              element={<ResetPassword />} // Nueva ruta para restablecer contraseña
+            />
           </Routes>
           <Footer />
-
         </Router>
       )}
     </div>

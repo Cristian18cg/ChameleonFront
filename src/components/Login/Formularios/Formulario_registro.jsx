@@ -194,6 +194,7 @@ export const FormularioRegistro = () => {
         <div>
           <FloatLabel>
             <InputText
+              autoComplete="given-name"
               id="nombres"
               name="nombres"
               value={usuario.nombres}
@@ -212,6 +213,7 @@ export const FormularioRegistro = () => {
         <div>
           <FloatLabel>
             <InputText
+              autoComplete="family-name"
               id="apellidos"
               name="apellidos"
               value={usuario.apellidos}
@@ -232,7 +234,7 @@ export const FormularioRegistro = () => {
             <InputText
               readonly
               onfocus="this.removeAttribute('readonly');"
-              autoComplete="off"
+              autoComplete="email"
               type="email"
               id="correo"
               name="correo"
@@ -253,6 +255,7 @@ export const FormularioRegistro = () => {
             <InputMask
               name="telefono"
               id="telefono"
+              autoComplete="tel"
               value={usuario.telefono}
               onChange={handleInputChange}
               mask="(+99) 999-999-9999"
@@ -294,6 +297,7 @@ export const FormularioRegistro = () => {
         <div>
           <FloatLabel>
             <InputText
+            autoComplete="off"
               id="numeroIdentificacion"
               name="numeroIdentificacion"
               value={usuario.numeroIdentificacion}
@@ -312,6 +316,7 @@ export const FormularioRegistro = () => {
         <div>
           <FloatLabel>
             <Dropdown
+            autoComplete="address-level1"
               id="department"
               name="department"
               value={selectedDepartment}
@@ -351,6 +356,7 @@ export const FormularioRegistro = () => {
         <div className="md:col-span-2">
           <FloatLabel>
             <InputText
+              autoComplete="street-address"
               id="direccion"
               name="direccion"
               value={usuario.direccion}

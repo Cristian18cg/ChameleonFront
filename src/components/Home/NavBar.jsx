@@ -341,6 +341,7 @@ export const NavBar = () => {
             <a
               className="flex align-items-center p-menuitem md:p-3 mt-6 md:mt-3"
               onClick={() => {
+                navigate("/");
                 logout();
               }}
             >

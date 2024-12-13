@@ -4,7 +4,7 @@ import useControl from '../../../hooks/useControl';
 
 export const FooterLogin = () => {
   const navigate = useNavigate();
-  const { vistaLog, setVistaLog } = useControl();
+  const { vistaLog, setVistaLog,setVisibleProfile } = useControl();
 
   return (
     <div className="flex flex-col justify-center items-center mt-1 space-y-2">
@@ -23,7 +23,9 @@ export const FooterLogin = () => {
         <>
           {/* Si el usuario está en la vista de login, muestra estos botones */}
           <button
-            onClick={() => navigate('/forgot-password')}
+            onClick={() => {
+              setVisibleProfile(false)
+              navigate('/recuperar_contraseña')}}
             className="text-purple-600 hover:underline"
           >
             Olvidé mi contraseña

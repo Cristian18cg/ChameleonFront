@@ -548,6 +548,7 @@ const PedidosProvider = ({ children }) => {
           },
         }
       );
+      setlistaPedidos([])
       setlistaPedidos(response.data);
       setloadingPedidosLista(false);
     } catch (error) {
@@ -607,69 +608,63 @@ const PedidosProvider = ({ children }) => {
     },
     [token, listarPedidos]
   );
-  const EditarPedido = useCallback(
-    async (pedido) => {
-      try {
+  const EditarPedido = useCallback(async (pedido) => {
+    console.log(listaPedidos);
+    console.log("envio actualizar", pedido);
+    try {
         setloadingEditar(true);
         const response = await clienteAxios.patch(
-          `orders/orders/${pedido.id}/update/`,
-          pedido,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+            `orders/orders/${pedido.id}/update/`,
+            pedido,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
         );
-        console.log(response.data)
+        console.log("respuesta", response.data);
         showSuccess("Pedido actualizado exitosamente.");
         setlistaPedidos((prevListaPedidos) =>
-          prevListaPedidos.map((p) =>
-            p.id === response.data.id ? { ...p, ...response.data } : p
-          )
+            prevListaPedidos.map((p) =>
+                p.id === response.data.id ? { ...p, ...response.data } : p
+            )
         );
         setloadingEditar(false);
-      } catch (error) {
+    } catch (error) {
         setloadingEditar(false);
-
         console.error("Error actualizando pedido:", error);
 
         if (error.response) {
-          console.error("Detalle del error:", error.response.data);
-
-          // Manejo de errores específicos de productos
-          if (
-            error.response.data.products &&
-            error.response.data.products.errors
-          ) {
-            const productErrors =
-              error.response.data.products.errors.join(", ");
-            showError(`Error con los productos: ${productErrors}`);
-          } else if (
-            Array.isArray(error.response.data.products) &&
-            error.response.data.products.length > 0
-          ) {
-            // Si el formato es un array de errores
-            showError(
-              `Ha ocurrido un error: ${error.response.data.products[0]}`
-            );
-          } else {
-            // Manejo de otros errores generales
-            showError(
-              `Ha ocurrido un error editando el pedido: ${
-                error.response.data.error || "Error de validación"
-              }`
-            );
-          }
+            console.error("Detalle del error:", error.response.data);
+            if (
+                error.response.data.products &&
+                error.response.data.products.errors
+            ) {
+                const productErrors =
+                    error.response.data.products.errors.join(", ");
+                showError(`Error con los productos: ${productErrors}`);
+            } else if (
+                Array.isArray(error.response.data.products) &&
+                error.response.data.products.length > 0
+            ) {
+                showError(
+                    `Ha ocurrido un error: ${error.response.data.products[0]}`
+                );
+            } else {
+                showError(
+                    `Ha ocurrido un error editando el pedido: ${
+                        error.response.data.error || "Error de validación"
+                    }`
+                );
+            }
         } else {
-          // Error sin respuesta del backend
-          showError(
-            "Ha ocurrido un error editando el pedido. Intente nuevamente."
-          );
+            showError(
+                "Ha ocurrido un error editando el pedido. Intente nuevamente."
+            );
         }
-      }
-    },
-    [token,listaPedidos]
-  );
+    }
+}, [token]); // Solo dependes del token
+
 
   const CancelarPedido = useCallback(
     async (idpedido) => {
