@@ -16,7 +16,7 @@ import { Dropdown } from "primereact/dropdown";
 import { Toast } from "primereact/toast";
 import { Dialog } from "primereact/dialog";
 import { FiEye } from "react-icons/fi";
-
+import { Calendar } from "primereact/calendar";
 import { ProgressSpinner } from "primereact/progressspinner";
 
 export const ListaPedidos = () => {
@@ -38,6 +38,7 @@ export const ListaPedidos = () => {
   const [pedidoEnEdicion, setPedidoEnEdicion] = useState(null);
   const [visibleDialog, setVisibleDialog] = useState(false);
   const [globalFilterValue, setGlobalFilterValue] = useState("");
+  const [dates, setDates] = useState(null);
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     name: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
@@ -90,14 +91,32 @@ export const ListaPedidos = () => {
             />
           </IconField>
         </div>
-        <div>
+        <div className="flex gap-2  ">
+          <Calendar
+            value={dates}
+            onChange={(e) => setDates(e.value)}
+            selectionMode="range"
+            readOnlyInput
+            hideOnRangeSelection
+            showIcon
+          />
+          <Button
+            loading={loadingPedidosLista}
+            icon="pi pi-filter"
+            onClick={() => {
+              listarPedidos(dates); // Pasar las fechas seleccionadas al filtro
+            }}
+            label="Filtrar"
+            disabled={!dates || dates.length < 2} // Desactivar si no hay un rango completo
+            className="bg-green-600 border-green-400 hover:bg-green-800"
+          ></Button>
           <Button
             loading={loadingPedidosLista}
             icon="pi pi-replay"
             onClick={() => {
               listarPedidos();
             }}
-            z
+            
             className="bg-purple-600 border-purple-400 hover:bg-purple-800 "
           ></Button>
         </div>
@@ -437,54 +456,72 @@ export const ListaPedidos = () => {
           {/* Mobile view (cards) */}
           <div className="block md:hidden mt-24">
             {/* Header for filtering and refreshing */}
-            <div className="flex justify-between items-center bg-white p-4 shadow-md rounded-lg mt-4">
-              <div className="flex items-center space-x-2 w-full">
-                <InputText
-                  placeholder="Buscar..."
-                  value={filtro}
-                  onChange={(e) => setFiltro(e.target.value)}
-                  className="w-full sm:w-64"
-                />
-                <Button
-                  icon="pi pi-search"
-                  onClick={() => {
-                    const pedidosFiltrados = listaPedidos.filter((pedido) => {
-                      const searchText = filtro.trim().toLowerCase();
-                      return (
-                        pedido.id
-                          .toString()
-                          .toLowerCase()
-                          .includes(searchText) ||
-                        `${pedido.user.first_name} ${pedido.user.last_name}`
-                          .toLowerCase()
-                          .includes(searchText) ||
-                        (pedido.different_shipping &&
-                          pedido.shipping_address
-                            ?.toLowerCase()
-                            .includes(searchText)) ||
-                        pedido.user.profile.address
-                          ?.toLowerCase()
-                          .includes(searchText) ||
-                        pedido.user.profile.city.name
-                          ?.toLowerCase()
-                          .includes(searchText) ||
-                        pedido.status.toLowerCase().includes(searchText)
-                      );
-                    });
-                    setlistaPedidos(pedidosFiltrados);
-                  }}
-                  severity="primary"
-                />
-              </div>
+            <div className="flex justify-between items-center bg-white p-2 gap-1 rounded-lg mt-4">
+              <InputText
+                placeholder="Buscar..."
+                value={filtro}
+                onChange={(e) => setFiltro(e.target.value)}
+                className="w-full sm:w-64"
+              />
               <Button
-                icon="pi pi-refresh"
+                icon="pi pi-search"
+                onClick={() => {
+                  const pedidosFiltrados = listaPedidos.filter((pedido) => {
+                    const searchText = filtro.trim().toLowerCase();
+                    return (
+                      pedido.id.toString().toLowerCase().includes(searchText) ||
+                      `${pedido.user.first_name} ${pedido.user.last_name}`
+                        .toLowerCase()
+                        .includes(searchText) ||
+                      (pedido.different_shipping &&
+                        pedido.shipping_address
+                          ?.toLowerCase()
+                          .includes(searchText)) ||
+                      pedido.user.profile.address
+                        ?.toLowerCase()
+                        .includes(searchText) ||
+                      pedido.user.profile.city.name
+                        ?.toLowerCase()
+                        .includes(searchText) ||
+                      pedido.status.toLowerCase().includes(searchText)
+                    );
+                  });
+                  setlistaPedidos(pedidosFiltrados);
+                }}
+                severity="primary"
+              />
+            </div>
+            <div className="flex p-2 gap-2 items-center bg-white shadow-md rounded-lg ">
+              <Calendar
+                value={dates}
+                onChange={(e) => setDates(e.value)}
+                selectionMode="range"
+                readOnlyInput
+                hideOnRangeSelection
+                showIcon
+                className="w-full max-w-72"
+              />
+              <Button
+                loading={loadingPedidosLista}
+                icon="pi pi-filter"
+                onClick={() => {
+                  listarPedidos(dates); // Pasar las fechas seleccionadas al filtro
+                }}
+                label="Filtrar"
+                disabled={!dates || dates.length < 2} // Desactivar si no hay un rango completo
+                className=" bg-green-600 border-green-400 hover:bg-green-800"
+              ></Button>
+              <Button
+                loading={loadingPedidosLista}
+                icon="pi pi-replay"
                 onClick={() => {
                   listarPedidos();
                 }}
-                className="mx-2"
-                severity="help"
-              />
+                label="Recargar"
+                className=" bg-purple-600 border-purple-400 hover:bg-purple-800 "
+              ></Button>
             </div>
+
             {listaPedidos?.map((order) => (
               <div
                 key={order.id}

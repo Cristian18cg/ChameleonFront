@@ -502,20 +502,16 @@ const PedidosProvider = ({ children }) => {
   }, [token, usuario, carrito, cupon, valordomicilio, valorPedido]);
   const listarPedidosUsuario = useCallback(async () => {
     try {
-      console.log('token',token)
+      console.log("token", token);
       setloadingPedidosUsuario(true);
-      const response = await clienteAxios.get(
-        `orders/user/orders_user/`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      console.log(response.data)
-      if(response.data.length > 0){
+      const response = await clienteAxios.get(`orders/user/orders_user/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(response.data);
+      if (response.data.length > 0) {
         setlistaPedidosUsuario(response.data);
-
       }
       setloadingPedidosUsuario(false);
     } catch (error) {
@@ -536,39 +532,61 @@ const PedidosProvider = ({ children }) => {
       }
     }
   }, [token]);
-  const listarPedidos = useCallback(async () => {
-    try {
-      setloadingPedidosLista(true);
-      const response = await clienteAxios.get(
-        `orders/orders/`,
+  const listarPedidos = useCallback(
+    async (dates) => {
+        try {
+            setloadingPedidosLista(true);
 
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+            let response;
+
+            if (dates && dates[0] && dates[1]) {
+                const start_date = dates[0].toISOString().split("T")[0]; // Fecha inicial
+                const end_date = dates[1].toISOString().split("T")[0];   // Fecha final
+
+                // Filtrar por rango de fechas
+                response = await clienteAxios.get(
+                    `orders/orders/?start_date=${start_date}&end_date=${end_date}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`, // Asegúrate de incluir el token
+                        },
+                    }
+                );
+            } else {
+                // Obtener todos los pedidos
+                response = await clienteAxios.get(
+                    `orders/orders/`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+            }
+
+            // Actualizar el estado con los pedidos obtenidos
+            setlistaPedidos(response.data);
+        } catch (error) {
+            console.error("Error obteniendo pedidos:", error);
+
+            if (error.response) {
+                console.error("Detalle del error:", error.response.data);
+                showError(
+                    `Ha ocurrido un error obteniendo los pedidos: ${
+                        error.response.data.error || "Error de validación"
+                    }`
+                );
+            } else {
+                showError(
+                    "Ha ocurrido un error obteniendo los pedidos. Intente nuevamente."
+                );
+            }
+        } finally {
+            setloadingPedidosLista(false); // Asegúrate de desactivar el loading al final
         }
-      );
-      setlistaPedidos([])
-      setlistaPedidos(response.data);
-      setloadingPedidosLista(false);
-    } catch (error) {
-      setloadingPedidosLista(false);
-
-      console.error("Error obteniendo pedidos:", error);
-      if (error.response) {
-        console.error("Detalle del error:", error.response.data);
-        showError(
-          `Ha ocurrido un error obteniendo los pedidos: ${
-            error.response.data.error || "Error de validación"
-          }`
-        );
-      } else {
-        showError(
-          "Ha ocurrido un error obteniendo los pedidos. Intente nuevamente."
-        );
-      }
-    }
-  }, [token]);
+    },
+    [token]
+);
   const EliminarPedido = useCallback(
     async (idpedido) => {
       try {
@@ -608,69 +626,71 @@ const PedidosProvider = ({ children }) => {
     },
     [token, listarPedidos]
   );
-  const EditarPedido = useCallback(async (pedido) => {
-    console.log(listaPedidos);
-    console.log("envio actualizar", pedido);
-    try {
+  const EditarPedido = useCallback(
+    async (pedido) => {
+      console.log(listaPedidos);
+      console.log("envio actualizar", pedido);
+      try {
         setloadingEditar(true);
         const response = await clienteAxios.patch(
-            `orders/orders/${pedido.id}/update/`,
-            pedido,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }
+          `orders/orders/${pedido.id}/update/`,
+          pedido,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         console.log("respuesta", response.data);
         showSuccess("Pedido actualizado exitosamente.");
         setlistaPedidos((prevListaPedidos) =>
-            prevListaPedidos.map((p) =>
-                p.id === response.data.id ? { ...p, ...response.data } : p
-            )
+          prevListaPedidos.map((p) =>
+            p.id === response.data.id ? { ...p, ...response.data } : p
+          )
         );
         setloadingEditar(false);
-    } catch (error) {
+      } catch (error) {
         setloadingEditar(false);
         console.error("Error actualizando pedido:", error);
 
         if (error.response) {
-            console.error("Detalle del error:", error.response.data);
-            if (
-                error.response.data.products &&
-                error.response.data.products.errors
-            ) {
-                const productErrors =
-                    error.response.data.products.errors.join(", ");
-                showError(`Error con los productos: ${productErrors}`);
-            } else if (
-                Array.isArray(error.response.data.products) &&
-                error.response.data.products.length > 0
-            ) {
-                showError(
-                    `Ha ocurrido un error: ${error.response.data.products[0]}`
-                );
-            } else {
-                showError(
-                    `Ha ocurrido un error editando el pedido: ${
-                        error.response.data.error || "Error de validación"
-                    }`
-                );
-            }
-        } else {
+          console.error("Detalle del error:", error.response.data);
+          if (
+            error.response.data.products &&
+            error.response.data.products.errors
+          ) {
+            const productErrors =
+              error.response.data.products.errors.join(", ");
+            showError(`Error con los productos: ${productErrors}`);
+          } else if (
+            Array.isArray(error.response.data.products) &&
+            error.response.data.products.length > 0
+          ) {
             showError(
-                "Ha ocurrido un error editando el pedido. Intente nuevamente."
+              `Ha ocurrido un error: ${error.response.data.products[0]}`
             );
+          } else {
+            showError(
+              `Ha ocurrido un error editando el pedido: ${
+                error.response.data.error || "Error de validación"
+              }`
+            );
+          }
+        } else {
+          showError(
+            "Ha ocurrido un error editando el pedido. Intente nuevamente."
+          );
         }
-    }
-}, [token]); // Solo dependes del token
-
+      }
+    },
+    [token]
+  ); // Solo dependes del token
 
   const CancelarPedido = useCallback(
     async (idpedido) => {
       try {
         setloadingPedidosLista(true);
-  
+
         // Realizar la solicitud para cancelar el pedido
         const response = await clienteAxios.post(
           `orders/orders/${idpedido}/cancel/`,
@@ -681,26 +701,27 @@ const PedidosProvider = ({ children }) => {
             },
           }
         );
-  
+
         // Verificar si hay un mensaje en la respuesta
         if (response.data.detail) {
           showSuccess(response.data.detail);
         } else {
           showSuccess("El pedido fue cancelado correctamente.");
         }
-  
+
         // Actualizar la lista de pedidos
         obtenerProductos();
+        listarPedidosUsuario();
       } catch (error) {
         setloadingPedidosLista(false);
-  
+
         // Manejo de errores del backend
         if (error.response) {
           const status = error.response.status;
           const data = error.response.data;
-  
+
           console.error("Error eliminando el pedido:", data);
-  
+
           // Mostrar mensajes específicos según el error
           if (status === 400 && data.detail) {
             showError(data.detail); // Mensaje de validación del backend
@@ -712,7 +733,9 @@ const PedidosProvider = ({ children }) => {
             );
           } else {
             showError(
-              `Error inesperado (${status}): ${data.detail || "Intente nuevamente."}`
+              `Error inesperado (${status}): ${
+                data.detail || "Intente nuevamente."
+              }`
             );
           }
         } else {
@@ -728,9 +751,6 @@ const PedidosProvider = ({ children }) => {
     },
     [token, listarPedidos]
   );
-  
-
-
 
   const contextValue = useMemo(() => {
     return {

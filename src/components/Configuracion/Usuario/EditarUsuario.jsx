@@ -459,7 +459,6 @@ export const EditarUsuario = () => {
               Acepto los
               <a
                 href="/ruta-a-terminos"
-                target="_blank"
                 rel="noopener noreferrer"
                 className="text-purple-500 mx-1"
               >
