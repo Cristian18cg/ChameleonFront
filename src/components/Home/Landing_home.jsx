@@ -186,9 +186,9 @@ const HomePage = () => {
           </motion.div>
         </div>
       </motion.div>
-
+            <div className="md:px-44 bg-gray-50">
       {/* Sale Products Slider */}
-      <div className="py-16 px-4 md:px-8 bg-gray-50">
+      <div className="py-16 px-4 md:px-6 bg-gray-50">
         <h2 className="text-3xl font-bold mb-8 text-center">
           Ofertas Especiales
         </h2>
@@ -200,8 +200,10 @@ const HomePage = () => {
           pagination={{ clickable: true }}
           autoplay={{ delay: 3000 }}
           breakpoints={{
-            640: { slidesPerView: 3 },
-            1024: { slidesPerView: 4 },
+            640: { slidesPerView: 2 },
+            1024: { slidesPerView: 3 },
+            1424: { slidesPerView: 4 },
+            1624: { slidesPerView: 5 },
           }}
           style={{ height: "auto" }} // Ajustar altura al contenido
         >
@@ -312,6 +314,8 @@ const HomePage = () => {
           breakpoints={{
             640: { slidesPerView: 2 },
             1024: { slidesPerView: 3 },
+            1424: { slidesPerView: 4 },
+            1624: { slidesPerView: 5 },
           }}
         >
           {newArrivals.map((product) => (
@@ -374,6 +378,8 @@ const HomePage = () => {
       </div>
 
       {/* CTA Section */}
+      
+      </div>
       <div className="bg-green-500 text-white py-16 px-4 md:px-8">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-bold mb-4">

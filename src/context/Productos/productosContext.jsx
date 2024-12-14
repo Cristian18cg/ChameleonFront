@@ -12,6 +12,7 @@ const ProductosProvider = ({ children }) => {
   const [productos, setProductos] = useState("");
   const [producto, setProducto] = useState("");
   const [btndelCate, setbtndelCate] = useState(true);
+  const [loadingfiltro, setloadingfiltro] = useState(false);
   const [loadingProducts, setloadingProducts] = useState(true);
   const categoriapadre = [{ name: "Sin categoria", id: null }];
   const [productDialog, setProductDialog] = useState(false);
@@ -180,13 +181,17 @@ const ProductosProvider = ({ children }) => {
 
   const filtrarCategoria = useCallback(async (idcategoria) => {
     try {
+      setloadingfiltro(true);
       const response = await clienteAxios.get(
         `products/products/category/${idcategoria}/`
       );
       const productos = response.data;
       setbtndelCate(false);
       setProductos(productos); // Guardar productos en el estado
+      setloadingfiltro(false);
     } catch (error) {
+      setloadingfiltro(false);
+
       if (error.response) {
         // Mostrar el mensaje de error consolidado en SweetAlert
         Swal.fire({
@@ -588,6 +593,9 @@ const ProductosProvider = ({ children }) => {
       setbtndelCate,
       setloadingProducts,
       setloadingProducto,
+      setloadingfiltro,
+      loadingfiltro, 
+
       loadingProducto, 
       loadingProducts,
       btndelCate,

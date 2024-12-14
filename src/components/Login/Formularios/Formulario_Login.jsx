@@ -66,10 +66,9 @@ export const Formulario_Login = () => {
           <FloatLabel >
             <InputText
               id="username"
-              className="input-login "
+              className="input-login w-60"
               value={usuario}
               onChange={handleCorreoChange}
-              style={{width:"15rem"}}
             />
             <label className="w-full" htmlFor="username">Correo electrónico</label>
           </FloatLabel>
@@ -84,7 +83,7 @@ export const Formulario_Login = () => {
               value={contraseña}
               onChange={handleContraseñaChange}
               feedback={false}
-              className="input-login"
+              className="input-login min-w-60" 
               keyfilter={/[^$<>{}()'"`;%]/} // No permite caracteres especiales
               toggleMask
 

@@ -39,6 +39,7 @@ export const Tienda = () => {
     filtrarCategoria,
     btndelCate,
     setbtndelCate,
+    loadingfiltro,
   } = useControlProductos();
   const [globalFilter, setGlobalFilter] = useState("");
   const [products, setProducts] = useState([]);
@@ -654,6 +655,7 @@ export const Tienda = () => {
           <div className="grid md:grid-cols-2 grid-cols-1">
             <Button
               label="Filtrar Categoria"
+              loading={loadingfiltro}
               className="mb-2  mt-2 md:mt-0 md:mb-0 bg-green-500 border-green-600 hover:bg-green-400 hover:border-green-500"
               onClick={() => {
                 filtrarCategoria(selectedKey);
