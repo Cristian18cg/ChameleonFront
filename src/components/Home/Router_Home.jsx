@@ -24,68 +24,76 @@ export const Router_Home = () => {
     setManager(admin);
   }, [admin]);
   return (
-    <div className="w-full">
-      {Manager ? (
-        <Router>
-          <NavBar />
+    <Router>
+      <div className="flex flex-col min-h-screen">
+        {/* Navegación */}
+        <NavBar />
+
+        {/* Contenido principal */}
+        <main className="flex-grow">
           <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/productos" element={<Table_products />} />
-            <Route path="/tienda/:id" element={<ProductoDetallado />} />
-            <Route path="/tienda" element={<Tienda />} />
-            <Route
-              path="/configuracion/domicilio"
-              element={<ConfigDomicilio />}
-            />
-            <Route path="/configuracion/usuarios" element={<ListUsers />} />
-            <Route path="/configuracion/imagenes" element={<Imagenes />} />
-            <Route path="/pedidos/lista_pedidos" element={<ListaPedidos />} />
-            <Route path="/terminos_y_condiciones" element={<Terminos />} />
-            <Route
-              path="/politicas_y_privacidad"
-              element={<PoliticaPrivacidad />}
-            />
-            <Route
-              path="/recuperar_contraseña"
-              element={<RequestPasswordReset />}
-            />
-            <Route
-              path="/reset-password"
-              element={<ResetPassword />} // Nueva ruta para restablecer contraseña
-            />
-          </Routes>
-        </Router>
-      ) : (
-        <Router>
-          <NavBar />
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/tienda" element={<Tienda />} />
-            <Route path="/tienda/:id" element={<ProductoDetallado />} />
-            {isLoggedIn && (
+            {Manager ? (
               <>
-                <Route path="/lista_pedidos" element={<OrderDashboard />} />
-                <Route path="/perfil" element={<UserProfile />} />
+                <Route path="/" element={<HomePage />} />
+                <Route path="/productos" element={<Table_products />} />
+                <Route path="/tienda/:id" element={<ProductoDetallado />} />
+                <Route path="/tienda" element={<Tienda />} />
+                <Route
+                  path="/configuracion/domicilio"
+                  element={<ConfigDomicilio />}
+                />
+                <Route path="/configuracion/usuarios" element={<ListUsers />} />
+                <Route path="/configuracion/imagenes" element={<Imagenes />} />
+                <Route
+                  path="/pedidos/lista_pedidos"
+                  element={<ListaPedidos />}
+                />
+                <Route path="/terminos_y_condiciones" element={<Terminos />} />
+                <Route
+                  path="/politicas_y_privacidad"
+                  element={<PoliticaPrivacidad />}
+                />
+                <Route
+                  path="/recuperar_contraseña"
+                  element={<RequestPasswordReset />}
+                />
+                <Route
+                  path="/reset-password"
+                  element={<ResetPassword />} // Nueva ruta para restablecer contraseña
+                />
+              </>
+            ) : (
+              <>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/tienda" element={<Tienda />} />
+                <Route path="/tienda/:id" element={<ProductoDetallado />} />
+                {isLoggedIn && (
+                  <>
+                    <Route path="/lista_pedidos" element={<OrderDashboard />} />
+                    <Route path="/perfil" element={<UserProfile />} />
+                  </>
+                )}
+                <Route path="/terminos_y_condiciones" element={<Terminos />} />
+                <Route
+                  path="/politicas_y_privacidad"
+                  element={<PoliticaPrivacidad />}
+                />
+                <Route
+                  path="/recuperar_contraseña"
+                  element={<RequestPasswordReset />}
+                />
+                <Route
+                  path="/reset-password"
+                  element={<ResetPassword />} // Nueva ruta para restablecer contraseña
+                />
               </>
             )}
-            <Route path="/terminos_y_condiciones" element={<Terminos />} />
-            <Route
-              path="/politicas_y_privacidad"
-              element={<PoliticaPrivacidad />}
-            />
-            <Route
-              path="/recuperar_contraseña"
-              element={<RequestPasswordReset />}
-            />
-
-            <Route
-              path="/reset-password"
-              element={<ResetPassword />} // Nueva ruta para restablecer contraseña
-            />
           </Routes>
-          <Footer />
-        </Router>
-      )}
-    </div>
+        </main>
+
+        {/* Footer siempre visible */}
+        <Footer />
+      </div>
+    </Router>
   );
 };

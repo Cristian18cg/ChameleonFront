@@ -34,15 +34,25 @@ export const ListUsers = () => {
     }
   }, [listaUsuarios]);
   let emptyUser = {
-    id: null,
-    name: "",
-    image: null,
-    description: "",
-    category: null,
-    price: 0,
-    quantity: 0,
-    rating: 0,
-    inventoryStatus: "INSTOCK",
+    first_name: "",
+    last_name: "",
+    profile: {
+      address: "",
+      phone: "",
+      terms_accepted: true,
+      type_document:"",
+      number_document:"",
+      department:null,
+      city:null,
+    },
+    email: "",
+    is_active: true,
+    is_superuser: false,
+    ciudad: null,
+    department: null,
+    contrasena: null,
+    confirmarContrasena: null,
+    
   };
   console.log(listaUsuarios);
   const exportCSV = () => {
@@ -104,9 +114,8 @@ export const ListUsers = () => {
     }
   };
   const statusBodyTemplate = (rowData) => {
-    console.log(rowData)
+    console.log(rowData);
     return (
-  
       <Tag value={getMessage(rowData)} severity={getSeverity(rowData)}></Tag>
     );
   };
@@ -182,7 +191,7 @@ export const ListUsers = () => {
           setUsuarioDialog(false);
         }}
       >
-        <EditarUsuario/>
+        <EditarUsuario />
       </Dialog>
       {!loadingListaUsuario ? (
         <div className="card">

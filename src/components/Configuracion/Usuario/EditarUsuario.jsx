@@ -28,7 +28,7 @@ export const EditarUsuario = () => {
     direccion: user.profile.address || "",
     telefono: user.profile.phone || "",
     correo: user.email || "",
-    is_active: user.is_active ,
+    is_active: user.is_active,
     is_superuser: user.is_superuser || false,
     ciudad: null,
     department: null,
@@ -39,46 +39,48 @@ export const EditarUsuario = () => {
     numeroIdentificacion: user.profile.number_document || "", // Nuevo campo para número de identificación
   });
   useEffect(() => {
-    console.log(user)
     // Cargar departamentos y ciudades basados en la información del usuario
     if (departamentos.length === 0) {
       departments();
     } else {
       const userDepartment = departamentos.find(
-        (d) => d.id === user.profile?.department.id
+        (d) => d.id === user.profile?.department?.id
       );
-      handleInputChange({
-        target: { name: "department", value: userDepartment.id },
-      });
-      setSelectedDepartment(userDepartment.id);
+
       if (userDepartment) {
-        cities(userDepartment.id);
+        setSelectedDepartment(userDepartment?.id);
+
+        handleInputChange({
+          target: { name: "department", value: userDepartment?.id },
+        });
+        cities(userDepartment?.id);
       }
     }
-  }, [departamentos, user, ]);
+  }, [departamentos, user]);
   useEffect(() => {
     // Cargar departamentos y ciudades basados en la información del usuario
     if (departamentos.length === 0) {
       departments();
     } else {
       const userDepartment = departamentos.find(
-        (d) => d.id === user.profile?.department.id
+        (d) => d.id === user.profile?.department?.id
       );
-      handleInputChange({
-        target: { name: "department", value: userDepartment.id },
-      });
-      setSelectedDepartment(userDepartment.id);
+     
       if (userDepartment) {
-        cities(userDepartment.id);
+        cities(userDepartment?.id);
+        handleInputChange({
+          target: { name: "department", value: userDepartment?.id },
+        });
+        setSelectedDepartment(userDepartment?.id);
       }
     }
-  }, [departamentos, user, ]);
+  }, [departamentos, user]);
   useEffect(() => {
-   console.log(usuario)
+    console.log(usuario);
   }, [usuario]);
   useEffect(() => {
     // Sincronizar ciudad basada en la información del usuario
-    const userCity = ciudades.find((c) => c.id === user.profile?.city.id);
+    const userCity = ciudades.find((c) => c.id === user.profile?.city?.id);
     handleInputChange({
       target: { name: "ciudad", value: userCity?.id },
     });
@@ -151,7 +153,12 @@ export const EditarUsuario = () => {
     };
 
     // Omitir validación si el campo es contraseña y está vacío
-    if (campo === "contrasena" || campo === "confirmarContrasena" ||  campo === "is_superuser" ||campo === "is_active") {
+    if (
+      campo === "contrasena" ||
+      campo === "confirmarContrasena" ||
+      campo === "is_superuser" ||
+      campo === "is_active"
+    ) {
       return errores;
     }
     if (!valor) errores[campo] = "Este campo es obligatorio.";
@@ -423,9 +430,7 @@ export const EditarUsuario = () => {
             <label htmlFor="is_active">Usuario activo</label>
           </div>
           {errores.is_active && (
-            <small className="p-error min-w-full">
-              {errores.is_active}
-            </small>
+            <small className="p-error min-w-full">{errores.is_active}</small>
           )}
         </div>
         <div className="card md:col-span-2 flex justify-content-center">
@@ -438,12 +443,9 @@ export const EditarUsuario = () => {
             />
 
             <label htmlFor="is_superuser">Es usuario administrador</label>
-         
           </div>
           {errores.is_superuser && (
-            <small className="p-error min-w-full">
-              {errores.is_superuser}
-            </small>
+            <small className="p-error min-w-full">{errores.is_superuser}</small>
           )}
         </div>
         <div className="card md:col-span-2 flex justify-content-center">
