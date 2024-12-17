@@ -195,7 +195,7 @@ export const ProductoDetallado = () => {
                           currency: "COP",
                           minimumFractionDigits: 0,
                           maximumFractionDigits: 2,
-                        }).format(producto.discount_price)}
+                        }).format(producto.price)}
                       </span>
                     )}
                   <span className="text-4xl font-semibold text-gray-900">
@@ -204,7 +204,7 @@ export const ProductoDetallado = () => {
                       currency: "COP",
                       minimumFractionDigits: 0,
                       maximumFractionDigits: 2,
-                    }).format(producto.price)}
+                    }).format(producto.discount_price)}
                   </span>
                 </div>
               </div>
