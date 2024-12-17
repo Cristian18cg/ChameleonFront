@@ -376,7 +376,6 @@ const PedidosProvider = ({ children }) => {
 
   const eliminarvalorDomicilio = useCallback(
     async (domicilioInfo) => {
-      console.log("eli", domicilioInfo);
       try {
         await clienteAxios.delete(
           `administration/config/address/${domicilioInfo.id}`,
@@ -502,14 +501,12 @@ const PedidosProvider = ({ children }) => {
   }, [token, usuario, carrito, cupon, valordomicilio, valorPedido]);
   const listarPedidosUsuario = useCallback(async () => {
     try {
-      console.log("token", token);
       setloadingPedidosUsuario(true);
       const response = await clienteAxios.get(`orders/user/orders_user/`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log(response.data);
       if (response.data.length > 0) {
         setlistaPedidosUsuario(response.data);
       }
@@ -628,8 +625,6 @@ const PedidosProvider = ({ children }) => {
   );
   const EditarPedido = useCallback(
     async (pedido) => {
-      console.log(listaPedidos);
-      console.log("envio actualizar", pedido);
       try {
         setloadingEditar(true);
         const response = await clienteAxios.patch(
@@ -641,7 +636,6 @@ const PedidosProvider = ({ children }) => {
             },
           }
         );
-        console.log("respuesta", response.data);
         showSuccess("Pedido actualizado exitosamente.");
         setlistaPedidos((prevListaPedidos) =>
           prevListaPedidos.map((p) =>

@@ -28,6 +28,7 @@ export const CrearProducto = ({ producto }) => {
     crearProducto,
     editarProducto,
     eliminarImagenProducto,
+    crearloading
   } = useControlProductos();
   const toast = useRef(null);
   const [totalSize, setTotalSize] = useState(0);
@@ -57,8 +58,6 @@ export const CrearProducto = ({ producto }) => {
 
       // Si estamos editando un producto, mapear sus categorías a un objeto
       if (producto && Array.isArray(producto.categories)) {
-        console.log("entro");
-
         // Crear un objeto con los IDs de categorías como clave y true como valor
         const selectedCategories = producto.categories.reduce(
           (acc, categoryName) => {
@@ -73,7 +72,6 @@ export const CrearProducto = ({ producto }) => {
           {}
         );
 
-        console.log(selectedCategories); // Esto imprimirá el objeto con categorías en el formato {1: true, 2: true}
 
         // Asignar el objeto de categorías seleccionadas al producto
         setProduct((prevProduct) => ({
@@ -87,9 +85,7 @@ export const CrearProducto = ({ producto }) => {
     }
   }, [categorias, producto]);
 
-  useEffect(() => {
-    console.log(product);
-  }, [product]);
+
 
   const onInputChange = (e, field) => {
     const value = e.target.value;
@@ -124,7 +120,6 @@ export const CrearProducto = ({ producto }) => {
       setDisableDiscountPercentage(true);
     }
     if (field === "stock" && value >= 0) {
-      console.log("entro");
       setProduct({ ...product, [field]: value });
     }
     if (field === "price" && value > 100) {
@@ -144,7 +139,6 @@ export const CrearProducto = ({ producto }) => {
   const [imageFiles, setImageFiles] = useState([]); // Para almacenar múltiples imágenes
 
   const onImageSelect = (e) => {
-    console.log("entro imagenes", e);
     const selectedFiles = Array.from(e.files); // Obtener las nuevas imágenes seleccionadas
 
     // Filtrar las imágenes que no están ya en imageFiles
@@ -158,7 +152,6 @@ export const CrearProducto = ({ producto }) => {
       setImageFiles([...imageFiles, ...filteredFiles]); // Agregar solo las imágenes no repetidas
       setProduct({ ...product, images: [...imageFiles, ...filteredFiles] }); // Actualizar el estado del producto
     } else {
-      console.log("Las imágenes ya están seleccionadas.");
     }
   };
   const onSaveProduct = () => {
@@ -196,7 +189,6 @@ export const CrearProducto = ({ producto }) => {
         };
       });
     } else {
-      console.log("categories no es un array");
     }
 
     const tree = [];
@@ -351,7 +343,6 @@ export const CrearProducto = ({ producto }) => {
   };
 
   const itemTemplateImg = (item) => {
-    console.log("itemmostrado", item);
     setImageFile(item);
     return (
       <img
@@ -653,6 +644,7 @@ export const CrearProducto = ({ producto }) => {
       <div className="flex justify-center">
         {/* Botón para guardar */}
         <Button
+        loading={crearloading}
           label="Guardar Producto"
           icon="pi pi-check"
           onClick={onSaveProduct}

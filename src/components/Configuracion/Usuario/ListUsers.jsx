@@ -54,7 +54,6 @@ export const ListUsers = () => {
     confirmarContrasena: null,
     
   };
-  console.log(listaUsuarios);
   const exportCSV = () => {
     dt.current.exportCSV();
   };
@@ -114,7 +113,6 @@ export const ListUsers = () => {
     }
   };
   const statusBodyTemplate = (rowData) => {
-    console.log(rowData);
     return (
       <Tag value={getMessage(rowData)} severity={getSeverity(rowData)}></Tag>
     );

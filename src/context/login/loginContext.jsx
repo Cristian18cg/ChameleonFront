@@ -84,7 +84,6 @@ const LoginProvider = ({ children }) => {
           title: "Contraseña incorrecta",
         });
       } else {
-        console.log("login", response);
         setJsonlogin(response.data);
         ///LOCAL STORAGE
         setItemWithExpiration("jsonlogin", response.data, 1);
@@ -466,7 +465,6 @@ const LoginProvider = ({ children }) => {
     async (usuario) => {
       try {
         setloadingEdicion(true);
-        console.log(usuario); // Construir dinámicamente el payload solo con los campos que han cambiado
         const payload = {
           ...(usuario.correo !== user.email && { email: usuario.correo }),
           ...(usuario.nombres !== user.first_name && {
@@ -510,7 +508,6 @@ const LoginProvider = ({ children }) => {
             }),
           },
         };
-        console.log("pay", payload);
         const response = await clienteAxios.patch(
           `users/info/users/${user.id}/`,
           payload,
@@ -635,7 +632,6 @@ const LoginProvider = ({ children }) => {
         if (response.status === 200) {
           showSuccess(`Se editó con éxito.`);
         }
-        console.log("response ", response);
       } catch (error) {
         console.error("Error al actualizar el perfil:", error);
         if (error.response) {

@@ -13,7 +13,8 @@ const ProductosProvider = ({ children }) => {
   const [producto, setProducto] = useState("");
   const [btndelCate, setbtndelCate] = useState(true);
   const [loadingfiltro, setloadingfiltro] = useState(false);
-  const [loadingProducts, setloadingProducts] = useState(true);
+  const [crearloading, setcrearloading] = useState(false);
+  const [loadingProducts, setloadingProducts] = useState(false);
   const categoriapadre = [{ name: "Sin categoria", id: null }];
   const [productDialog, setProductDialog] = useState(false);
   const [loadingProducto, setloadingProducto] = useState(true);
@@ -220,6 +221,7 @@ const ProductosProvider = ({ children }) => {
   }, []);
   const crearProducto = useCallback(
     async (producto) => {
+      setcrearloading(true);
       try {
         const formData = new FormData();
         formData.append("name", producto.name);
@@ -246,7 +248,6 @@ const ProductosProvider = ({ children }) => {
         );
 
         selectedCategoryIds.forEach((categoryId) => {
-          console.log(categoryId);
           formData.append("category_ids", categoryId); // Sin índice, para que el backend lo trate como array
         });
 
@@ -259,8 +260,6 @@ const ProductosProvider = ({ children }) => {
           }
         });
 
-        console.log([...formData.entries()]); // Depuración para ver qué se está enviando
-
         await clienteAxios.post("products/products/", formData, {
           headers: {
             "Content-Type": "multipart/form-data", // Porque estás enviando una imagen
@@ -271,7 +270,10 @@ const ProductosProvider = ({ children }) => {
         showSuccess(`Producto ${producto.name} creado con éxito`);
         setProductDialog(false);
         obtenerProductos();
+        setcrearloading(false);
       } catch (error) {
+        setcrearloading(false);
+
         console.log(error);
         if (error.response) {
           let mensajeError = "";
@@ -393,7 +395,6 @@ const ProductosProvider = ({ children }) => {
         );
 
         selectedCategoryIds.forEach((categoryId) => {
-          console.log(categoryId);
           formData.append("category_ids", categoryId); // Sin índice, para que el backend lo trate como array
         });
 
@@ -594,9 +595,11 @@ const ProductosProvider = ({ children }) => {
       setloadingProducts,
       setloadingProducto,
       setloadingfiltro,
-      loadingfiltro, 
+      setcrearloading,
+      crearloading,
+      loadingfiltro,
 
-      loadingProducto, 
+      loadingProducto,
       loadingProducts,
       btndelCate,
       producto,
@@ -627,7 +630,10 @@ const ProductosProvider = ({ children }) => {
     setbtndelCate,
     setloadingProducts,
     setloadingProducto,
-    loadingProducto, 
+    setcrearloading,
+    crearloading,
+    loadingfiltro,
+    loadingProducto,
     loadingProducts,
     btndelCate,
     producto,

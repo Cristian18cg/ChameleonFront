@@ -39,7 +39,6 @@ export const ConfigDomicilio = () => {
       ValorDomicilio();
 
     }
-    console.log(valoresdomicilio);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const getSeverity = (value) => {

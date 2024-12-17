@@ -25,7 +25,6 @@ export const FormularioUsuario = () => {
 
   useEffect(() => {
     // Obtener departamentos al cargar el componente
-    console.log('usuario',usuario);
   }, [usuario]);
 
   const handleInputChange = (e) => {

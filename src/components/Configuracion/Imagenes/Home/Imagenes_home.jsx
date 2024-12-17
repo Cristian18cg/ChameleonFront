@@ -36,9 +36,7 @@ const Imagenes = () => {
       images.forEach((image) => URL.revokeObjectURL(image.objectURL));
     };
   }, [images]);
-  useEffect(() => {
-    console.log("images", images);
-  }, [images]);
+ 
   useEffect(() => {
     if (listaImagenes.length === 0) {
       ListarImagenesHome();
@@ -220,7 +218,6 @@ const Imagenes = () => {
     },
   ];
   const itemTemplateImg = (item) => {
-    console.log("itemmme", item);
     return (
       <img
         alt={item?.name}
@@ -314,7 +311,6 @@ const Imagenes = () => {
   };
   const [statuses] = useState([false, true]);
   const getMessageEditor = (user) => {
-    console.log(user);
     if (user) {
       return `ACTIVO`;
     } else {
@@ -322,7 +318,6 @@ const Imagenes = () => {
     }
   };
   const getSeverityEditor = (user) => {
-    console.log(user);
 
     if (user) {
       return `success`;

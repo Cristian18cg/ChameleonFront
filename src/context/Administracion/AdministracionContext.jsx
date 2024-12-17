@@ -107,7 +107,6 @@ const AdministracionProvider = ({ children }) => {
         setListaImagenes((prevLista) =>
           prevLista.map((img) => (img.id === imagen.id ? response.data : img))
         );
-        console.log(response.data);
         showSuccess(`Imagen ${imagen.title} editada exitosamente.`);
       } catch (error) {
         console.error("Error al editar las imágenes:", error);

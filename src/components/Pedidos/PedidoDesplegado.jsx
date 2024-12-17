@@ -75,7 +75,6 @@ export const PedidoDesplegado = () => {
         // Actualizar la lista de productos del pedido
         _listaPedidos[pedidoIndex].products = updatedProducts;
 
-        console.log("prod", _listaPedidos[pedidoIndex].products);
         // Llamar a `EditarPedido` con el pedido actualizado
         EditarPedido(_listaPedidos[pedidoIndex]);
       }

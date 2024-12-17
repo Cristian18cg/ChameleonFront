@@ -82,11 +82,9 @@ export const Tienda = () => {
     } else {
       setProducts(productos);
     }
-    console.log(productos);
   }, [productos]);
   useEffect(() => {
     if (selectedKey) {
-      console.log(selectedKey);
       setdisabledFiltroCate(false);
     } else {
       setdisabledFiltroCate(true);
@@ -115,7 +113,6 @@ export const Tienda = () => {
         };
       });
     } else {
-      console.log("categories no es un array");
     }
 
     const tree = [];
@@ -553,7 +550,6 @@ export const Tienda = () => {
     else if (layout === "grid") return gridItemSkeleton(index);
   };
   const listTemplate2 = (products, layout) => {
-    console.log(products);
     return (
       <div
         className={

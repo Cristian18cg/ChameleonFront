@@ -76,7 +76,6 @@ export const EditarUsuario = () => {
     }
   }, [departamentos, user]);
   useEffect(() => {
-    console.log(usuario);
   }, [usuario]);
   useEffect(() => {
     // Sincronizar ciudad basada en la información del usuario
