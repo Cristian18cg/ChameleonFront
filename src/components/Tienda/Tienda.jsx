@@ -191,7 +191,9 @@ export const Tienda = () => {
               <div className="flex items-center gap-3">
                 <span className="flex items-center gap-2">
                   <i className="pi pi-tag"></i>
-                  <span className="font-semibold">{product.categories}</span>
+                  <span className="font-semibold">{product.categories && product.categories.length > 0
+                  ? product.categories.join(", ")
+                  : "Sin categoría"}</span>
                 </span>
               </div>
               <Tag
